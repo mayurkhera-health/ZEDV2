@@ -97,6 +97,33 @@ if os.path.exists('robots.txt'):
     if 'Disallow: /' not in io.open('robots.txt', encoding='utf-8').read():
         fail('robots.txt is not disallowing crawlers.')
 
+# --- Structural spine of the home page ---------------------------------------
+# A bulk edit once deleted the whole trust band and the FAQ section wrapper
+# without any other check noticing, because the page still parsed and the line
+# count went up. These assertions are cheap and would have caught it.
+EXPECTED_SECTIONS = ['recognition', 'teams', 'how', 'view', 'plate', 'time',
+                     'story', 'pricing', 'people', 'faq', 'final']
+found = set(re.findall(r'<section[^>]*id="([^"]+)"', home))
+for sec in EXPECTED_SECTIONS:
+    if sec not in found:
+        fail('index.html is missing the #%s section.' % sec)
+
+for needle, what in [('class="trust"', 'the trust band'),
+                     ('class="faq"', 'the FAQ block'),
+                     ('class="wall"', 'the recognition wall'),
+                     ('id="drawer"', 'the result panel')]:
+    if needle not in home:
+        fail('index.html is missing %s (%s).' % (what, needle))
+
+n_faq = home.count('<details>')
+if n_faq < 10:
+    fail('index.html has only %d FAQ entries; expected at least 10.' % n_faq)
+
+# Every rail chip must point at a section that exists.
+for sec in re.findall(r'data-sec="([^"]+)"', home):
+    if sec not in found:
+        fail('the section rail links to #%s, which does not exist.' % sec)
+
 # --- Report -----------------------------------------------------------------
 if fails:
     print('Copy checks FAILED:\n')
