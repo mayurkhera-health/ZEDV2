@@ -76,6 +76,19 @@ for line in re.findall(r'data-ex-health="([^"]*)"', home):
     if 'patient record' in line.lower():
         fail('health example mentions patient records: %r (A1.4)' % line)
 
+# --- No real personal data in the pages -------------------------------------
+# The Food Explorers screenshots contain a real instructor name and email.
+# Nothing resembling a live address may reach a published page; the only
+# addresses allowed are the obvious example one on the booking form and the
+# marked [contact email] placeholders.
+ALLOWED_EMAILS = {'you@yourbusiness.com'}
+for page in pages:
+    raw = io.open(page, encoding='utf-8').read()
+    for addr in set(re.findall(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}', raw)):
+        if addr not in ALLOWED_EMAILS:
+            fail('%s contains what looks like a real email address (%s). '
+                 'Use a placeholder, or redact it.' % (page, addr))
+
 # --- Staging must not be indexable ------------------------------------------
 if os.path.exists('nginx.conf'):
     if 'noindex' not in io.open('nginx.conf', encoding='utf-8').read():

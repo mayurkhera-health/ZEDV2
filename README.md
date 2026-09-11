@@ -22,6 +22,14 @@ assets/site.js              ~22KB, no dependencies. Degrades without JS.
 scripts/check-copy.py       Enforces A3/A4/B3. CI runs this too.
 ```
 
+## One warning about editing
+
+The HTML files **are** the source. The Python generators used to scaffold them
+were throwaway and are not in this repo. Do not regenerate pages from a script
+and overwrite them — hand edits (the humanized copy, the section rail) live
+only in the HTML. If you find yourself writing a generator, make it patch the
+files rather than rewrite them, and check `git diff` before committing.
+
 ## The rules, enforced in code
 
 `scripts/check-copy.py` is the single source of truth — the deploy script and
