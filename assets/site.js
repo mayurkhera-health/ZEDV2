@@ -55,65 +55,6 @@
     }
   })();
 
-  /* --------------------------------------------------- C1 rotating questions
-     Not an ARIA live region: a visually hidden list carries all eight for
-     screen readers. Pauses on hover and on focus, plus an explicit control
-     (WCAG 2.2.2). Reduced motion shows the first three as a static list. */
-  (function probe() {
-    var root = $('#probe');
-    if (!root) return;
-    var out = $('#probe-q'), ctrl = $('#probe-ctrl'), line = $('#probe-line'),
-        stat = $('#probe-static');
-    var qs = $$('#probe-all li').map(function (li) { return li.textContent.trim(); });
-    if (!qs.length) return;
-
-    if (reduced.matches) {
-      line.hidden = true;
-      ctrl.hidden = true;
-      stat.hidden = false;
-      return;
-    }
-
-    var i = 0, timer = null, wanted = true, held = false;
-
-    function swap(n) {
-      root.classList.add('is-out');
-      window.setTimeout(function () {
-        i = (n + qs.length) % qs.length;
-        out.textContent = qs[i];
-        root.classList.remove('is-out');
-      }, 250);
-    }
-    function run() {
-      window.clearInterval(timer);
-      if (!wanted || held) return;
-      timer = window.setInterval(function () { swap(i + 1); }, 4500);
-    }
-    function paint() {
-      ctrl.setAttribute('aria-pressed', String(!wanted));
-      ctrl.setAttribute('aria-label', wanted ? 'Pause questions' : 'Play questions');
-      ctrl.innerHTML = wanted
-        ? '<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" rx="1"></rect><rect x="9.5" y="2.5" width="3" height="11" rx="1"></rect></svg>'
-        : '<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4.5 2.8v10.4l8.5-5.2z"></path></svg>';
-    }
-    ctrl.hidden = false;
-    ctrl.addEventListener('click', function () { wanted = !wanted; paint(); run(); });
-
-    ['mouseenter', 'focusin'].forEach(function (e) {
-      root.addEventListener(e, function () { held = true; window.clearInterval(timer); });
-    });
-    ['mouseleave', 'focusout'].forEach(function (e) {
-      root.addEventListener(e, function () { held = false; run(); });
-    });
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden) { window.clearInterval(timer); } else { run(); }
-    });
-
-    out.textContent = qs[0];
-    paint();
-    run();
-  })();
-
   /* ------------------------------------------------------------- C1/C6 stacks */
   function stack(rootSel) {
     var root = $(rootSel);
@@ -549,52 +490,22 @@
   };
 })();
 
-/* Section rail — mark where the reader is, and keep the active chip in view. */
-(function rail() {
+/* "Not seeing yours?" — same posture as the booking form: validates, confirms,
+   and transmits nothing until a mailer is connected. */
+(function ask() {
   'use strict';
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  var rail = document.querySelector('#rail');
-  if (!rail || !('IntersectionObserver' in window)) return;
-
-  var list  = rail.querySelector('.rail__list');
-  var links = Array.prototype.slice.call(rail.querySelectorAll('a[data-sec]'));
-  var byId = {}, targets = [];
-  links.forEach(function (a) {
-    var el = document.getElementById(a.getAttribute('data-sec'));
-    if (el) { byId[a.getAttribute('data-sec')] = a; targets.push(el); }
+  var form = document.querySelector('#ask');
+  if (!form) return;
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var what = document.querySelector('#ask-what');
+    if (!what.value.trim()) { what.focus(); return; }
+    // NOTE FOR LAUNCH: connect this to the inbox that actually gets read.
+    form.hidden = true;
+    var done = document.querySelector('#ask-done');
+    done.hidden = false;
+    done.setAttribute('tabindex', '-1');
+    done.focus();
+    (window.dataLayer = window.dataLayer || []).push({ event: 'service_request_sent' });
   });
-  if (!targets.length) return;
-
-  var current = null;
-  function mark(id) {
-    if (id === current) return;
-    current = id;
-    links.forEach(function (a) {
-      if (a.getAttribute('data-sec') === id) { a.setAttribute('aria-current', 'true'); }
-      else { a.removeAttribute('aria-current'); }
-    });
-    // In the horizontal presentation, bring the active chip into view without
-    // moving the page itself.
-    var active = byId[id];
-    if (!active || list.scrollWidth <= list.clientWidth) return;
-    var r = active.getBoundingClientRect(), lr = list.getBoundingClientRect();
-    if (r.left < lr.left + 8 || r.right > lr.right - 8) {
-      list.scrollTo({
-        left: active.offsetLeft - list.clientWidth / 2 + active.offsetWidth / 2,
-        behavior: reduced.matches ? 'auto' : 'smooth'
-      });
-    }
-  }
-
-  // Whichever tracked section occupies most of the reading area wins.
-  var ratio = {};
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) { ratio[e.target.id] = e.isIntersecting ? e.intersectionRatio : 0; });
-    var best = null, bestRatio = 0;
-    targets.forEach(function (t) {
-      if ((ratio[t.id] || 0) > bestRatio) { bestRatio = ratio[t.id]; best = t.id; }
-    });
-    if (best) mark(best);
-  }, { rootMargin: '-140px 0px -45% 0px', threshold: [0, 0.05, 0.25, 0.6, 1] });
-  targets.forEach(function (t) { io.observe(t); });
 })();
