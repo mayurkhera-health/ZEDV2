@@ -1,102 +1,106 @@
 # AutomateSmall — website
 
-Static site. No build step, no framework, no package manager. Open `index.html`
-in a browser, or serve the folder:
+Built to **spec v2**. Static site: no build step, no framework, no package
+manager. Open `index.html`, or serve the folder:
 
 ```bash
-python3 -m http.server 8080     # then visit http://localhost:8080
+python3 -m http.server 8080
 ```
 
 ## Files
 
 ```
-index.html                  Home — the 12 sections from the spec, in order
-how-it-works.html           Methodology + engagement process
-operations-assessment.html  Exactly what the customer receives in step 2
-about.html                  Founder story, AutomateSmall story, ZEDventures
-book.html                   Free walkthrough request (3 questions + email)
-privacy.html                Plain-English privacy page
-terms.html                  Website terms
-assets/styles.css           One stylesheet. Tokens at the top.
-assets/site.js              ~12KB, no dependencies. Everything degrades without it.
+index.html                  Home — C1–C12 in order
+how-it-works.html           D2 — the five steps expanded, plus engagement
+assessment.html             D1 — exactly what the assessment delivers
+about.html                  D3 — founder, and why a separate brand from ZEDventures
+book.html                   D4 — three questions, then the scheduler
+privacy.html / terms.html   Plain-language, with a summary at the top
+404.html                    Styled, uses the site's own stylesheet
+assets/styles.css           One stylesheet. B2 tokens at the top.
+assets/site.js              ~22KB, no dependencies. Degrades without JS.
+scripts/check-copy.py       Enforces A3/A4/B3. CI runs this too.
 ```
 
-## Rules this site is built to
+## The rules, enforced in code
 
-These are enforced in the code, not just in the copy. Re-check them before any
-change ships.
-
-- **The words "AI" and "artificial intelligence" appear nowhere.** Not in copy,
-  meta descriptions, alt text, comments, or class names.
-- **No fake proof.** No testimonials, customer quotes, statistics, client logos,
-  tool logos, case studies, or security claims we cannot support. The
-  recognition statements in section 02 are deliberately unattributed — they are
-  not quotes, and must not be presented as quotes until they come from real
-  owner interviews.
-- **Every mockup is labelled** `Example. Yours is built around the tools you
-  already use.`
-- **Banned vocabulary:** seamless, leverage, empower, streamline, robust,
-  cutting-edge, transformation, ecosystem, synergy, end-to-end, orchestration,
-  intelligent automation, digital transformation, "platform" (describing us),
-  "solutions" (without saying what they do).
-
-Quick audit:
+`scripts/check-copy.py` is the single source of truth — the deploy script and
+CI both call it, so the rules cannot drift between your machine and the
+pipeline.
 
 ```bash
-grep -rnE '\bAI\b|[Aa]rtificial [Ii]ntelligence' --include=*.html --include=*.js .
-grep -rniE 'seamless|leverage|empower|streamline|robust|cutting-edge|transformation|ecosystem|synergy|end-to-end|orchestrat|\bplatform|\bsolutions?\b' --include=*.html .
+python3 scripts/check-copy.py
 ```
 
-Both should return nothing.
+It fails the build on:
 
-## Before launch — fill these in
+- **The AI rule (A4, revised).** Exactly **one** visible mention of "AI",
+  and it must be the FAQ answer. Both failure modes are caught: leakage into
+  headings or body copy, *and* total silence, which reads as evasive once an
+  owner asks. The FAQ question is mirrored in the FAQPage structured data;
+  the checker strips JSON-LD and HTML comments before counting, so that
+  legitimate duplicate does not trip it.
+- **Banned vocabulary (A4):** seamless, leverage, empower, streamline, robust,
+  cutting-edge, ecosystem, synergy, digital transformation, end-to-end,
+  orchestration, "platform" and "solutions" as standalone nouns.
+- **No invented proof (A3):** testimonials, "trusted by", statistics,
+  award claims.
+- **Mockup captions (A3.3):** the hero desk and the owner summary must each
+  carry *Example. Yours is built around the tools you already use.*
+- **No all-caps labels (B3).**
+- **No patient-record examples (A1.4)** in any health-industry line.
+- **Staging stays non-indexable** while `nginx.conf` and `robots.txt` exist.
 
-Search for `tofill` (a highlighted span) and for `PHOTO SLOT` comments.
+## The shared check (C0)
+
+One client-side state object drives the hero CTA, the recognition wall, the
+calculator and the result panel. **Nothing is stored or sent** until the
+visitor presses "Email me this list" or books a walkthrough. No account, no
+sign-up. Answers travel to the booking page through `sessionStorage`, written
+only when they press the booking button.
+
+Scoring is exactly as specified: each selected statement adds one point to
+each workflow it maps to; ties break by the chosen industry's priority order,
+then by the default order W3, W5, W8, W1, W7, W4, W6, W2. The mapping lives in
+`data-maps` on each statement and the industry lines in `data-ex-*` on each
+workflow card, so the copy and the logic cannot fall out of step.
+
+Verified: picking R2 + R5 + R6 with "Home services & trades" returns
+W3 (2 points), then W5 and W6 on the industry tie-break. 10 hours a week
+reads as "about 500 hours a year, or 12.5 full work weeks."
+
+## Before launch — the A1 decisions and every placeholder
+
+Search for `tofill` and for `PHOTO SLOT`. Nothing with a yellow highlight may
+ship.
 
 | What | Where |
 |---|---|
-| Founder name | `index.html` section 10, `about.html` |
-| Founder photograph | `index.html` and `about.html` — `.portrait` blocks |
-| Legal entity name + registered address | `privacy.html`, `terms.html` |
-| Contact email | `privacy.html`, `terms.html` |
-| Booking form destination | `assets/site.js`, `book()` — see the NOTE comment |
+| Prices: assessment, first project, care plan | `index.html` C9, `assessment.html`, FAQ |
+| Founder name and 80–120 word note | `index.html` C10, `about.html` |
+| Founder photograph (real, not a studio shot) | `.portrait` blocks |
+| Sample assessment pages | `assessment.html` |
+| Legal entity, address, contact email, phone, city, region | `privacy.html`, `terms.html`, footer |
+| Booking scheduler (A1.8) | `assets/site.js`, `booking()` |
+| "Email me this list" mailer | `assets/site.js`, drawer submit handler |
+| Open Graph image (desk end state, 1200×630) | `assets/og.png`, referenced in `index.html` |
+| Real recognition statements from 8–10 owner interviews (A1.6) | `index.html` C2 |
 
-The walkthrough form currently validates and shows a confirmation, but
-**transmits nothing**. Connect it to a booking tool or inbox before launch, or
-take the page down.
+The booking form and "Email me this list" both **validate and confirm but
+transmit nothing**. Connect them or take those paths down before launch.
 
-## Photography
+## Deliberately absent
 
-There is none, on purpose. The spec asks for 4–6 photographs of real small
-businesses; we have no customer photographs yet, and generic stock photography
-of "a contractor" is exactly what makes the site fail its own test — a visitor
-should not be able to mistake this for an IT consultancy. The Owner's Desk
-illustration language carries the page instead.
-
-When real customer photographs exist, add them at: the recognition section
-(section 02), the founder section (section 10), and the final CTA. Natural
-daylight, candid, actual work happening, nobody smiling at the camera. Use
-WebP/AVIF with `loading="lazy"` and explicit `width`/`height`.
-
-## Accessibility
-
-Targets WCAG 2.2 AA. Keyboard operable throughout, visible focus states,
-44px minimum touch targets, pause control on the rotating hero questions,
-`prefers-reduced-motion` honoured (the desk resolves instantly instead of
-animating), native `<input type="range">` for the calculator, native
-`<details>` for the FAQ, and no status communicated by colour alone — every
-state carries a text label and an icon.
-
-## Deliberately not built
-
-Per the spec's V1 scope: no scoring algorithm, no stored profiles, no accounts
-or login, no recommendation engine, no CRM behaviour, no personalised email
-reports. The "where we'd start" panel is a direct lookup from what the visitor
-tapped — nothing is scored and nothing is stored.
-
-Also not built: a blog, resources, case studies, news, or partners. Empty
-sections make a new company look thinner, not larger. Add them when there is
-real content.
+- **Photography.** The spec wants up to six photos; we have no client photos
+  and no signed releases. Stock imagery of "a contractor" is what makes a site
+  fail its own logo test. The desk language carries it. Replace within 90 days
+  of the first client, per B7.
+- **Tool names and logos.** A3.6 permits them only for tools we have actually
+  worked in. The tools strip lists categories until that is true.
+- **The case-study slot.** Built as a comment in C10, out of the page until at
+  least two real, permissioned case studies exist (A3.4).
+- **Resources, blog, industry pages.** An empty section makes a new company
+  look thin.
 
 ## Staging on Fly.io
 
@@ -155,7 +159,7 @@ validates but transmits nothing. That is fine for the five-owner test in the
 section below — those owners are being asked about the copy, not the company
 details — but nothing here should be sent to a prospect as finished.
 
-## Pre-launch test
+## Pre-launch test (Part F)
 
 Put this in front of at least five real small-business owners before it goes
 live. Do not explain the company first. Five seconds on the home page, then:

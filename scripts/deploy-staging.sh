@@ -31,6 +31,8 @@ if [ -n "$(git status --porcelain)" ]; then
   exit 1
 fi
 
+python3 scripts/check-copy.py
+
 echo "Deploying $(git rev-parse --short HEAD) to $APP ..."
 flyctl deploy --app "$APP" --ha=false
 

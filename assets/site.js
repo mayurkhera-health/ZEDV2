@@ -1,5 +1,4 @@
-/* AutomateSmall — small, dependency-free behaviour.
-   Everything here degrades to readable static content without JS. */
+/* AutomateSmall — spec v2. No dependencies. Everything degrades without JS. */
 (function () {
   'use strict';
 
@@ -7,92 +6,124 @@
   var $  = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
-  /* ---------- Mobile navigation ---------- */
+  /* ---------------------------------------------------------------- C0 state
+     Nothing here is stored or transmitted until the visitor presses
+     "Email me this list" or books a walkthrough. No account, no sign-up. */
+  var check = {
+    statements: [],
+    industry: null,
+    hoursPerWeek: 10,
+    teamCount: 0,
+    teamHoursEach: 0,
+    timeBackChoice: null
+  };
+
+  /* E4 — analytics. Pushes to dataLayer; swap in any privacy-friendly tool. */
+  function track(event, props) {
+    (window.dataLayer = window.dataLayer || []).push(
+      Object.assign({ event: event }, props || {})
+    );
+  }
+
+  /* Default ranking when points tie and no industry is set. */
+  var DEFAULT_ORDER = ['W3', 'W5', 'W8', 'W1', 'W7', 'W4', 'W6', 'W2'];
+
+  var INDUSTRY_PRIORITY = {
+    home:         ['W5', 'W3', 'W6', 'W8'],
+    studios:      ['W4', 'W6', 'W3', 'W2'],
+    professional: ['W7', 'W4', 'W3', 'W8'],
+    retail:       ['W8', 'W3', 'W1', 'W6'],
+    health:       ['W1', 'W2', 'W6', 'W3'],
+    childcare:    ['W2', 'W4', 'W3', 'W1'],
+    construction: ['W3', 'W5', 'W2', 'W8']
+  };
+
+  /* ------------------------------------------------------------------- nav */
   (function nav() {
-    var btn = $('#nav-toggle'), panel = $('#nav-panel');
-    if (!btn || !panel) return;
-    btn.addEventListener('click', function () {
-      var open = panel.classList.toggle('is-open');
-      btn.setAttribute('aria-expanded', String(open));
-      btn.textContent = open ? 'Close' : 'Menu';
-    });
+    var bar = $('#nav'), btn = $('#nav-toggle'), panel = $('#nav-panel');
+    if (btn && panel) {
+      btn.addEventListener('click', function () {
+        var open = panel.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', String(open));
+        btn.textContent = open ? 'Close' : 'Menu';
+      });
+    }
+    if (bar) {
+      var onScroll = function () { bar.classList.toggle('is-stuck', window.scrollY > 40); };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
   })();
 
-  /* ---------- Hero: rotating probe questions ---------- */
+  /* --------------------------------------------------- C1 rotating questions
+     Not an ARIA live region: a visually hidden list carries all eight for
+     screen readers. Pauses on hover and on focus, plus an explicit control
+     (WCAG 2.2.2). Reduced motion shows the first three as a static list. */
   (function probe() {
     var root = $('#probe');
     if (!root) return;
-    var out   = $('#probe-q'), ctrl = $('#probe-ctrl'), dots = $('#probe-dots');
-    var qs = [
-      'Did everyone submit their paperwork?',
-      "Which invoices still haven't been paid?",
-      'Whose certification expires next month?',
-      'Did anyone follow up with that customer?',
-      'Where did we put that spreadsheet?',
-      'Did the new hire finish onboarding?',
-      'Why am I entering this information again?',
-      'Which system has that information?'
-    ];
-    var i = 0, timer = null, playing = false;
+    var out = $('#probe-q'), ctrl = $('#probe-ctrl'), line = $('#probe-line'),
+        stat = $('#probe-static');
+    var qs = $$('#probe-all li').map(function (li) { return li.textContent.trim(); });
+    if (!qs.length) return;
 
-    qs.forEach(function (_, n) {
-      var d = document.createElement('span');
-      d.className = 'probe__dot' + (n === 0 ? ' is-on' : '');
-      dots.appendChild(d);
-    });
-    var dotEls = $$('.probe__dot', dots);
-    out.textContent = qs[0];
-
-    function paint(n) {
-      dotEls.forEach(function (d, k) { d.classList.toggle('is-on', k === n); });
+    if (reduced.matches) {
+      line.hidden = true;
+      ctrl.hidden = true;
+      stat.hidden = false;
+      return;
     }
-    function show(n) {
-      i = (n + qs.length) % qs.length;
-      if (reduced.matches) { out.textContent = qs[i]; paint(i); return; }
-      root.classList.add('is-swapping');
+
+    var i = 0, timer = null, wanted = true, held = false;
+
+    function swap(n) {
+      root.classList.add('is-out');
       window.setTimeout(function () {
+        i = (n + qs.length) % qs.length;
         out.textContent = qs[i];
-        paint(i);
-        root.classList.remove('is-swapping');
-      }, 350);
+        root.classList.remove('is-out');
+      }, 250);
     }
-    function play() {
-      playing = true;
-      ctrl.setAttribute('aria-pressed', 'true');
-      $('#probe-ctrl-label').textContent = 'Pause';
-      $('#probe-ctrl-icon').innerHTML = '<rect x="3" y="2" width="3" height="10" rx="1"/><rect x="8" y="2" width="3" height="10" rx="1"/>';
-      clearInterval(timer);
-      timer = window.setInterval(function () { show(i + 1); }, 4500);
+    function run() {
+      window.clearInterval(timer);
+      if (!wanted || held) return;
+      timer = window.setInterval(function () { swap(i + 1); }, 4500);
     }
-    function pause() {
-      playing = false;
-      ctrl.setAttribute('aria-pressed', 'false');
-      $('#probe-ctrl-label').textContent = 'Play';
-      $('#probe-ctrl-icon').innerHTML = '<path d="M4 2.5v9l7-4.5z"/>';
-      clearInterval(timer);
+    function paint() {
+      ctrl.setAttribute('aria-pressed', String(!wanted));
+      ctrl.setAttribute('aria-label', wanted ? 'Pause questions' : 'Play questions');
+      ctrl.innerHTML = wanted
+        ? '<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" rx="1"></rect><rect x="9.5" y="2.5" width="3" height="11" rx="1"></rect></svg>'
+        : '<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4.5 2.8v10.4l8.5-5.2z"></path></svg>';
     }
-    ctrl.addEventListener('click', function () { playing ? pause() : play(); });
     ctrl.hidden = false;
+    ctrl.addEventListener('click', function () { wanted = !wanted; paint(); run(); });
 
-    if (reduced.matches) { pause(); } else { play(); }
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden) { clearInterval(timer); }
-      else if (playing) { play(); }
+    ['mouseenter', 'focusin'].forEach(function (e) {
+      root.addEventListener(e, function () { held = true; window.clearInterval(timer); });
     });
+    ['mouseleave', 'focusout'].forEach(function (e) {
+      root.addEventListener(e, function () { held = false; run(); });
+    });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) { window.clearInterval(timer); } else { run(); }
+    });
+
+    out.textContent = qs[0];
+    paint();
+    run();
   })();
 
-  /* ---------- Two-state stacks (Owner's Desk, Business View) ---------- */
+  /* ------------------------------------------------------------- C1/C6 stacks */
   function stack(rootSel) {
     var root = $(rootSel);
     if (!root) return null;
-    var layers = $$('[data-layer]', root);
-    var btns   = $$('[data-show]', root);
-
+    var layers = $$('[data-layer]', root), btns = $$('[data-show]', root);
     function set(name) {
       layers.forEach(function (l) {
         var on = l.getAttribute('data-layer') === name;
         l.setAttribute('data-state', on ? 'shown' : 'hidden');
-        l.setAttribute('aria-hidden', on ? 'false' : 'true');
+        l.setAttribute('aria-hidden', String(!on));
         $$('button, a, input, select', l).forEach(function (c) {
           if (on) { c.removeAttribute('tabindex'); } else { c.setAttribute('tabindex', '-1'); }
         });
@@ -110,202 +141,410 @@
   (function desk() {
     var set = stack('#desk');
     if (!set) return;
-    set('before');
     if (reduced.matches) { set('after'); return; }
-    // One orchestrated moment: the desk resolves itself once, then the
-    // visitor owns the control.
-    window.setTimeout(function () {
-      var d = $('#desk');
-      var seen = d.getBoundingClientRect().top < window.innerHeight;
-      if (seen) { set('after'); }
-    }, 2200);
+    set('before');
+    // Plays once, 600ms after load. End state persists; no replay loop.
+    window.setTimeout(function () { set('after'); }, 600 + 1900);
   })();
 
-  (function bizview() {
-    var set = stack('#bv');
-    if (set) { set('after'); }
-  })();
+  (function before() { var s = stack('#bv'); if (s) s('after'); })();
 
-  /* ---------- Delivery preference ---------- */
-  (function delivery() {
-    var wrap = $('#delivery');
-    if (!wrap) return;
-    var out = $('#delivery-out');
-    var copy = {
-      dashboard: 'One page you open when you want it. Nothing for your staff to install, nothing new for them to learn.',
-      email: 'One email before you start your day. Anything that needs a decision sits at the top.',
-      text: 'A short message only when something actually needs you. Quiet the rest of the time.'
-    };
-    $$('.chip', wrap).forEach(function (c) {
-      c.addEventListener('click', function () {
-        $$('.chip', wrap).forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
-        c.setAttribute('aria-pressed', 'true');
-        out.textContent = copy[c.getAttribute('data-delivery')] || '';
+  /* -------------------------------------------------------------- C6 tablist */
+  (function tabs() {
+    var list = $('#fmt-tabs');
+    if (!list) return;
+    var tabs = $$('[role=tab]', list);
+    function select(tab) {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        $('#' + t.getAttribute('aria-controls')).hidden = !on;
+      });
+      track('format_tab', { format: tab.getAttribute('data-fmt') });
+    }
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () { select(t); });
+      t.addEventListener('keydown', function (e) {
+        var i = tabs.indexOf(t), n = null;
+        if (e.key === 'ArrowRight') n = tabs[(i + 1) % tabs.length];
+        if (e.key === 'ArrowLeft')  n = tabs[(i - 1 + tabs.length) % tabs.length];
+        if (e.key === 'Home')       n = tabs[0];
+        if (e.key === 'End')        n = tabs[tabs.length - 1];
+        if (n) { e.preventDefault(); select(n); n.focus(); }
       });
     });
   })();
 
-  /* ---------- Recognition slips ---------- */
-  (function recognition() {
-    var list = $('#recog');
-    if (!list) return;
-    var count = $('#recog-count'), cta = $('#recog-cta');
-    var panel = $('#recstart'), out = $('#recstart-list'), lead = $('#recstart-lead');
+  /* ------------------------------------------------- C2 the recognition wall */
+  var pill = $('#pill');
 
-    function picked() {
-      return $$('.recog__item[aria-pressed="true"]', list);
-    }
+  function refreshPill() {
+    if (!pill) return;
+    var n = check.statements.length;
+    var drawerOpen = panelEl && !panelEl.hidden;
+    var finalInView = finalSeen;
+    pill.classList.toggle('is-on', n > 0 && !drawerOpen && !finalInView);
+    $('#pill-n').textContent = String(n);
+    $('#pill-word').textContent = n === 1 ? 'picked' : 'picked';
+  }
+
+  (function wall() {
+    var wallEl = $('#wall');
+    if (!wallEl) return;
+    var count = $('#wall-count'), cta = $('#wall-cta');
+
     function refresh() {
-      var n = picked().length;
-      count.innerHTML = n === 0
-        ? 'Nothing picked yet'
-        : '<em>' + n + '</em> picked';
+      var n = check.statements.length;
+      count.textContent = n === 0 ? 'Nothing picked yet' : n + (n === 1 ? ' picked' : ' picked');
       cta.disabled = n === 0;
-      cta.setAttribute('aria-disabled', String(n === 0));
-      if (!panel.hidden && n === 0) { panel.hidden = true; }
-      if (!panel.hidden) { render(); }
+      refreshPill();
     }
-    function render() {
-      var items = picked().slice(0, 3);
-      out.innerHTML = '';
-      items.forEach(function (el, n) {
-        var li = document.createElement('li');
-        var b = document.createElement('span');
-        b.className = 'recstart__n';
-        b.textContent = String(n + 1);
-        var d = document.createElement('div');
-        var t = document.createElement('div');
-        t.className = 'recstart__t';
-        t.textContent = el.getAttribute('data-rec-title');
-        var p = document.createElement('div');
-        p.className = 'recstart__d';
-        p.textContent = el.getAttribute('data-rec-body');
-        d.appendChild(t); d.appendChild(p);
-        li.appendChild(b); li.appendChild(d);
-        out.appendChild(li);
-      });
-      var total = picked().length;
-      lead.textContent = total > 3
-        ? 'You picked ' + total + '. We would not try to fix all of them at once — here is the order we would suggest, starting with the first.'
-        : 'Here is where we would start, in that order. One at a time, finished properly, before moving on.';
-    }
-    $$('.recog__item', list).forEach(function (b) {
+    $$('.stmt', wallEl).forEach(function (b) {
       b.addEventListener('click', function () {
-        b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+        var id = b.getAttribute('data-id');
+        var on = b.getAttribute('aria-pressed') !== 'true';
+        b.setAttribute('aria-pressed', String(on));
+        var at = check.statements.indexOf(id);
+        if (on && at === -1) check.statements.push(id);
+        if (!on && at > -1) check.statements.splice(at, 1);
+        track('statement_toggle', { id: id, selected: on });
         refresh();
       });
     });
-    cta.addEventListener('click', function () {
-      if (picked().length === 0) return;
-      panel.hidden = false;
-      render();
-      panel.setAttribute('tabindex', '-1');
-      panel.focus();
-    });
+    cta.addEventListener('click', function () { openPanel(); });
     refresh();
   })();
 
-  /* ---------- Industry filter ---------- */
-  (function jobs() {
-    var bar = $('#filterbar');
-    if (!bar) return;
-    var cards = $$('#jobs .job'), empty = $('#jobs-empty');
-    $$('.chip', bar).forEach(function (c) {
-      c.addEventListener('click', function () {
-        var key = c.getAttribute('data-filter');
-        $$('.chip', bar).forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
-        c.setAttribute('aria-pressed', 'true');
-        var shown = 0;
-        cards.forEach(function (card) {
-          var tags = (card.getAttribute('data-tags') || '').split(' ');
-          var on = key === 'all' || tags.indexOf(key) > -1;
-          card.hidden = !on;
-          if (on) shown++;
-        });
-        empty.hidden = shown > 0;
-        $('#jobs-live').textContent = shown + (shown === 1 ? ' job shown' : ' jobs shown');
-      });
+  // Hero CTA sends focus to the first statement, per C0.
+  (function heroCta() {
+    var b = $('#hero-cta');
+    if (!b) return;
+    b.addEventListener('click', function (e) {
+      e.preventDefault();
+      track('hero_cta_click', {});
+      var wallEl = $('#wall');
+      wallEl.scrollIntoView({ behavior: reduced.matches ? 'auto' : 'smooth', block: 'start' });
+      var first = $('.stmt', wallEl);
+      window.setTimeout(function () { first.focus(); }, reduced.matches ? 0 : 500);
     });
   })();
 
-  /* ---------- Time calculator ---------- */
+  // Hide the pill once the final CTA is on screen.
+  var finalSeen = false;
+  (function watchFinal() {
+    var f = $('#final');
+    if (!f || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function (entries) {
+      finalSeen = entries[0].isIntersecting;
+      refreshPill();
+    }, { threshold: 0.15 }).observe(f);
+  })();
+
+  /* ------------------------------------------------------- C7 industry filter */
+  function applyIndustry(key) {
+    check.industry = key === 'all' ? null : key;
+    $$('#cards .wf').forEach(function (card) {
+      var ex = $('.wf__ex', card);
+      var line = check.industry ? card.getAttribute('data-ex-' + check.industry) : null;
+      if (line) { ex.textContent = line; ex.hidden = false; } else { ex.hidden = true; }
+    });
+    $$('#filterbar .chip').forEach(function (c) {
+      var on = c.getAttribute('data-industry') === key;
+      c.setAttribute('aria-checked', String(on));
+      c.tabIndex = on ? 0 : -1;
+    });
+    var sel = $('#drawer-industry');
+    if (sel) sel.value = check.industry || '';
+  }
+
+  (function filter() {
+    var bar = $('#filterbar');
+    if (!bar) return;
+    var chips = $$('.chip', bar);
+    chips.forEach(function (c) {
+      c.addEventListener('click', function () {
+        applyIndustry(c.getAttribute('data-industry'));
+        track('industry_select', { industry: c.getAttribute('data-industry'), from: 'filter' });
+      });
+      c.addEventListener('keydown', function (e) {
+        var i = chips.indexOf(c), n = null;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = chips[(i + 1) % chips.length];
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   n = chips[(i - 1 + chips.length) % chips.length];
+        if (n) { e.preventDefault(); n.focus(); n.click(); }
+      });
+    });
+    applyIndustry('all');
+  })();
+
+  /* -------------------------------------------------------- C8 the calculator */
+  function annualHours() {
+    var h = check.hoursPerWeek;
+    var annual = h * 50;
+    return annual > 100 ? Math.round(annual / 10) * 10 : annual;
+  }
+  function teamAnnual() { return check.teamCount * check.teamHoursEach * 50; }
+  function workWeeks(hrs) { return Math.round((hrs / 40) * 2) / 2; }
+  function atLeast() { return check.hoursPerWeek >= 20 ? 'at least ' : ''; }
+  function num(n) { return n.toLocaleString('en-US'); }
+
   (function calc() {
     var slider = $('#hours');
     if (!slider) return;
-    var hrsOut = $('#calc-hours'), bigOut = $('#calc-annual'),
-        weeksOut = $('#calc-weeks'), ack = $('#calc-ack');
+    var big = $('#calc-big'), sub = $('#calc-sub'), teamOut = $('#calc-team'),
+        qLabel = $('#calc-q'), toggle = $('#team-toggle'), fields = $('#team-fields'),
+        peopleOut = $('#team-people'), each = $('#team-each'), eachOut = $('#team-each-out');
     var shown = 0, raf = null;
 
-    function words(n) {
-      return n.toLocaleString('en-US');
-    }
-    function paintBig(target) {
-      if (reduced.matches) { bigOut.textContent = words(target); shown = target; return; }
+    function countTo(target) {
+      if (reduced.matches) { big.textContent = 'About ' + num(target) + ' hours a year'; shown = target; return; }
       cancelAnimationFrame(raf);
-      var from = shown, start = null, dur = 420;
+      var from = shown, start = null;
       function tick(ts) {
         if (start === null) start = ts;
-        var p = Math.min(1, (ts - start) / dur);
-        var eased = 1 - Math.pow(1 - p, 3);
-        var v = Math.round(from + (target - from) * eased);
-        bigOut.textContent = words(v);
+        var p = Math.min(1, (ts - start) / 600);
+        var v = Math.round(from + (target - from) * (1 - Math.pow(1 - p, 3)));
+        big.textContent = 'About ' + num(v) + ' hours a year';
         if (p < 1) { raf = requestAnimationFrame(tick); } else { shown = target; }
       }
       raf = requestAnimationFrame(tick);
     }
-    function update() {
-      var h = Number(slider.value);
-      var plus = h >= 20;
-      hrsOut.innerHTML = (plus ? '20+' : h) + ' <span>' + (h === 1 ? 'hour' : 'hours') + ' a week</span>';
-      var annual = h * 50;
-      paintBig(annual);
-      var w = Math.floor(annual / 40);
-      weeksOut.textContent = w < 1
-        ? "That is most of a working week, every year."
-        : "That is more than " + w + " full work " + (w === 1 ? 'week' : 'weeks') + ".";
+    function paintText() {
+      var a = annualHours();
+      sub.textContent = "That's around " + atLeast() + workWeeks(a) + ' full work weeks.';
+      qLabel.textContent = 'What would you do with ' + num(a) + ' hours back?';
+      var t = teamAnnual();
+      if (t > 0) {
+        teamOut.hidden = false;
+        teamOut.textContent = 'Your team: about ' + num(t) + ' hours a year. Together: ' + num(a + t) + '.';
+      } else {
+        teamOut.hidden = true;
+      }
     }
-    slider.addEventListener('input', update);
-    update();
+    function setSlider() {
+      var v = Number(slider.value);
+      check.hoursPerWeek = v;
+      slider.setAttribute('aria-valuetext', (v >= 20 ? '20 or more' : v) + (v === 1 ? ' hour a week' : ' hours a week'));
+      $('#hours-out').textContent = (v >= 20 ? '20+' : v) + (v === 1 ? ' hour' : ' hours') + ' a week';
+      paintText();
+    }
+    // Count-up runs when the slider is released, not on every step (B8).
+    function release() { countTo(annualHours()); track('calculator_set', { hours: check.hoursPerWeek }); }
 
-    var ackCopy = {
-      customers: 'Then that is where we would aim first — take the admin off the front of your day so more of it reaches customers.',
-      grow: 'Then the first thing to fix is whatever you personally have to touch before the business can take on more.',
-      team: 'Then we would start with the work that has you checking up on people instead of working alongside them.',
-      service: 'Then we would look for the steps where things get dropped, because that is usually what customers feel.',
-      home: 'Then we would start with whatever is keeping you at the desk after everyone else has gone.'
-    };
-    $$('#timeback .chip').forEach(function (c) {
-      c.addEventListener('click', function () {
-        $$('#timeback .chip').forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
-        c.setAttribute('aria-pressed', 'true');
-        ack.textContent = ackCopy[c.getAttribute('data-want')] || '';
+    slider.addEventListener('input', function () { setSlider(); big.textContent = 'About ' + num(annualHours()) + ' hours a year'; shown = annualHours(); });
+    slider.addEventListener('change', release);
+    slider.addEventListener('keyup', release);
+
+    toggle.addEventListener('change', function () {
+      fields.hidden = !toggle.checked;
+      if (!toggle.checked) { check.teamCount = 0; check.teamHoursEach = 0; peopleOut.textContent = '0'; each.value = 0; eachOut.textContent = '0'; }
+      paintText();
+    });
+    $$('[data-step]', fields).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var d = Number(b.getAttribute('data-step'));
+        check.teamCount = Math.min(20, Math.max(0, check.teamCount + d));
+        peopleOut.textContent = String(check.teamCount);
+        paintText();
       });
     });
+    each.addEventListener('input', function () {
+      check.teamHoursEach = Number(each.value);
+      eachOut.textContent = String(check.teamHoursEach);
+      paintText();
+    });
+
+    $$('#timeback .chip').forEach(function (c) {
+      c.addEventListener('click', function () {
+        var on = c.getAttribute('aria-pressed') !== 'true';
+        $$('#timeback .chip').forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
+        c.setAttribute('aria-pressed', String(on));
+        check.timeBackChoice = on ? c.textContent.trim() : null;
+      });
+    });
+
+    $('#calc-cta').addEventListener('click', function () { openPanel(); });
+    setSlider();
+    shown = annualHours();
+    big.textContent = 'About ' + num(annualHours()) + ' hours a year';
   })();
 
-  /* ---------- Walkthrough request form ---------- */
-  (function book() {
+  /* ------------------------------------------------------- C0 the result panel */
+  var panelEl = $('#drawer'), scrim = $('#scrim'), lastFocus = null;
+
+  function score() {
+    var pts = {};
+    check.statements.forEach(function (id) {
+      var el = $('.stmt[data-id="' + id + '"]');
+      if (!el) return;
+      (el.getAttribute('data-maps') || '').split(/\s+/).forEach(function (w) {
+        if (w) pts[w] = (pts[w] || 0) + 1;
+      });
+    });
+    var prio = check.industry ? (INDUSTRY_PRIORITY[check.industry] || []) : [];
+    function rank(w) {
+      var p = prio.indexOf(w);
+      return p > -1 ? p : 100 + DEFAULT_ORDER.indexOf(w);
+    }
+    return Object.keys(pts)
+      .sort(function (a, b) { return (pts[b] - pts[a]) || (rank(a) - rank(b)); })
+      .slice(0, 3);
+  }
+
+  function renderPanel() {
+    var empty = $('#drawer-empty'), body = $('#drawer-result');
+    var has = check.statements.length > 0;
+    empty.hidden = has;
+    body.hidden = !has;
+    $('#drawer-book').hidden = !has;
+    $('#drawer-email-wrap').hidden = !has;
+    if (!has) return;
+
+    var list = $('#drawer-list');
+    list.innerHTML = '';
+    score().forEach(function (w, n) {
+      var card = $('.wf[data-id="' + w + '"]');
+      if (!card) return;
+      var li = document.createElement('li');
+      var b = document.createElement('span');
+      b.className = 'picked__n'; b.textContent = String(n + 1);
+      var d = document.createElement('div');
+      var t = document.createElement('div');
+      t.className = 'picked__t'; t.textContent = card.getAttribute('data-title');
+      var o = document.createElement('div');
+      o.className = 'picked__o'; o.textContent = card.getAttribute('data-outcome');
+      d.appendChild(t); d.appendChild(o);
+      var ex = check.industry ? card.getAttribute('data-ex-' + check.industry) : null;
+      if (ex) {
+        var e = document.createElement('div');
+        e.className = 'picked__e'; e.textContent = ex;
+        d.appendChild(e);
+      }
+      li.appendChild(b); li.appendChild(d);
+      list.appendChild(li);
+    });
+
+    var a = annualHours();
+    var txt = 'You said about ' + check.hoursPerWeek + (check.hoursPerWeek >= 20 ? '+' : '') +
+              ' hours a week. That’s around ' + atLeast() + num(a) + ' hours a year, or ' +
+              workWeeks(a) + ' full work weeks.';
+    if (check.timeBackChoice) {
+      txt += " That's a lot of room to " + check.timeBackChoice.charAt(0).toLowerCase() + check.timeBackChoice.slice(1) + '.';
+    }
+    $('#drawer-time').textContent = txt;
+  }
+
+  function trapFocus(e) {
+    if (e.key === 'Escape') { closePanel(); return; }
+    if (e.key !== 'Tab') return;
+    var items = $$('button, a[href], input, select, textarea', panelEl)
+      .filter(function (el) { return !el.disabled && el.offsetParent !== null; });
+    if (!items.length) return;
+    var first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+
+  function openPanel() {
+    lastFocus = document.activeElement;
+    renderPanel();
+    scrim.hidden = false; panelEl.hidden = false;
+    requestAnimationFrame(function () { scrim.classList.add('is-on'); panelEl.classList.add('is-on'); });
+    document.body.classList.add('is-locked');
+    panelEl.addEventListener('keydown', trapFocus);
+    $('#drawer-close').focus();
+    refreshPill();
+    track('check_result_open', { statements: check.statements.length });
+  }
+
+  function closePanel() {
+    scrim.classList.remove('is-on'); panelEl.classList.remove('is-on');
+    document.body.classList.remove('is-locked');
+    panelEl.removeEventListener('keydown', trapFocus);
+    window.setTimeout(function () { scrim.hidden = true; panelEl.hidden = true; refreshPill(); }, reduced.matches ? 0 : 260);
+    if (lastFocus) lastFocus.focus();
+  }
+
+  if (panelEl) {
+    $('#drawer-close').addEventListener('click', closePanel);
+    scrim.addEventListener('click', closePanel);
+    $('#drawer-goto').addEventListener('click', function () {
+      closePanel();
+      $('#wall').scrollIntoView({ behavior: reduced.matches ? 'auto' : 'smooth' });
+      window.setTimeout(function () { $('.stmt').focus(); }, reduced.matches ? 0 : 500);
+    });
+    $('#drawer-industry').addEventListener('change', function (e) {
+      applyIndustry(e.target.value || 'all');
+      track('industry_select', { industry: e.target.value || 'all', from: 'drawer' });
+      renderPanel();
+    });
+    $('#drawer-book').addEventListener('click', function () {
+      try { sessionStorage.setItem('automatesmall.check', JSON.stringify(check)); } catch (err) {}
+      track('booking_start', { from: 'drawer' });
+      window.location.href = 'book.html';
+    });
+    $('#drawer-email').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var f = $('#drawer-email-addr');
+      if (!f.value.trim() || f.value.indexOf('@') < 0) { f.focus(); return; }
+      // NOTE FOR LAUNCH: connect to the mailer. Nothing leaves the browser yet.
+      $('#drawer-email').hidden = true;
+      $('#drawer-sent').hidden = false;
+      track('email_list_sent', { statements: check.statements.length });
+    });
+  }
+  if (pill) pill.addEventListener('click', function () { openPanel(); });
+
+  /* ------------------------------------------------------- D4 booking prefill */
+  (function booking() {
     var form = $('#walkthrough');
     if (!form) return;
-    var done = $('#walkthrough-done');
-
+    var saved = null;
+    try { saved = JSON.parse(sessionStorage.getItem('automatesmall.check') || 'null'); } catch (e) {}
+    if (saved) {
+      if (saved.industry) { var s = $('#biz'); if (s) s.value = saved.industry; }
+      var chipWrap = $('#booking-chips');
+      if (chipWrap && saved.statements && saved.statements.length) {
+        chipWrap.hidden = false;
+        var ul = $('#booking-chip-list');
+        saved.statements.forEach(function (id) {
+          var li = document.createElement('li');
+          li.className = 'tag';
+          li.textContent = (STATEMENT_TEXT[id] || id);
+          ul.appendChild(li);
+        });
+      }
+    }
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+      if ($('#company-website').value) return;   // honeypot
       var ok = true, firstBad = null;
       $$('[data-required]', form).forEach(function (f) {
         var err = $('#' + f.id + '-err');
-        var empty = !String(f.value || '').trim();
-        if (err) { err.hidden = !empty; }
-        f.setAttribute('aria-invalid', String(empty));
-        if (empty) { ok = false; if (!firstBad) firstBad = f; }
+        var bad = !String(f.value || '').trim();
+        if (err) err.hidden = !bad;
+        f.setAttribute('aria-invalid', String(bad));
+        if (bad) { ok = false; if (!firstBad) firstBad = f; }
       });
       if (!ok) { firstBad.focus(); return; }
-      // NOTE FOR LAUNCH: connect this to the booking tool / inbox of choice.
-      // Nothing is transmitted until that connection is made.
+      // NOTE FOR LAUNCH: embed the scheduler here (A1.8) and pass these
+      // answers into the booking notes. Nothing is transmitted yet.
       form.hidden = true;
-      done.hidden = false;
-      done.setAttribute('tabindex', '-1');
-      done.focus();
+      $('#walkthrough-done').hidden = false;
+      $('#walkthrough-done').setAttribute('tabindex', '-1');
+      $('#walkthrough-done').focus();
+      track('booking_complete', {});
     });
   })();
+
+  var STATEMENT_TEXT = {
+    R1: 'Entering the same information in three places',
+    R2: 'Follow-ups only happen if I remember',
+    R3: 'Spreadsheets everywhere',
+    R4: 'Five systems, still no clear picture',
+    R5: 'Checking employee paperwork by hand',
+    R6: 'Invoices going out late',
+    R7: 'How we do things lives in someone’s head',
+    R8: 'Chasing people for forms'
+  };
 })();

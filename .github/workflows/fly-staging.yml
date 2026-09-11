@@ -55,22 +55,7 @@ jobs:
           fi
 
       - name: Check the site is intact before shipping it
-        run: |
-          set -euo pipefail
-          # The terminology rules are not advisory. A build that breaks them
-          # must not reach a URL, even a staging one.
-          if grep -rnE '\bAI\b|[Aa]rtificial [Ii]ntelligence' --include='*.html' --include='*.js' .; then
-            echo "::error::Banned term found. See README."
-            exit 1
-          fi
-          if grep -rniE 'seamless|leverage|empower|streamline|robust|cutting-edge|ecosystem|synergy|end-to-end|orchestrat' --include='*.html' .; then
-            echo "::error::Banned marketing vocabulary found. See README."
-            exit 1
-          fi
-          # Staging must never be indexable.
-          grep -q 'noindex' nginx.conf || { echo "::error::noindex header missing from nginx.conf"; exit 1; }
-          grep -q 'Disallow: /' robots.txt || { echo "::error::robots.txt is not disallowing"; exit 1; }
-          echo "Checks passed."
+        run: python3 scripts/check-copy.py
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
