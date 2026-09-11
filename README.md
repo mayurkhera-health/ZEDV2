@@ -98,6 +98,63 @@ Also not built: a blog, resources, case studies, news, or partners. Empty
 sections make a new company look thinner, not larger. Add them when there is
 real content.
 
+## Staging on Fly.io
+
+The app is `automatesmall-staging`, a **new, standalone Fly app**. It has no
+relationship to `fuelup-youth` (the frozen AthFuelPath rollback snapshot);
+`scripts/deploy-staging.sh` refuses to deploy if `fly.toml` ever names it.
+
+```
+Dockerfile                  nginx:1.27-alpine serving the files on :8080
+nginx.conf                  routing, noindex headers, gzip, 404
+fly.toml                    app config, scales to zero when idle
+scripts/deploy-staging.sh   guarded deploy
+robots.txt                  Disallow: / — staging must not be indexed
+404.html                    styled, uses the site's own stylesheet
+```
+
+First deploy, from a machine with `flyctl` installed and logged in:
+
+```bash
+cd ZEDV2
+flyctl apps create automatesmall-staging      # name must be free across all of Fly
+flyctl deploy --app automatesmall-staging --ha=false
+```
+
+After that, use the guarded script — it refuses to deploy a dirty tree, so the
+live URL always corresponds to a commit:
+
+```bash
+./scripts/deploy-staging.sh
+```
+
+Lands at `https://automatesmall-staging.fly.dev`.
+
+### Cost
+
+`min_machines_running = 0` and `auto_stop_machines = "stop"`. The machine stops
+when idle and starts on the next request, so an unvisited staging site runs no
+compute. First request after an idle period takes an extra moment to wake.
+
+Fly runs a VM to serve 146KB of static files. If cost or simplicity matters more
+than keeping everything on one vendor, Cloudflare Pages or Netlify would host
+this for free with no Dockerfile — the site is plain static output, so moving it
+is a drag-and-drop.
+
+### Not indexable, on purpose
+
+`X-Robots-Tag: noindex, nofollow, noarchive` is set **once**, in `nginx.conf`,
+plus `robots.txt`. That is deliberately the only place, so there is one line to
+delete at launch. Do not add a second copy in `fly.toml`.
+
+### Before showing it to anyone outside the business
+
+The staging build still carries a placeholder founder name, a placeholder
+founder photograph, placeholder legal entity details, and a booking form that
+validates but transmits nothing. That is fine for the five-owner test in the
+section below — those owners are being asked about the copy, not the company
+details — but nothing here should be sent to a prospect as finished.
+
 ## Pre-launch test
 
 Put this in front of at least five real small-business owners before it goes
