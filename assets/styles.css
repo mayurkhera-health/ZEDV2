@@ -678,3 +678,42 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
 
 .cs-number{ display:block; margin-top:20px; padding:14px 16px; white-space:normal;
   max-width:min(680px,68ch); line-height:1.5; }
+
+/* ==========================================================================
+   Services catalogue. Two taxonomies live on this page — functional groups
+   and commercial bundles — and a few offerings appear in a bundle other than
+   their own group. They are given deliberately different surfaces so that
+   reads as intentional rather than as a mistake: offerings are white cards
+   with a numbered rule, bundles are paper panels with a ledger spine.
+   ========================================================================== */
+.svc-group + .svc-group{ margin-top:clamp(38px,4.6vw,60px); }
+.svc-group__head{ max-width:min(680px,68ch); padding-bottom:16px; margin-bottom:22px; border-bottom:1px solid var(--line); }
+.svc-group__head h2{ font-size:clamp(24px,2.8vw,32px); margin-bottom:8px; }
+.svc-group__head p{ color:var(--ink-soft); font-size:16.5px; line-height:1.5; }
+
+/* auto-fit so a two-item group fills its row instead of leaving a dead cell */
+.svc-grid{ display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); }
+.svc-grid > *{ min-width:0; }
+
+.svc{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:14px;
+  padding:20px; background:var(--card); border:1px solid var(--line); border-radius:var(--r-card); }
+.svc__n{ font-family:var(--display); font-weight:700; font-size:15px; color:var(--brick);
+  font-variant-numeric:tabular-nums; padding-top:3px; }
+.svc__t{ font-family:var(--display); font-weight:700; font-size:18.5px; line-height:1.25; margin-bottom:6px; }
+.svc__p{ color:var(--ink-soft); font-size:16px; line-height:1.45; }
+.svc__new{ display:inline-block; margin-left:6px; padding:2px 7px; border-radius:5px; vertical-align:2px;
+  background:var(--sticky-tint); border:1px solid #E2CE87; color:#6B5A1C;
+  font-family:var(--body); font-size:12px; font-weight:700; }
+
+.bundles{ display:grid; gap:16px; }
+.bundles > *{ min-width:0; }
+@media (min-width:820px){ .bundles{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+.bundle{ padding:24px 24px 24px 22px; background:var(--paper); border:1px solid var(--line);
+  border-left:3px solid var(--ledger); border-radius:var(--r-card); }
+.sec--deep .bundle{ background:var(--card); }
+.bundle__t{ font-family:var(--display); font-weight:700; font-size:clamp(19px,2.1vw,23px); margin-bottom:6px; }
+.bundle__who{ color:var(--ink-soft); font-size:16px; line-height:1.45; margin-bottom:16px; }
+.bundle__list{ list-style:none; margin:0; padding:0; display:grid; gap:9px; }
+.bundle__list li{ display:flex; gap:11px; align-items:baseline; font-size:16px; font-weight:500; line-height:1.4; }
+.bundle__n{ flex:none; font-family:var(--display); font-weight:700; font-size:13px; color:var(--ledger);
+  font-variant-numeric:tabular-nums; }
