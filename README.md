@@ -13,7 +13,7 @@ python3 -m http.server 8080
 index.html                  Home — C1–C12 in order
 how-it-works.html           D2 — the five steps expanded, plus engagement
 assessment.html             D1 — exactly what the assessment delivers
-about.html                  D3 — founder, and why a separate brand from ZEDventures
+about.html                  D3 — founder, what AutomateSmall is, who we're for
 book.html                   D4 — three questions, then the scheduler
 privacy.html / terms.html   Plain-language, with a summary at the top
 404.html                    Styled, uses the site's own stylesheet
