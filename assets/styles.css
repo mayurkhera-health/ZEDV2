@@ -596,6 +596,12 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
   :target,[id]{ scroll-margin-top:92px; }
 }
 
+/* Narrow laptops: tighten the chips rather than let the last one clip. */
+@media (min-width:861px) and (max-width:1300px){
+  .rail__list a{ padding:8px 11px; font-size:14.5px; }
+  .rail__label{ font-size:13px; }
+}
+
 /* Phone: the rail must not push the proposition below the fold (C1, Part 10). */
 @media (max-width:560px){
   .rail__inner{ padding-inline:12px; }
@@ -636,3 +642,15 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
 .usecase__k{ font-size:15px; font-weight:600; color:var(--ink-soft); margin-bottom:8px; }
 .usecase__t{ font-family:var(--display); font-weight:700; font-size:clamp(20px,2.3vw,25px); line-height:1.25; margin-bottom:10px; }
 .usecase__d{ color:var(--ink-soft); max-width:62ch; }
+
+/* The one real story. Proof, placed immediately before the price. */
+.story{ display:grid; gap:clamp(24px,3.4vw,44px); align-items:center; }
+.story > *{ min-width:0; }
+@media (min-width:900px){ .story{ grid-template-columns:minmax(0,1fr) minmax(0,1.08fr); } }
+.story__list{ list-style:none; margin:22px 0 0; padding:0; display:grid; gap:11px; }
+.story__list li{ display:flex; gap:10px; align-items:flex-start; font-weight:500; line-height:1.45; }
+.story__list svg{ flex:none; margin-top:3px; }
+.story__shot{ display:block; border-radius:var(--r-panel); overflow:hidden; border:1px solid var(--line);
+  box-shadow:var(--shadow-panel); background:var(--card); transition:transform .18s ease; }
+.story__shot:hover{ transform:translateY(-2px); }
+.story__shot img{ display:block; width:100%; height:auto; }
