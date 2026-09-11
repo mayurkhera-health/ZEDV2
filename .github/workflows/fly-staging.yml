@@ -1,0 +1,91 @@
+# Deploy the AutomateSmall staging site to Fly.io.
+#
+# This deploys ONE app: automatesmall-staging. The guard step below fails the
+# run if fly.toml ever names anything else, so this workflow can never be
+# pointed at another Fly app by an accidental edit.
+#
+# Setup, once:
+#   1. flyctl apps create automatesmall-staging
+#   2. flyctl tokens create deploy -a automatesmall-staging
+#   3. Paste that token into GitHub -> Settings -> Secrets and variables ->
+#      Actions -> New repository secret, named FLY_API_TOKEN
+#
+# Use a DEPLOY token, not a personal access token. A deploy token is scoped to
+# the single app it was issued for and cannot touch anything else in the org.
+
+name: Deploy staging
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.html'
+      - 'assets/**'
+      - 'Dockerfile'
+      - 'nginx.conf'
+      - 'fly.toml'
+      - 'robots.txt'
+      - '.github/workflows/fly-staging.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: fly-staging
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to automatesmall-staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Refuse to deploy anything but the staging app
+        run: |
+          set -euo pipefail
+          APP="$(grep -E '^app[[:space:]]*=' fly.toml | head -1 | cut -d'"' -f2)"
+          echo "fly.toml targets: $APP"
+          if [ "$APP" != "automatesmall-staging" ]; then
+            echo "::error::fly.toml names '$APP'. This workflow only deploys automatesmall-staging."
+            exit 1
+          fi
+
+      - name: Check the site is intact before shipping it
+        run: |
+          set -euo pipefail
+          # The terminology rules are not advisory. A build that breaks them
+          # must not reach a URL, even a staging one.
+          if grep -rnE '\bAI\b|[Aa]rtificial [Ii]ntelligence' --include='*.html' --include='*.js' .; then
+            echo "::error::Banned term found. See README."
+            exit 1
+          fi
+          if grep -rniE 'seamless|leverage|empower|streamline|robust|cutting-edge|ecosystem|synergy|end-to-end|orchestrat' --include='*.html' .; then
+            echo "::error::Banned marketing vocabulary found. See README."
+            exit 1
+          fi
+          # Staging must never be indexable.
+          grep -q 'noindex' nginx.conf || { echo "::error::noindex header missing from nginx.conf"; exit 1; }
+          grep -q 'Disallow: /' robots.txt || { echo "::error::robots.txt is not disallowing"; exit 1; }
+          echo "Checks passed."
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${FLY_API_TOKEN:-}" ]; then
+            echo "::error::FLY_API_TOKEN secret is not set. See the header of this file."
+            exit 1
+          fi
+          flyctl deploy --app automatesmall-staging --ha=false --remote-only
+
+      - name: Where it landed
+        run: |
+          echo "### Staging" >> "$GITHUB_STEP_SUMMARY"
+          echo "https://automatesmall-staging.fly.dev" >> "$GITHUB_STEP_SUMMARY"
