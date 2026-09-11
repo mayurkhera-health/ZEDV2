@@ -548,3 +548,53 @@
     R8: 'Chasing people for forms'
   };
 })();
+
+/* Section rail — mark where the reader is, and keep the active chip in view. */
+(function rail() {
+  'use strict';
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var rail = document.querySelector('#rail');
+  if (!rail || !('IntersectionObserver' in window)) return;
+
+  var list  = rail.querySelector('.rail__list');
+  var links = Array.prototype.slice.call(rail.querySelectorAll('a[data-sec]'));
+  var byId = {}, targets = [];
+  links.forEach(function (a) {
+    var el = document.getElementById(a.getAttribute('data-sec'));
+    if (el) { byId[a.getAttribute('data-sec')] = a; targets.push(el); }
+  });
+  if (!targets.length) return;
+
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) {
+      if (a.getAttribute('data-sec') === id) { a.setAttribute('aria-current', 'true'); }
+      else { a.removeAttribute('aria-current'); }
+    });
+    // In the horizontal presentation, bring the active chip into view without
+    // moving the page itself.
+    var active = byId[id];
+    if (!active || list.scrollWidth <= list.clientWidth) return;
+    var r = active.getBoundingClientRect(), lr = list.getBoundingClientRect();
+    if (r.left < lr.left + 8 || r.right > lr.right - 8) {
+      list.scrollTo({
+        left: active.offsetLeft - list.clientWidth / 2 + active.offsetWidth / 2,
+        behavior: reduced.matches ? 'auto' : 'smooth'
+      });
+    }
+  }
+
+  // Whichever tracked section occupies most of the reading area wins.
+  var ratio = {};
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { ratio[e.target.id] = e.isIntersecting ? e.intersectionRatio : 0; });
+    var best = null, bestRatio = 0;
+    targets.forEach(function (t) {
+      if ((ratio[t.id] || 0) > bestRatio) { bestRatio = ratio[t.id]; best = t.id; }
+    });
+    if (best) mark(best);
+  }, { rootMargin: '-140px 0px -45% 0px', threshold: [0, 0.05, 0.25, 0.6, 1] });
+  targets.forEach(function (t) { io.observe(t); });
+})();
