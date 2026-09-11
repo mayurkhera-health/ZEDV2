@@ -609,32 +609,6 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
   .rail__cta{ display:none; }
 }
 
-/* ==========================================================================
-   Use case page
-   ========================================================================== */
-.facts{ display:grid; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r-card); overflow:hidden; }
-@media (min-width:700px){ .facts{ grid-template-columns:repeat(4,1fr); } }
-.fact{ background:var(--card); padding:16px 18px; }
-.fact__k{ font-size:14px; color:var(--ink-soft); margin-bottom:5px; }
-.fact__v{ font-weight:600; font-size:16px; line-height:1.35; }
-
-.callout{ display:flex; gap:13px; align-items:flex-start; margin-top:clamp(26px,3vw,36px);
-  padding:20px 22px; background:var(--brick-tint); border:1px solid #E3C7BC; border-radius:var(--r-card); }
-.callout svg{ flex:none; margin-top:4px; }
-.callout p{ font-size:17px; line-height:1.55; max-width:60ch; }
-
-.built{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:18px; padding:26px 0; border-top:1px solid var(--line); }
-.built:last-of-type{ border-bottom:1px solid var(--line); }
-.built__n{ font-family:var(--display); font-weight:700; font-size:15px; color:var(--brick); font-variant-numeric:tabular-nums; padding-top:5px; }
-.built h3{ margin-bottom:8px; }
-.built p{ color:var(--ink-soft); max-width:66ch; }
-
-/* Screenshot slots. Deliberately obvious until the real images drop in. */
-.shot{ margin:22px 0 0; }
-.shot img{ display:block; width:100%; height:auto; border:1px solid var(--line);
-  border-radius:var(--r-card); background:var(--card); }
-.shot figcaption{ margin-top:10px; font-size:15px; color:var(--ink-soft); }
-
 /* Homepage teaser for the use case */
 .usecase{ display:grid; gap:22px; align-items:center; margin-top:clamp(32px,4vw,48px);
   padding:clamp(22px,3vw,30px); background:var(--card); border:1px solid var(--line); border-radius:var(--r-card); }
@@ -654,3 +628,53 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
   box-shadow:var(--shadow-panel); background:var(--card); transition:transform .18s ease; }
 .story__shot:hover{ transform:translateY(-2px); }
 .story__shot img{ display:block; width:100%; height:auto; }
+
+/* ==========================================================================
+   Case study template (.cs-*). Reusable: the next case study copies
+   food-explorers.html and changes only the words and the two screenshots.
+   Text holds the spec's 680px reading measure; screenshots break out wider
+   so the type inside them stays legible.
+   ========================================================================== */
+.wrap--case{ max-width:1000px; }
+.wrap--case h1{ margin-bottom:18px; }
+.wrap--case h2{ margin-bottom:16px; }
+.wrap--case h3{ margin-bottom:5px; }
+.cs-lede{ max-width:min(680px,66ch); }
+.cs-body{ max-width:min(680px,68ch); color:var(--ink-soft); font-size:17.5px; line-height:1.6; }
+.cs-body + .cs-body{ margin-top:1em; }
+
+/* Facts bar: scannable, no card. */
+.cs-facts{ display:grid; gap:1px; margin:clamp(26px,3.4vw,38px) 0 0;
+  background:var(--line); border-block:1px solid var(--line); }
+@media (min-width:700px){ .cs-facts{ grid-template-columns:repeat(4,1fr); } }
+.cs-facts > div{ background:var(--paper); padding:15px 0; }
+@media (min-width:700px){ .cs-facts > div{ padding:15px 18px; } .cs-facts > div:first-child{ padding-left:0; } }
+.cs-facts dt{ font-size:14px; color:var(--ink-soft); margin-bottom:4px; }
+.cs-facts dd{ margin:0; font-weight:600; font-size:16px; line-height:1.35; }
+
+.cs-list{ list-style:none; margin:20px 0 24px; padding:0; display:grid; gap:10px; max-width:min(680px,68ch); }
+.cs-list li{ display:flex; gap:10px; align-items:flex-start; font-size:16.5px; line-height:1.45; }
+.cs-list svg{ flex:none; margin-top:3px; }
+
+/* The sharpest sentence gets room. One per case study. */
+.cs-pull{ margin:clamp(24px,3vw,34px) 0; padding:20px 0 20px 22px;
+  border-left:3px solid var(--brick); max-width:min(700px,62ch); }
+.cs-pull p{ font-family:var(--display); font-weight:600; font-size:clamp(19px,2.1vw,23px);
+  line-height:1.35; letter-spacing:-.01em; }
+
+.cs-steps{ list-style:none; margin:24px 0 0; padding:0; display:grid; gap:0; max-width:min(760px,72ch); }
+.cs-steps li{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:18px;
+  padding:20px 0; border-top:1px solid var(--line); }
+.cs-steps li:last-child{ border-bottom:1px solid var(--line); }
+.cs-steps__n{ font-family:var(--display); font-weight:700; font-size:14px; color:var(--brick);
+  font-variant-numeric:tabular-nums; padding-top:5px; }
+.cs-steps p{ color:var(--ink-soft); font-size:16.5px; line-height:1.5; }
+
+/* Screenshots: wider than the text column, capped so the type stays readable. */
+.cs-shot{ margin:26px 0 0; max-width:1000px; }
+.cs-shot img{ display:block; width:100%; height:auto; border:1px solid var(--line);
+  border-radius:var(--r-panel); box-shadow:var(--shadow-panel); background:var(--card); }
+.cs-shot figcaption{ margin-top:12px; font-size:15.5px; color:var(--ink-soft); max-width:min(680px,68ch); }
+
+.cs-number{ display:block; margin-top:20px; padding:14px 16px; white-space:normal;
+  max-width:min(680px,68ch); line-height:1.5; }
