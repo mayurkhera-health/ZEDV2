@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book a Walkthrough</title>
+<meta name="description" content="Thirty minutes, free. Tell us what kind of business you run and what takes up too much of your time, and we'll find a time to talk.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&family=Kalam:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap">
+    <div class="nav__inner">
+      <a class="nav__logo" href="index.html">
+        <svg class="nav__mark" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="2.5" y="3" width="15" height="18" rx="2.5" fill="#FFFFFF" stroke="#26282B" stroke-width="1.6" transform="rotate(-4 10 12)"/>
+          <path d="M9 13.4l2.6 2.6 5.6-6" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        AutomateSmall
+      </a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="how-it-works.html">How it works</a>
+        <a href="index.html#plate">What we handle</a>
+        <a href="index.html#recognition">Who we help</a>
+        <a href="about.html">About</a>
+      </nav>
+      <a class="btn btn--primary nav__cta" href="book.html">Let's talk</a>
+      <button class="nav__toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-panel">Menu</button>
+    </div>
+    <div class="nav__panel" id="nav-panel">
+      <a href="how-it-works.html">How it works</a>
+      <a href="index.html#plate">What we handle</a>
+      <a href="index.html#recognition">Who we help</a>
+      <a href="about.html">About</a>
+      <a class="btn btn--primary" href="book.html">Let's talk</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Free walkthrough</p>
+      <h1>Show us a normal week.</h1>
+      <p class="lede">Thirty minutes. No charge, no preparation needed, no technology pitch. Three questions here, then we'll find a time.</p>
+    </div>
+
+    <div class="calc" style="align-items:start">
+      <div>
+        <form class="form" id="walkthrough" novalidate>
+          <div class="field">
+            <label for="biz">What kind of business do you run?</label>
+            <p class="hint" id="biz-hint">Plain words are fine &mdash; "dental practice", "three-van plumbing outfit", "after-school music school".</p>
+            <input type="text" id="biz" name="biz" data-required aria-describedby="biz-hint biz-err" autocomplete="organization">
+            <p class="err" id="biz-err" hidden>Tell us roughly what the business does, so we know who we're talking to.</p>
+          </div>
+
+          <div class="field">
+            <label for="size">Roughly how many people work there?</label>
+            <select id="size" name="size" data-required aria-describedby="size-err">
+              <option value="">Choose one</option>
+              <option>Just me</option>
+              <option>2&ndash;5</option>
+              <option>6&ndash;15</option>
+              <option>16&ndash;30</option>
+              <option>31&ndash;50</option>
+              <option>More than 50</option>
+            </select>
+            <p class="err" id="size-err" hidden>Pick the closest option.</p>
+          </div>
+
+          <div class="field">
+            <label for="pain">What takes up too much of your time?</label>
+            <p class="hint" id="pain-hint">The thing you'd hand to somebody else tomorrow if you could.</p>
+            <textarea id="pain" name="pain" data-required aria-describedby="pain-hint pain-err"></textarea>
+            <p class="err" id="pain-err" hidden>Even one sentence helps us come prepared.</p>
+          </div>
+
+          <div class="field">
+            <label for="email">Where should we reply?</label>
+            <input type="email" id="email" name="email" data-required aria-describedby="email-err" autocomplete="email">
+            <p class="err" id="email-err" hidden>We need an email address to send you a time.</p>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn--primary" type="submit">Find a time</button>
+          </div>
+          <p class="micro">We use what you tell us to prepare for the call. Nothing else.</p>
+        </form>
+
+        <div class="formdone" id="walkthrough-done" hidden>
+          <h2 style="font-size:clamp(23px,2.8vw,28px)">Thanks &mdash; that's everything we need.</h2>
+          <p style="margin-top:14px;color:var(--ink-soft)">We'll read it before we call, so you won't have to explain it twice. Expect a reply with a couple of times to choose from.</p>
+          <p style="margin-top:14px;color:var(--ink-soft)">If it's easier to just talk, reply to that email and say so.</p>
+        </div>
+      </div>
+
+      <aside class="calc__panel">
+        <h2 style="font-size:clamp(20px,2.4vw,24px)">What happens on the call</h2>
+        <ul class="own__list" style="grid-template-columns:1fr;margin-top:18px">
+          <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>You walk us through a normal week. We ask questions.</span></li>
+          <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>We tell you which parts sound like they could be simpler.</span></li>
+          <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>If we don't think we can help, we say so on the call.</span></li>
+          <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>If we can, we explain what we'd suggest next and what it would cost.</span></li>
+        </ul>
+        <p class="caption" style="margin-top:20px;padding-top:18px;border-top:1px solid var(--line)">
+          You don't need to prepare anything, tidy anything up, or know what you want built. Turning up with a messy week is the point.
+        </p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__grid">
+      <div>
+        <p class="foot__brand">AutomateSmall</p>
+        <p class="foot__tag">Your business needs you. It shouldn't need all of your time.</p>
+      </div>
+      <nav aria-label="Footer">
+        <a href="how-it-works.html">How it works</a>
+        <a href="operations-assessment.html">Operations assessment</a>
+        <a href="index.html#plate">What we handle</a>
+      </nav>
+      <nav aria-label="Company">
+        <a href="about.html">About</a>
+        <a href="book.html">Book a walkthrough</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </nav>
+    </div>
+    <div class="foot__legal">
+      <span>&copy; 2026 AutomateSmall</span>
+      <span>Built by the team behind ZEDventures</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js" defer></script>
+</body>
+</html>

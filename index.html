@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AutomateSmall</title>
+<meta name="description" content="Small-business owners end up doing the paperwork, the follow-ups and the chasing themselves. We find what is taking your time, simplify it, and take the repetitive parts off your plate.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&family=Kalam:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap">
+    <div class="nav__inner">
+      <a class="nav__logo" href="index.html">
+        <svg class="nav__mark" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="2.5" y="3" width="15" height="18" rx="2.5" fill="#FFFFFF" stroke="#26282B" stroke-width="1.6" transform="rotate(-4 10 12)"/>
+          <path d="M9 13.4l2.6 2.6 5.6-6" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        AutomateSmall
+      </a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="how-it-works.html">How it works</a>
+        <a href="#plate">What we handle</a>
+        <a href="#recognition">Who we help</a>
+        <a href="about.html">About</a>
+      </nav>
+      <a class="btn btn--primary nav__cta" href="book.html">Let's talk</a>
+      <button class="nav__toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-panel">Menu</button>
+    </div>
+    <div class="nav__panel" id="nav-panel">
+      <a href="how-it-works.html">How it works</a>
+      <a href="#plate">What we handle</a>
+      <a href="#recognition">Who we help</a>
+      <a href="about.html">About</a>
+      <a class="btn btn--primary" href="book.html">Let's talk</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- 01 + 01B — HERO & THE OWNER'S DESK -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="hero__grid">
+
+      <div class="hero__copy">
+        <p class="eyebrow">For small business owners</p>
+        <h1><span>Your business needs you.</span><span class="h1-2">It shouldn't need all of your time.</span></h1>
+        <p class="lede">Chasing paperwork. Checking invoices. Following up with staff. Updating spreadsheets. Jumping between different systems.</p>
+        <p class="lede">We help take repetitive work off your plate so you have more time for the parts of the business that actually need you.</p>
+
+        <div class="btn-row hero__cta">
+          <a class="btn btn--primary" href="#recognition">Show me what I could stop doing manually</a>
+          <a class="btn btn--ghost" href="#how">See how it works</a>
+        </div>
+        <p class="micro hero__micro">Free. About 2 minutes. No sign-up required.</p>
+
+        <div class="probe" id="probe">
+          <div class="probe__head">
+            <span class="probe__title">Still doing any of these yourself?</span>
+            <button class="probe__ctrl" id="probe-ctrl" type="button" aria-pressed="true" hidden>
+              <svg id="probe-ctrl-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><rect x="3" y="2" width="3" height="10" rx="1"></rect><rect x="8" y="2" width="3" height="10" rx="1"></rect></svg>
+              <span id="probe-ctrl-label">Pause</span>
+              <span class="vh">rotating questions</span>
+            </button>
+          </div>
+          <p class="probe__q"><span id="probe-q" aria-live="polite">Did everyone submit their paperwork?</span></p>
+          <div class="probe__dots" id="probe-dots" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <!-- The Owner's Desk -->
+      <div class="desk" id="desk">
+        <div class="desk__bar">
+          <div class="toggle" role="group" aria-label="Show the desk before or after">
+            <button type="button" data-show="before" aria-pressed="true">A normal week</button>
+            <button type="button" data-show="after" aria-pressed="false">Handled</button>
+          </div>
+        </div>
+
+        <div class="deskstack">
+          <div class="deskstack__layer" data-layer="before">
+            <h2 class="vh">What a normal week looks like on the desk</h2>
+            <div class="slips">
+              <article class="slip slip--a">
+                <p class="slip__label">Email</p>
+                <p class="slip__body">3 follow-ups</p>
+                <p class="slip__meta">Nobody has replied yet</p>
+              </article>
+              <article class="slip slip--b">
+                <p class="slip__label">Spreadsheet</p>
+                <p class="slip__body">Employee tracker.xlsx</p>
+                <p class="slip__meta">Last updated 11 days ago</p>
+              </article>
+              <article class="slip slip--c slip--invoice">
+                <p class="slip__label">Invoice</p>
+                <p class="slip__body">Harper &amp; Sons — $640</p>
+                <span class="pill pill--due">Past due</span>
+              </article>
+              <article class="slip slip--d">
+                <p class="slip__label">Calendar</p>
+                <p class="slip__body">Staff schedule</p>
+                <p class="slip__meta">Friday still not confirmed</p>
+              </article>
+              <article class="slip slip--e">
+                <p class="slip__label">Reminder</p>
+                <p class="slip__body">Certification expires Friday</p>
+                <span class="pill pill--soon">Needs action</span>
+              </article>
+              <article class="slip slip--f slip--sticky">
+                <p class="slip__label">Sticky note</p>
+                <p class="slip__body">Call vendor</p>
+              </article>
+              <article class="slip slip--g slip--msg">
+                <p class="slip__label">Text message</p>
+                <p class="slip__body">"Did you get my form?"</p>
+                <p class="slip__meta">8:42pm</p>
+              </article>
+            </div>
+          </div>
+
+          <div class="deskstack__layer" data-layer="after" data-state="hidden">
+            <h2 class="vh">The same week, handled</h2>
+            <div class="handled">
+              <div class="hcard hcard--done">
+                <div class="hcard__top">
+                  <span class="hcard__title">Handled</span>
+                  <span class="hcard__n">3 done</span>
+                </div>
+                <ul class="hlist">
+                  <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Follow-ups sent</span></li>
+                  <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Schedule shared</span></li>
+                  <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Employee tracker updated</span></li>
+                </ul>
+              </div>
+              <div class="hcard hcard--you">
+                <div class="hcard__top">
+                  <span class="hcard__title">Needs you</span>
+                  <span class="hcard__n">2 items</span>
+                </div>
+                <ul class="hlist">
+                  <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.4l7 13H3z" fill="none" stroke="#A9472A" stroke-width="2" stroke-linejoin="round"/><path d="M10 8.8v3.1" stroke="#A9472A" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="#A9472A"/></svg><span>Harper &amp; Sons is 30 days past due</span></li>
+                  <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.4l7 13H3z" fill="none" stroke="#A9472A" stroke-width="2" stroke-linejoin="round"/><path d="M10 8.8v3.1" stroke="#A9472A" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="#A9472A"/></svg><span>Friday's schedule change needs your OK</span></li>
+                </ul>
+                <p class="hcard__note">The judgment calls stay with you. That's the point.</p>
+              </div>
+            </div>
+            <p class="exnote">
+              <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.9" fill="none" stroke="#5A5D61" stroke-width="1.4"/><path d="M8 7.2v4" stroke="#5A5D61" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="4.9" r=".95" fill="#5A5D61"/></svg>
+              <span>Example. Yours is built around the tools you already use.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 02 — RECOGNITION -->
+<section class="sec sec--deep" id="recognition">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Does this sound familiar?</h2>
+      <p class="lede">Tap the ones that happen in your business.</p>
+    </div>
+
+    <div class="recog" id="recog">
+      <button type="button" class="recog__item" aria-pressed="false"
+        data-rec-title="Stop entering the same thing twice"
+        data-rec-body="We find where the same information gets typed more than once, and connect those tools so it only gets entered one time.">
+        <span class="recog__box" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M3 8.4l3.2 3.2L13 4.6" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>I enter the same information in three different places.</span>
+      </button>
+
+      <button type="button" class="recog__item" aria-pressed="false"
+        data-rec-title="Follow-ups that happen without you"
+        data-rec-body="Reminders and follow-ups go out on the schedule you set. You hear about it when someone doesn't respond.">
+        <span class="recog__box" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M3 8.4l3.2 3.2L13 4.6" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>If I don't remember to follow up, nobody does.</span>
+      </button>
+
+      <button type="button" class="recog__item" aria-pressed="false"
+        data-rec-title="Spreadsheets that update themselves"
+        data-rec-body="We work out which spreadsheets your business actually runs on, keep those, and have them filled in from the tools you already use.">
+        <span class="recog__box" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M3 8.4l3.2 3.2L13 4.6" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>We have spreadsheets everywhere.</span>
+      </button>
+
+      <button type="button" class="recog__item" aria-pressed="false"
+        data-rec-title="See what needs your attention in one place"
+        data-rec-body="Your tools keep doing their jobs. We bring the handful of things that need a decision into one short view."
+        >
+        <span class="recog__box" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M3 8.4l3.2 3.2L13 4.6" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>I have five different systems and still don't know what's going on.</span>
+      </button>
+
+      <button type="button" class="recog__item" aria-pressed="false"
+        data-rec-title="New hires finish their paperwork without you chasing them"
+        data-rec-body="Forms go out, completion gets tracked, reminders go out on their own, and you only hear about what's still missing.">
+        <span class="recog__box" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M3 8.4l3.2 3.2L13 4.6" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>I'm checking employee paperwork by hand.</span>
+      </button>
+
+      <button type="button" class="recog__item" aria-pressed="false"
+        data-rec-title="Know which invoices need attention"
+        data-rec-body="Invoices go out on time, payment gets watched, and anything overdue arrives as a short list instead of a hunt.">
+        <span class="recog__box" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M3 8.4l3.2 3.2L13 4.6" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>Invoices go out later than they should.</span>
+      </button>
+
+      <button type="button" class="recog__item" aria-pressed="false"
+        data-rec-title="Get how the work actually happens written down"
+        data-rec-body="We map the real process, not the one on paper, so it doesn't walk out the door when a person does.">
+        <span class="recog__box" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M3 8.4l3.2 3.2L13 4.6" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>Half of how we do things lives in someone's head.</span>
+      </button>
+
+      <button type="button" class="recog__item" aria-pressed="false"
+        data-rec-title="Documents collected without the chasing"
+        data-rec-body="Requests go out, what's back and what's missing stays tracked, and everything lands in one place you can find later.">
+        <span class="recog__box" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M3 8.4l3.2 3.2L13 4.6" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>Chasing people for forms eats my week.</span>
+      </button>
+    </div>
+
+    <div class="recog__bar">
+      <p class="recog__count" id="recog-count" aria-live="polite">Nothing picked yet</p>
+      <button class="btn btn--ledger" type="button" id="recog-cta" disabled aria-disabled="true">See where we'd start</button>
+    </div>
+
+    <div class="recstart" id="recstart" hidden>
+      <h3>Where we'd start</h3>
+      <p class="caption" id="recstart-lead"></p>
+      <ol class="recstart__list" id="recstart-list"></ol>
+      <div class="btn-row" style="margin-top:24px">
+        <a class="btn btn--primary" href="book.html">Let's look at my business</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 — THE TURN -->
+<section class="turn">
+  <div class="wrap">
+    <p>Your business may not need another piece of software.</p>
+    <p>It may just need the things you already have to work better together.</p>
+  </div>
+</section>
+
+<!-- 04 — BIG COMPANIES VS. SMALL BUSINESS -->
+<section class="sec sec--deep">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Big companies have operations teams.<br>Small businesses have you.</h2>
+    </div>
+
+    <div class="teams">
+      <div class="team">
+        <p class="team__h">A larger company</p>
+        <p class="team__sub">Six departments thinking about how the business runs</p>
+        <ul class="deptlist">
+          <li class="dept">Operations</li>
+          <li class="dept">Finance</li>
+          <li class="dept">HR</li>
+          <li class="dept">IT</li>
+          <li class="dept">Compliance</li>
+          <li class="dept">Process improvement</li>
+        </ul>
+      </div>
+
+      <div class="team team--you">
+        <p class="team__h">A small business</p>
+        <p class="team__sub">Four things pulling at once, all landing in the same place</p>
+        <ul class="deptlist">
+          <li class="dept">Customers</li>
+          <li class="dept">Employees</li>
+          <li class="dept">Finance</li>
+          <li class="dept">Operations</li>
+        </ul>
+        <div class="youline">
+          <span class="youline__stem" aria-hidden="true"></span>
+          <span class="youbadge">YOU</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="prose teams__note">
+      <p>Larger companies have whole teams working on how the business runs. Small-business owners often handle the same responsibilities themselves, on top of customers, staff and everything else.</p>
+      <p class="teams__kicker">You shouldn't need five departments to make your business run more smoothly.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 — HOW IT WORKS -->
+<section class="sec" id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">How it works</p>
+      <h2>We start with how your business actually runs.</h2>
+      <p class="lede">Before automating anything, we learn your processes, your people and the tools you already use.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step__n">01</div>
+        <div>
+          <p class="step__t">Discover</p>
+          <p class="step__d">Show us how things work today. Not the version in the handbook — the version that actually happens on a Tuesday.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__n">02</div>
+        <div>
+          <p class="step__t">Simplify</p>
+          <p class="step__d">Remove steps that don't need to exist. A step you delete never needs maintaining.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__n">03</div>
+        <div>
+          <p class="step__t">Automate</p>
+          <p class="step__d">Take repetitive work off people's plates — the sending, the tracking, the reminding, the copying between places.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__n">04</div>
+        <div>
+          <p class="step__t">Connect</p>
+          <p class="step__d">Help the tools you already use share information, so the same thing doesn't get entered twice.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__n">05</div>
+        <div>
+          <p class="step__t">Hand over</p>
+          <p class="step__d"><b>Documentation, training and the keys. You run it.</b></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tools">
+      <h3>Works with the tools you already have.</h3>
+      <p class="caption">We'd rather connect what's working than replace it. The kinds of tools we look at first:</p>
+      <ul class="toolcats">
+        <li class="toolcat">Accounting</li>
+        <li class="toolcat">Email</li>
+        <li class="toolcat">Documents</li>
+        <li class="toolcat">Scheduling</li>
+        <li class="toolcat">Payments</li>
+        <li class="toolcat">Customer management</li>
+        <li class="toolcat">Industry-specific tools</li>
+      </ul>
+      <p class="tools__note prose"><strong>Still running on paper and spreadsheets? That's a perfectly good place to start.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 — THE BUSINESS VIEW -->
+<section class="sec sec--deep" id="view">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Stop checking five places to understand one business.</h2>
+      <p class="lede">Your accounting, scheduling, staff and customer tools keep doing what they do best. We bring the information that matters together and show you what needs your attention.</p>
+    </div>
+
+    <div id="bv">
+      <div class="desk__bar">
+        <div class="toggle" role="group" aria-label="Show information before or after">
+          <button type="button" data-show="before" aria-pressed="false">Where it lives now</button>
+          <button type="button" data-show="after" aria-pressed="true">What you'd see</button>
+        </div>
+      </div>
+
+      <div class="bv__stack">
+        <div class="bv__layer" data-layer="before" data-state="hidden">
+          <h3 class="vh">Where the information lives now</h3>
+          <div class="scatter">
+            <div class="sysbox">Accounting</div>
+            <div class="sysbox">Payroll</div>
+            <div class="sysbox">Email</div>
+            <div class="sysbox">Scheduling</div>
+            <div class="sysbox">Documents</div>
+            <div class="sysbox">Customer information</div>
+            <div class="sysbox">Payments</div>
+            <div class="sysbox">Spreadsheets</div>
+            <div class="sysbox">Compliance</div>
+            <div class="sysbox">Your memory</div>
+            <div class="scatter__you">
+              <svg class="scatter__tangle" viewBox="0 0 400 44" preserveAspectRatio="none" aria-hidden="true">
+                <g fill="none" stroke="#C9C0AC" stroke-width="1.4">
+                  <path d="M20 0C40 22 150 14 200 42"/><path d="M60 0C80 26 160 18 200 42"/>
+                  <path d="M110 0C120 24 170 22 200 42"/><path d="M160 0C168 20 186 26 200 42"/>
+                  <path d="M210 0C214 20 198 24 200 42"/><path d="M250 0C242 24 214 22 200 42"/>
+                  <path d="M300 0C286 24 232 20 200 42"/><path d="M345 0C322 26 240 18 200 42"/>
+                  <path d="M385 0C356 22 250 14 200 42"/>
+                </g>
+              </svg>
+              <span class="youbadge">YOU</span>
+              <p class="caption" style="margin-top:14px;text-align:center">Ten places. One person holding it together.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bv__layer" data-layer="after">
+          <h3 class="vh">What you'd see instead</h3>
+          <div class="view">
+            <div class="view__bar">
+              <span class="view__hello">Good morning, Sarah</span>
+              <span class="view__date">Thursday</span>
+            </div>
+            <div class="view__body">
+
+              <div class="vgroup vgroup--decide">
+                <p class="vgroup__h">Needs your decision <span class="vgroup__n">1</span></p>
+                <div class="vrow">
+                  <svg class="vrow__ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.4l7 13H3z" fill="none" stroke="#A9472A" stroke-width="2" stroke-linejoin="round"/><path d="M10 8.8v3.1" stroke="#A9472A" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="#A9472A"/></svg>
+                  <span>Approve Friday's schedule change</span>
+                  <button class="vrow__act" type="button">Approve</button>
+                </div>
+              </div>
+
+              <div class="vgroup vgroup--attn">
+                <p class="vgroup__h">Needs your attention <span class="vgroup__n">4</span></p>
+                <div class="vrow">
+                  <svg class="vrow__ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.2" fill="none" stroke="#8A7526" stroke-width="1.8"/><path d="M10 6.2v4.3l2.6 1.6" fill="none" stroke="#8A7526" stroke-width="1.8" stroke-linecap="round"/></svg>
+                  <span><b>2 invoices overdue</b> — <span class="amt">$1,340</span></span>
+                </div>
+                <div class="vrow">
+                  <svg class="vrow__ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.2" fill="none" stroke="#8A7526" stroke-width="1.8"/><path d="M10 6.2v4.3l2.6 1.6" fill="none" stroke="#8A7526" stroke-width="1.8" stroke-linecap="round"/></svg>
+                  <span><b>2 staff certifications</b> expiring soon</span>
+                </div>
+              </div>
+
+              <div class="vgroup vgroup--done">
+                <p class="vgroup__h">Already handled <span class="vgroup__n">12</span></p>
+                <div class="vrow">
+                  <svg class="vrow__ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span>3 reminders sent</span>
+                </div>
+                <div class="vrow">
+                  <svg class="vrow__ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span>New hire paperwork received</span>
+                </div>
+                <div class="vrow">
+                  <svg class="vrow__ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span>4 customer follow-ups scheduled</span>
+                </div>
+                <div class="vrow">
+                  <svg class="vrow__ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span>Weekly summary prepared</span>
+                </div>
+              </div>
+
+              <div class="today">
+                <div class="today__cell"><p class="today__k">Today</p><p class="today__v">6 appointments</p></div>
+                <div class="today__cell"><p class="today__k">Staff</p><p class="today__v">2 actions</p></div>
+                <div class="today__cell"><p class="today__k">Receivables</p><p class="today__v">$4,850</p></div>
+              </div>
+
+            </div>
+          </div>
+          <p class="exnote">
+            <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.9" fill="none" stroke="#5A5D61" stroke-width="1.4"/><path d="M8 7.2v4" stroke="#5A5D61" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="4.9" r=".95" fill="#5A5D61"/></svg>
+            <span>Example. Yours is built around the tools you already use.</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="delivery" id="delivery">
+        <p class="delivery__h">How would you like to receive it?</p>
+        <div class="chips" role="group" aria-label="How you'd like to receive it">
+          <button type="button" class="chip" data-delivery="dashboard" aria-pressed="true">Dashboard</button>
+          <button type="button" class="chip" data-delivery="email" aria-pressed="false">Morning email</button>
+          <button type="button" class="chip" data-delivery="text" aria-pressed="false">Text message</button>
+        </div>
+        <p class="delivery__out" id="delivery-out" aria-live="polite">One page you open when you want it. Nothing for your staff to install, nothing new for them to learn.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 — WHAT WE CAN TAKE OFF YOUR PLATE -->
+<section class="sec" id="plate">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>What could we take off your plate?</h2>
+      <p class="lede">Here are some of the everyday jobs we can help small businesses handle more efficiently.</p>
+    </div>
+
+    <div class="filterbar" id="filterbar" role="group" aria-label="Filter by kind of business">
+      <button type="button" class="chip" data-filter="all" aria-pressed="true">All</button>
+      <button type="button" class="chip" data-filter="home" aria-pressed="false">Home services</button>
+      <button type="button" class="chip" data-filter="studio" aria-pressed="false">Studios &amp; learning</button>
+      <button type="button" class="chip" data-filter="pro" aria-pressed="false">Professional services</button>
+      <button type="button" class="chip" data-filter="retail" aria-pressed="false">Retail</button>
+    </div>
+    <p class="vh" id="jobs-live" aria-live="polite"></p>
+
+    <div class="jobs" id="jobs">
+
+      <article class="job" data-tags="home studio pro retail">
+        <h3 class="job__t">New employee onboarding</h3>
+        <div class="flow">
+          <span class="flow__s">Send forms</span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Track completion</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Remind</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Flag what's missing</span></span>
+        </div>
+        <p class="job__you"><svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.4l7 13H3z" fill="none" stroke="#A9472A" stroke-width="2" stroke-linejoin="round"/><path d="M10 8.8v3.1" stroke="#A9472A" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="#A9472A"/></svg><span><b>You step in when:</b> something important is still incomplete.</span></p>
+      </article>
+
+      <article class="job" data-tags="home studio pro">
+        <h3 class="job__t">Certifications</h3>
+        <div class="flow">
+          <span class="flow__s">Track requirements</span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Watch dates</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Remind</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Alert</span></span>
+        </div>
+        <p class="job__you"><svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.4l7 13H3z" fill="none" stroke="#A9472A" stroke-width="2" stroke-linejoin="round"/><path d="M10 8.8v3.1" stroke="#A9472A" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="#A9472A"/></svg><span><b>You step in when:</b> something is close to expiring and still unresolved.</span></p>
+      </article>
+
+      <article class="job" data-tags="home studio pro retail">
+        <h3 class="job__t">Invoices &amp; payments</h3>
+        <div class="flow">
+          <span class="flow__s">Prepare</span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Send</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Watch</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Follow up</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Surface exceptions</span></span>
+        </div>
+        <p class="job__you"><svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.4l7 13H3z" fill="none" stroke="#A9472A" stroke-width="2" stroke-linejoin="round"/><path d="M10 8.8v3.1" stroke="#A9472A" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="#A9472A"/></svg><span><b>You step in when:</b> a payment is badly overdue or disputed.</span></p>
+      </article>
+
+      <article class="job" data-tags="home studio pro">
+        <h3 class="job__t">Customer intake</h3>
+        <div class="flow">
+          <span class="flow__s">Collect information</span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Schedule</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Communicate</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Track</span></span>
+        </div>
+        <p class="job__you"><svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.4l7 13H3z" fill="none" stroke="#A9472A" stroke-width="2" stroke-linejoin="round"/><path d="M10 8.8v3.1" stroke="#A9472A" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="#A9472A"/></svg><span><b>You step in when:</b> someone needs a real conversation, not a form.</span></p>
+      </article>
+
+      <article class="job" data-tags="home studio retail pro">
+        <h3 class="job__t">Lead follow-up</h3>
+        <div class="flow">
+          <span class="flow__s">Capture</span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Reply</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Remind</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Escalate</span></span>
+        </div>
+        <p class="job__you"><svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.4l7 13H3z" fill="none" stroke="#A9472A" stroke-width="2" stroke-linejoin="round"/><path d="M10 8.8v3.1" stroke="#A9472A" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="#A9472A"/></svg><span><b>You step in when:</b> it's worth a call from you personally.</span></p>
+      </article>
+
+      <article class="job" data-tags="home studio">
+        <h3 class="job__t">Scheduling</h3>
+        <div class="flow">
+          <span class="flow__s">Book</span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Confirm</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Remind</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Reschedule</span></span>
+        </div>
+        <p class="job__you"><svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.4l7 13H3z" fill="none" stroke="#A9472A" stroke-width="2" stroke-linejoin="round"/><path d="M10 8.8v3.1" stroke="#A9472A" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="#A9472A"/></svg><span><b>You step in when:</b> the day needs rearranging, not just rebooking.</span></p>
+      </article>
+
+      <article class="job" data-tags="pro home retail">
+        <h3 class="job__t">Document collection</h3>
+        <div class="flow">
+          <span class="flow__s">Request</span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Track</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Remind</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Organize</span></span>
+        </div>
+        <p class="job__you"><svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.4l7 13H3z" fill="none" stroke="#A9472A" stroke-width="2" stroke-linejoin="round"/><path d="M10 8.8v3.1" stroke="#A9472A" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="#A9472A"/></svg><span><b>You step in when:</b> someone still hasn't sent it after being asked twice.</span></p>
+      </article>
+
+      <article class="job" data-tags="home studio pro retail">
+        <h3 class="job__t">Weekly owner summary</h3>
+        <div class="flow">
+          <span class="flow__s">Gather</span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Organize</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Summarize</span></span><span class="flow__i"><span class="flow__arr" aria-hidden="true">→</span><span class="flow__s">Highlight what needs attention</span></span>
+        </div>
+        <p class="job__you"><svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.4l7 13H3z" fill="none" stroke="#A9472A" stroke-width="2" stroke-linejoin="round"/><path d="M10 8.8v3.1" stroke="#A9472A" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="#A9472A"/></svg><span><b>You step in when:</b> the summary says something is going the wrong way.</span></p>
+      </article>
+
+    </div>
+    <p class="jobs__empty" id="jobs-empty" hidden>Nothing listed for that one yet. Most of these apply across every kind of business — try "All".</p>
+  </div>
+</section>
+
+<!-- 08 — TIME CALCULATOR -->
+<section class="sec sec--deep" id="time">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>"I'll just do it myself" isn't always free.</h2>
+      <p class="lede">Manual work rarely shows up as an expense. It usually shows up as your time.</p>
+    </div>
+
+    <div class="calc">
+      <div class="calc__panel">
+        <label class="calc__label" for="hours">Roughly how many hours a week do you spend on repetitive admin?</label>
+        <input type="range" id="hours" name="hours" min="1" max="20" step="1" value="10"
+               aria-describedby="calc-hours">
+        <div class="calc__scale" aria-hidden="true"><span>1 hour</span><span>20+ hours</span></div>
+        <div class="calc__read">
+          <p class="calc__hrs" id="calc-hours">10 <span>hours a week</span></p>
+          <p class="calc__big"><span id="calc-annual">500</span></p>
+          <p class="calc__big-sub">hours a year</p>
+          <p class="calc__weeks" id="calc-weeks">That is more than 12 full work weeks.</p>
+        </div>
+      </div>
+
+      <div>
+        <p class="calc__q">What would you do with that time back?</p>
+        <div class="chips" id="timeback" role="group" aria-label="What you'd do with the time back">
+          <button type="button" class="chip" data-want="customers" aria-pressed="false">Serve more customers</button>
+          <button type="button" class="chip" data-want="grow" aria-pressed="false">Grow the business</button>
+          <button type="button" class="chip" data-want="team" aria-pressed="false">Spend more time with my team</button>
+          <button type="button" class="chip" data-want="service" aria-pressed="false">Improve our service</button>
+          <button type="button" class="chip" data-want="home" aria-pressed="false">Go home earlier</button>
+        </div>
+        <p class="calc__ack" id="calc-ack" aria-live="polite"></p>
+        <div class="btn-row" style="margin-top:28px">
+          <a class="btn btn--primary" href="book.html">Let's look at my business</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 — WORKING WITH AUTOMATESMALL -->
+<section class="sec" id="working">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Working with us</p>
+      <h2>Start small. Fix something that matters.</h2>
+      <p class="lede">No massive project. No long consulting engagement. We start by understanding what's actually worth fixing.</p>
+    </div>
+
+    <div class="engage">
+      <div class="estep">
+        <p class="estep__k">Step 1</p>
+        <p class="estep__t">Free walkthrough</p>
+        <ul>
+          <li>A 30-minute conversation</li>
+          <li>Show us a normal week</li>
+          <li>We tell you honestly whether we think we can help</li>
+        </ul>
+      </div>
+      <div class="estep">
+        <p class="estep__k">Step 2</p>
+        <p class="estep__t">Operations assessment</p>
+        <ul>
+          <li>We map what's actually happening</li>
+          <li>We identify where the time is going</li>
+          <li>Fixed price agreed beforehand</li>
+        </ul>
+      </div>
+      <div class="estep">
+        <p class="estep__k">Step 3</p>
+        <p class="estep__t">First improvement</p>
+        <ul>
+          <li>One meaningful problem, solved completely</li>
+          <li>Fixed scope</li>
+          <li>Fixed price</li>
+        </ul>
+      </div>
+      <div class="estep estep--opt">
+        <p class="estep__k">Step 4 — optional</p>
+        <p class="estep__t">Ongoing support</p>
+        <ul>
+          <li>If you'd rather we keep looking after things, we can</li>
+          <li>It is optional, not a condition</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="budget">
+      <h3>We know every dollar matters.</h3>
+      <div class="budget__grid">
+        <div class="bud">
+          <p class="bud__t">Use what you already have</p>
+          <p class="bud__d">We don't replace working systems just to have something new to run.</p>
+        </div>
+        <div class="bud">
+          <p class="bud__t">Start small</p>
+          <p class="bud__d">Solve one problem properly before tackling ten badly.</p>
+        </div>
+        <div class="bud">
+          <p class="bud__t">Start where it hurts</p>
+          <p class="bud__d">Lost time. Errors. Missed follow-ups. Late payments.</p>
+        </div>
+        <div class="bud">
+          <p class="bud__t">Keep it simple</p>
+          <p class="bud__d">The simplest thing that works is usually the right thing.</p>
+        </div>
+      </div>
+      <div class="btn-row" style="margin-top:30px">
+        <a class="btn btn--ghost" href="operations-assessment.html">What's in an operations assessment</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 — FOUNDER -->
+<section class="sec sec--deep" id="founder">
+  <div class="wrap">
+    <div class="founder">
+      <div>
+        <!-- PHOTO SLOT: replace with a real, candid photograph of the founder.
+             Natural daylight, at work, not a studio headshot. -->
+        <div class="portrait">
+          <div>
+            <p class="portrait__mark" aria-hidden="true">◻</p>
+            <p class="portrait__note">Founder photograph goes here before launch.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="eyebrow">Who you'll work with</p>
+        <h2>25+ years solving business problems with technology. Now focused on making that experience useful for small businesses.</h2>
+        <div class="prose" style="margin-top:26px">
+          <p>I've spent more than 25 years working on how businesses actually run — processes, systems, getting separate tools to share information, and finding the places where work quietly piles up on one person. Most of that was through ZEDventures, with larger organisations that had teams and budgets for this kind of thing.</p>
+          <p>What I kept noticing is that small businesses have the same problems. The paperwork still has to be chased. The invoices still have to be followed up. Someone still has to remember whose certification expires next month. The difference is that there's no department to hand it to. It lands on the owner, usually in the evening.</p>
+          <p>That's why AutomateSmall exists. Same thinking, without the cost, the jargon or the year-long project.</p>
+          <p>— <span class="tofill">Founder name to be added</span></p>
+        </div>
+        <p class="caption" style="margin-top:24px;max-width:640px">AutomateSmall is built by the team behind ZEDventures. We've taken what we've learned over more than 25 years and made the approach simpler, more practical and appropriate for small businesses.</p>
+      </div>
+    </div>
+
+    <div class="own">
+      <p class="own__h">We build it. We teach you. You run it.</p>
+      <ul class="own__list">
+        <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Plain-English documentation</span></li>
+        <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Training for you and your staff</span></li>
+        <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Process maps of how it all fits together</span></li>
+        <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Administration access, in your name</span></li>
+        <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>A handover session at the end</span></li>
+      </ul>
+      <p class="caption" style="margin-top:20px">If you'd rather have us continue looking after it, that's an option — not a requirement.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 — TRUST & FAQ -->
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="trust prose">
+      <h3>Your business. Your information.</h3>
+      <ul class="trust__list">
+        <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Accounts are set up in your name, and you hold the administration access.</span></li>
+        <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Our access can be removed at any time, by you, without breaking what we built.</span></li>
+        <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>We ask for the minimum information needed to do the work, and no more.</span></li>
+        <li><svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Where staff or customer records are involved, we agree in writing what we handle before we touch anything.</span></li>
+      </ul>
+    </div>
+
+    <div class="faq">
+      <h2 style="margin-bottom:22px">Questions owners ask</h2>
+
+      <details>
+        <summary>Do I have to replace my software?</summary>
+        <div class="faq__a"><p>Usually not. We start with what you already use. Replacing something that works costs you money and costs your staff time learning it again — we'd rather connect it to the rest of your business.</p></div>
+      </details>
+
+      <details>
+        <summary>We still use spreadsheets and paper. Is that a problem?</summary>
+        <div class="faq__a"><p>No. That's a perfectly good place to start. Plenty of well-run businesses operate that way. It just means the first conversation is about what the paper is actually doing for you.</p></div>
+      </details>
+
+      <details>
+        <summary>How much does this cost?</summary>
+        <div class="faq__a"><p>The first conversation is free. After we understand your business, we'll explain what we'd recommend and give you a clear price before any work starts. No work begins on an open-ended clock.</p></div>
+      </details>
+
+      <details>
+        <summary>How long does this take?</summary>
+        <div class="faq__a"><p>It depends on the process. We deliberately start with one manageable problem rather than trying to change everything at once — that way you see whether this works for you before committing to more.</p></div>
+      </details>
+
+      <details>
+        <summary>Who owns what you build?</summary>
+        <div class="faq__a"><p>You do. Accounts should be in your name, the work is documented, and your team is trained on it. If you and we parted ways tomorrow, what we built keeps running.</p></div>
+      </details>
+
+      <details>
+        <summary>What happens if our software changes?</summary>
+        <div class="faq__a"><p>Everything is documented so it can be maintained — by you, by whoever you hire, or by us. If you'd rather we handle future changes, we can, but you're not stuck with us to keep it working.</p></div>
+      </details>
+
+      <details>
+        <summary>Will this replace my employees?</summary>
+        <div class="faq__a"><p>That's not the goal. The goal is to remove repetitive work so people can spend more time on customers and on work that actually needs a person. If your staff are spending their week re-typing information, that's the part we'd take away — not them.</p></div>
+      </details>
+
+      <details>
+        <summary>Are we too small?</summary>
+        <div class="faq__a"><p>That's exactly what the free walkthrough helps determine. If the numbers don't make sense for a business your size, we'll tell you that rather than sell you something.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- 12 — FINAL CTA -->
+<section class="sec final" id="talk">
+  <div class="wrap">
+    <div class="final__grid">
+      <div>
+        <h2>Show us what takes up your time.</h2>
+        <p class="lede" style="margin-top:18px;max-width:560px">Tell us about the repetitive work, the spreadsheets, the follow-ups and the operational headaches in your business. We'll help work out where things could be simpler.</p>
+        <div class="btn-row" style="margin-top:30px">
+          <a class="btn btn--primary" href="book.html">Let's look at my business</a>
+          <a class="btn btn--ghost" href="#recognition">Take the 2-minute check</a>
+        </div>
+        <p class="micro" style="margin-top:14px">No technology pitch. We start with your business.</p>
+      </div>
+
+      <div class="tidy" aria-label="The same desk, in order">
+        <div class="tidy__row">
+          <svg width="17" height="17" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="tidy__t">Follow-up emails</span><span class="tidy__s">Sent</span>
+        </div>
+        <div class="tidy__row">
+          <svg width="17" height="17" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="tidy__t">Employee tracker</span><span class="tidy__s">Up to date</span>
+        </div>
+        <div class="tidy__row">
+          <svg width="17" height="17" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="tidy__t">Staff schedule</span><span class="tidy__s">Shared</span>
+        </div>
+        <div class="tidy__row">
+          <svg width="17" height="17" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#2F5D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="tidy__t">Certification reminders</span><span class="tidy__s">Scheduled</span>
+        </div>
+        <div class="tidy__row">
+          <svg width="17" height="17" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.4l7 13H3z" fill="none" stroke="#A9472A" stroke-width="2" stroke-linejoin="round"/><path d="M10 8.8v3.1" stroke="#A9472A" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="#A9472A"/></svg>
+          <span class="tidy__t">Harper &amp; Sons invoice</span><span class="tidy__s tidy__s--you">Needs you</span>
+        </div>
+        <p class="caption" style="margin-top:10px">Nothing here happened without someone deciding it should.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__grid">
+      <div>
+        <p class="foot__brand">AutomateSmall</p>
+        <p class="foot__tag">Your business needs you. It shouldn't need all of your time.</p>
+      </div>
+      <nav aria-label="Footer">
+        <a href="how-it-works.html">How it works</a>
+        <a href="operations-assessment.html">Operations assessment</a>
+        <a href="index.html#plate">What we handle</a>
+      </nav>
+      <nav aria-label="Company">
+        <a href="about.html">About</a>
+        <a href="book.html">Book a walkthrough</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </nav>
+    </div>
+    <div class="foot__legal">
+      <span>&copy; 2026 AutomateSmall</span>
+      <span>Built by the team behind ZEDventures</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js" defer></script>
+</body>
+</html>
