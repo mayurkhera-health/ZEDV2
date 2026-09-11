@@ -41,7 +41,7 @@
   --r-panel: 16px;
 
   --gutter: clamp(20px, 5vw, 32px);
-  --sec-pad: clamp(32px, 3.8vw, 60px);
+  --sec-pad: clamp(26px, 2.9vw, 44px);
 }
 
 *,*::before,*::after{ box-sizing:border-box; }
@@ -96,8 +96,15 @@ a:hover{ color:var(--brick-deep); }
 .wrap--narrow{ max-width:860px; }
 .sec{ padding-block:var(--sec-pad); background:var(--paper); }
 .sec--deep{ background:var(--paper-deep); }
-.sec--tight{ padding-block:clamp(26px,3vw,40px); }
+.sec--tight{ padding-block:clamp(22px,2.4vw,32px); }
 .sec-head{ max-width:min(680px,68ch); margin-bottom:clamp(20px,2.6vw,32px); }
+
+/* Two sections on the same ground read as one block with a hole punched in
+   it, because you get both paddings and no boundary. If that ever happens
+   again, collapse the seam instead of doubling it. */
+.sec--deep + .sec--deep,
+.sec--deep + .sec.final,
+.sec:not(.sec--deep):not(.final) + .sec:not(.sec--deep):not(.final){ padding-top:0; }
 .sec-head > * + *{ margin-top:16px; }
 :target,[id]{ scroll-margin-top:92px; }
 
@@ -255,14 +262,14 @@ a:hover{ color:var(--brick-deep); }
 .wall__count{ font-weight:600; font-variant-numeric:tabular-nums; }
 
 /* ---------- C4 teams ---------- */
-.teams{ display:grid; gap:clamp(24px,3vw,40px); align-items:center; }
+.teams{ display:grid; gap:clamp(20px,2.4vw,32px); align-items:center; }
 .teams > *{ min-width:0; }
-@media (min-width:820px){ .teams{ grid-template-columns:1.25fr .75fr; } }
+@media (min-width:820px){ .teams{ grid-template-columns:1.45fr .55fr; } }
 .tags{ display:flex; flex-wrap:wrap; gap:10px; }
-.tag{ padding:10px 14px; background:var(--card); border:1px solid var(--line); border-radius:var(--r-slip); box-shadow:var(--shadow-slip); font-size:15.5px; font-weight:500; }
+.tag{ padding:8px 12px; background:var(--card); border:1px solid var(--line); border-radius:var(--r-slip); box-shadow:var(--shadow-slip); font-size:15.5px; font-weight:500; }
 .tag:nth-child(odd){ transform:rotate(-1deg); } .tag:nth-child(even){ transform:rotate(1deg); }
-.youslip{ display:grid; place-items:center; min-height:128px; padding:24px; background:var(--card); border:1px solid var(--line); border-radius:var(--r-slip); box-shadow:var(--shadow-slip); transform:rotate(-1.4deg); font-family:var(--display); font-weight:700; font-size:clamp(30px,3.4vw,40px); }
-.teams__label{ font-size:15px; color:var(--ink-soft); margin-bottom:12px; }
+.youslip{ display:grid; place-items:center; min-height:92px; padding:18px; background:var(--card); border:1px solid var(--line); border-radius:var(--r-slip); box-shadow:var(--shadow-slip); transform:rotate(-1.4deg); font-family:var(--display); font-weight:700; font-size:clamp(26px,2.8vw,34px); }
+.teams__label{ font-size:14.5px; color:var(--ink-soft); margin-bottom:9px; }
 
 /* ---------- C5 steps ---------- */
 .steps{ display:grid; }
@@ -593,10 +600,13 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
 .svc-grid{ display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); }
 .svc-grid > *{ min-width:0; }
 
-.svc{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:14px;
-  padding:20px; background:var(--card); border:1px solid var(--line); border-radius:var(--r-card); }
-.svc__n{ font-family:var(--display); font-weight:700; font-size:15px; color:var(--brick);
-  font-variant-numeric:tabular-nums; padding-top:3px; }
+.svc{ padding:18px 20px 20px; background:var(--card); border:1px solid var(--line);
+  border-radius:var(--r-card); }
+.svc__head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+.svc__ico{ width:38px; height:38px; flex:none; padding:7px; border-radius:10px;
+  background:var(--ledger-tint); color:var(--ledger); }
+.svc__n{ font-family:var(--display); font-weight:700; font-size:14px; color:var(--brick);
+  font-variant-numeric:tabular-nums; }
 .svc__t{ font-family:var(--display); font-weight:700; font-size:18.5px; line-height:1.25; margin-bottom:6px; }
 .svc__p{ color:var(--ink-soft); font-size:16px; line-height:1.45; }
 .svc__new{ display:inline-block; margin-left:6px; padding:2px 7px; border-radius:5px; vertical-align:2px;

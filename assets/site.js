@@ -38,6 +38,115 @@
     construction: ['W3', 'W5', 'W2', 'W8']
   };
 
+  /* Workflow definitions. These used to be read out of the "what we take off
+     your plate" cards; that section is gone, so this is now the only copy. */
+  var WORKFLOWS = {
+    "W1": {
+      "ex": {
+        "childcare": "New staff finish background checks and policy sign-offs before they’re on the floor.",
+        "construction": "New crew have their safety induction and documents done before they’re on site.",
+        "health": "New front-desk and clinical staff finish onboarding paperwork before day one.",
+        "home": "New techs have their licences, insurance and van checklist done before the first call-out.",
+        "professional": "New staff complete confidentiality agreements without you asking twice.",
+        "retail": "New sales staff finish their paperwork before their first shift on the floor.",
+        "studios": "New instructors finish their background check and waivers before they teach."
+      },
+      "outcome": "New hires finish their paperwork without you chasing them.",
+      "title": "New employee onboarding"
+    },
+    "W2": {
+      "ex": {
+        "childcare": "Staff CPR and first-aid renewals flagged 30 days ahead.",
+        "construction": "Subcontractor insurance certificates tracked, with a heads-up before they expire.",
+        "health": "Staff certifications tracked and renewed before they lapse.",
+        "home": "Licences and trade certifications tracked, so nobody works on an expired ticket.",
+        "professional": "Professional licences and continuing-education hours tracked per person.",
+        "retail": "Food-handling and age-restricted sales certifications tracked per employee.",
+        "studios": "Instructor certifications and first-aid renewals flagged before they lapse."
+      },
+      "outcome": "Know what’s expiring before it becomes a problem.",
+      "title": "Certifications and compliance"
+    },
+    "W3": {
+      "ex": {
+        "childcare": "Late fees and outstanding tuition surfaced before the month closes.",
+        "construction": "Progress claims raised on schedule and retention tracked per job.",
+        "health": "Outstanding account balances chased on a schedule instead of by hand.",
+        "home": "Job finished Friday, invoice out Friday, not the following Wednesday.",
+        "professional": "Fee notes go out on schedule and overdue accounts arrive as one list.",
+        "retail": "Open vendor invoices and unpaid accounts in a single weekly view.",
+        "studios": "Failed monthly payments surface the same week, not at month end."
+      },
+      "outcome": "Know which invoices need attention.",
+      "title": "Invoices and payments"
+    },
+    "W4": {
+      "ex": {
+        "childcare": "Enrolment forms, allergies and authorised pick-ups collected in one go.",
+        "construction": "New clients’ scope, site details and contacts captured once.",
+        "health": "New patients complete intake forms and scheduling before they arrive.",
+        "home": "New customers give you the address, access notes and photos before you roll a truck.",
+        "professional": "New clients complete engagement letters and identity checks in one pass.",
+        "retail": "Trade and account customers set up the same way, every time.",
+        "studios": "New students’ forms, waivers and first payment, collected before the first class."
+      },
+      "outcome": "New customers get set up the same way every time.",
+      "title": "Customer intake"
+    },
+    "W5": {
+      "ex": {
+        "childcare": "Tour requests get a reply and a scheduled visit within the day.",
+        "construction": "Tender and quote requests get acknowledged before the deadline passes.",
+        "health": "New-patient enquiries get a reply the same day.",
+        "home": "Every estimate request gets a reply the same day, even when you’re on a job.",
+        "professional": "Referrals get acknowledged the day they arrive, not the week they arrive.",
+        "retail": "Special-order and stock enquiries get answered before the customer buys elsewhere.",
+        "studios": "Trial-class enquiries get a reply and a booked slot the same day."
+      },
+      "outcome": "Every inquiry gets a reply, even on your busiest day.",
+      "title": "Lead follow-up"
+    },
+    "W6": {
+      "ex": {
+        "childcare": "Parents reminded about closures, early pickups and paperwork deadlines.",
+        "construction": "Site visits and inspections confirmed with the right people the day before.",
+        "health": "Appointment reminders and rescheduling handled without a call from the front desk.",
+        "home": "Appointment windows confirmed the day before, so fewer wasted drives.",
+        "professional": "Meeting reminders that say what the client needs to bring.",
+        "retail": "Fitting, service and pickup appointments confirmed and reminded.",
+        "studios": "Class reminders and make-up bookings without the front desk chasing."
+      },
+      "outcome": "Fewer no-shows and fewer “what time was that?” calls.",
+      "title": "Scheduling and reminders"
+    },
+    "W7": {
+      "ex": {
+        "childcare": "Immunisation records and authorisation forms collected before the start date.",
+        "construction": "Subcontractor insurance, licences and method statements collected before mobilisation.",
+        "health": "Staff credentialing documents collected and filed per person.",
+        "home": "Permits, sign-offs and job photos collected and filed against the job.",
+        "professional": "Tax-season documents requested, tracked and chased without your inbox.",
+        "retail": "Supplier paperwork and resale certificates collected and filed.",
+        "studios": "Waivers, medical notes and photo permissions collected and filed per student."
+      },
+      "outcome": "Stop chasing people for forms.",
+      "title": "Document collection"
+    },
+    "W8": {
+      "ex": {
+        "childcare": "Monday: enrolment numbers, staff ratios and paperwork outstanding.",
+        "construction": "Monday: jobs running, claims outstanding and certificates about to expire.",
+        "health": "Monday: chair time booked, staff actions and outstanding balances.",
+        "home": "Monday: jobs booked, quotes outstanding, invoices unpaid, techs short of work.",
+        "professional": "Monday: work in progress, unbilled time, and what’s waiting on a client.",
+        "retail": "A Monday summary of sales, open vendor invoices and next week’s staffing.",
+        "studios": "Monday: attendance, trials booked, failed payments and memberships lapsing."
+      },
+      "outcome": "One page on Monday that tells you how the business is doing.",
+      "title": "Weekly owner summary"
+    }
+  };
+
   /* ------------------------------------------------------------------- nav */
   (function nav() {
     var bar = $('#nav'), btn = $('#nav-toggle'), panel = $('#nav-panel');
@@ -185,38 +294,9 @@
   /* ------------------------------------------------------- C7 industry filter */
   function applyIndustry(key) {
     check.industry = key === 'all' ? null : key;
-    $$('#cards .wf').forEach(function (card) {
-      var ex = $('.wf__ex', card);
-      var line = check.industry ? card.getAttribute('data-ex-' + check.industry) : null;
-      if (line) { ex.textContent = line; ex.hidden = false; } else { ex.hidden = true; }
-    });
-    $$('#filterbar .chip').forEach(function (c) {
-      var on = c.getAttribute('data-industry') === key;
-      c.setAttribute('aria-checked', String(on));
-      c.tabIndex = on ? 0 : -1;
-    });
     var sel = $('#drawer-industry');
     if (sel) sel.value = check.industry || '';
   }
-
-  (function filter() {
-    var bar = $('#filterbar');
-    if (!bar) return;
-    var chips = $$('.chip', bar);
-    chips.forEach(function (c) {
-      c.addEventListener('click', function () {
-        applyIndustry(c.getAttribute('data-industry'));
-        track('industry_select', { industry: c.getAttribute('data-industry'), from: 'filter' });
-      });
-      c.addEventListener('keydown', function (e) {
-        var i = chips.indexOf(c), n = null;
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = chips[(i + 1) % chips.length];
-        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   n = chips[(i - 1 + chips.length) % chips.length];
-        if (n) { e.preventDefault(); n.focus(); n.click(); }
-      });
-    });
-    applyIndustry('all');
-  })();
 
   /* -------------------------------------------------------- C8 the calculator */
   function annualHours() {
@@ -344,18 +424,18 @@
     var list = $('#drawer-list');
     list.innerHTML = '';
     score().forEach(function (w, n) {
-      var card = $('.wf[data-id="' + w + '"]');
+      var card = WORKFLOWS[w];
       if (!card) return;
       var li = document.createElement('li');
       var b = document.createElement('span');
       b.className = 'picked__n'; b.textContent = String(n + 1);
       var d = document.createElement('div');
       var t = document.createElement('div');
-      t.className = 'picked__t'; t.textContent = card.getAttribute('data-title');
+      t.className = 'picked__t'; t.textContent = card.title;
       var o = document.createElement('div');
-      o.className = 'picked__o'; o.textContent = card.getAttribute('data-outcome');
+      o.className = 'picked__o'; o.textContent = card.outcome;
       d.appendChild(t); d.appendChild(o);
-      var ex = check.industry ? card.getAttribute('data-ex-' + check.industry) : null;
+      var ex = check.industry ? card.ex[check.industry] : null;
       if (ex) {
         var e = document.createElement('div');
         e.className = 'picked__e'; e.textContent = ex;

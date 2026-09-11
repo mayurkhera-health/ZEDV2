@@ -101,7 +101,7 @@ if os.path.exists('robots.txt'):
 # A bulk edit once deleted the whole trust band and the FAQ section wrapper
 # without any other check noticing, because the page still parsed and the line
 # count went up. These assertions are cheap and would have caught it.
-EXPECTED_SECTIONS = ['recognition', 'teams', 'how', 'view', 'plate', 'time',
+EXPECTED_SECTIONS = ['recognition', 'teams', 'how', 'view', 'time',
                      'story', 'pricing', 'people', 'faq', 'final']
 found = set(re.findall(r'<section[^>]*id="([^"]+)"', home))
 for sec in EXPECTED_SECTIONS:
