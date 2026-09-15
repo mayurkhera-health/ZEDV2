@@ -157,12 +157,21 @@ runs for want of a `FLY_API_TOKEN` nobody ever set.
 
 There is no deploy command any more. Push to `main` and Cloudflare builds it.
 
-| Pages setting | Value |
+Cloudflare now routes "connect a repository" into the **Workers** flow rather
+than Pages, and a Workers build runs `npx wrangler deploy`. `wrangler.jsonc`
+is what makes that work: an assets-only Worker with no script, serving `dist/`
+from the edge.
+
+| Cloudflare build setting | Value |
 |---|---|
-| Framework preset | None |
 | Build command | `bash scripts/build.sh` |
-| Build output directory | `dist` |
+| Deploy command | `npx wrangler deploy` |
+| Root directory | `/` |
 | Production branch | `main` |
+
+Everything else — the project name, what is served, 404 handling — comes from
+`wrangler.jsonc` rather than the dashboard, so it is in version control and
+reviewable.
 
 `scripts/build.sh` assembles only what a visitor should see: the ten pages,
 `robots.txt`, `sitemap.xml`, `assets/`, `_headers`, and a version stamp. It
