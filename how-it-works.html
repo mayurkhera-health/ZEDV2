@@ -118,7 +118,7 @@
 <section class="sec">
   <div class="wrap">
     <div class="sec-head"><h2>How working with us works</h2>
-    <p class="lede">Clear steps. Fixed prices. No long contracts. You can stop after any of them.</p></div>
+    <p class="lede">Clear steps. A fixed number in writing before any work starts. No long contracts, and you can stop after any of them.</p></div>
     <div class="plan">
       <div class="pstep"><p class="pstep__k">Step 1</p><p class="pstep__t">Free walkthrough</p><p class="pstep__d">You show us a normal week. We tell you honestly whether we can help.</p><div class="pstep__meta"><span class="pstep__price">Free</span><span class="pstep__time">30 minutes</span></div></div>
       <div class="pstep"><p class="pstep__k">Step 2</p><p class="pstep__t">Operations assessment</p><p class="pstep__d">We map how work flows today and give you 3&ndash;5 fixes ranked by time saved. Yours to keep.</p><div class="pstep__meta"><span class="pstep__price">Quoted after the walkthrough</span><span class="pstep__time">Timeline agreed with the quote</span></div></div>
@@ -137,6 +137,113 @@
         <li><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#2F5D48" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.4l4.2 4.2L16.4 5.6"/></svg><span>A handover session</span></li>
       </ul>
       <p class="small" style="margin-top:18px">If you&rsquo;d rather not look after it yourself, the care plan covers that. Your choice, never a requirement.</p>
+    </div>
+  </div>
+</section>
+
+<!-- C6 ------------------------------------------------- the command center -->
+<section class="sec" id="view">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Stop checking five places to understand one business.</h2>
+      <p class="lede">Your accounting, scheduling, staff and customer tools keep doing what they do best. We bring the information that matters together, and tell you what needs you.</p>
+    </div>
+
+    <div id="bv">
+      <div class="desk__bar">
+        <div class="toggle" role="group" aria-label="Show where information lives now, or what you would see">
+          <button type="button" data-show="before" aria-pressed="false">Where it lives now</button>
+          <button type="button" data-show="after" aria-pressed="true">What you&rsquo;d see</button>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="stack__layer" data-layer="before" data-state="hidden">
+          <h3 class="vh">Where the information lives now</h3>
+          <div class="scatter">
+            <div class="sysbox">Accounting</div><div class="sysbox">Payroll</div><div class="sysbox">Email</div>
+            <div class="sysbox">Scheduling</div><div class="sysbox">Documents</div><div class="sysbox">Customer list</div>
+            <div class="sysbox">Compliance</div><div class="sysbox">Payments</div><div class="sysbox">Spreadsheets</div>
+            <div class="sysbox sysbox--hand">Owner&rsquo;s memory</div>
+            <div class="scatter__you">
+              <svg class="scatter__tangle" viewBox="0 0 400 42" preserveAspectRatio="none" aria-hidden="true">
+                <g fill="none" stroke="#C9C0AC" stroke-width="1.3">
+                  <path d="M20 0C40 21 150 13 200 40"/><path d="M60 0C80 25 160 17 200 40"/>
+                  <path d="M110 0C120 23 170 21 200 40"/><path d="M158 0C166 19 186 25 200 40"/>
+                  <path d="M212 0C216 19 198 23 200 40"/><path d="M252 0C244 23 214 21 200 40"/>
+                  <path d="M300 0C286 23 232 19 200 40"/><path d="M345 0C322 25 240 17 200 40"/>
+                  <path d="M385 0C356 21 250 13 200 40"/>
+                </g>
+              </svg>
+              <div class="youslip" style="min-height:78px;font-size:26px">You</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stack__layer" data-layer="after">
+          <h3 class="vh">What you would see instead</h3>
+          <div class="tabs">
+            <div class="tablist" role="tablist" id="fmt-tabs" aria-label="How you receive it">
+              <button class="tab" role="tab" id="tab-dash" data-fmt="dashboard" aria-selected="true" aria-controls="p-dash" tabindex="0">Dashboard</button>
+              <button class="tab" role="tab" id="tab-mail" data-fmt="email" aria-selected="false" aria-controls="p-mail" tabindex="-1">Morning email</button>
+              <button class="tab" role="tab" id="tab-sms" data-fmt="text" aria-selected="false" aria-controls="p-sms" tabindex="-1">Text message</button>
+            </div>
+
+            <div class="tabpanel" role="tabpanel" id="p-dash" aria-labelledby="tab-dash">
+              <div class="panel">
+                <div class="panel__bar"><span class="panel__hello">Good morning, Sarah</span><span class="small">Tuesday</span></div>
+                <div class="panel__body">
+                  <div class="grp grp--decide">
+                    <p class="grp__h"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#A9472A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.2l7.2 13.2H2.8z"/><path d="M10 8.4v3.2"/><path d="M10 14.1h.01"/></svg> Needs your decision <span class="grp__n">1</span></p>
+                    <div class="row"><span>Approve Friday&rsquo;s schedule change</span><button class="row__act" type="button" id="demo-approve" data-demo-approve>Approve</button></div>
+                  </div>
+                  <div class="grp grp--attn">
+                    <p class="grp__h"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#9A6700" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.1"/><path d="M10 6.1v4.2l2.7 1.6"/></svg> Needs your attention <span class="grp__n">4</span></p>
+                    <div class="row"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#9A6700" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.1"/><path d="M10 6.1v4.2l2.7 1.6"/></svg><span><b>2 invoices overdue</b> &mdash; <span class="amt">$1,340</span> total</span></div>
+                    <div class="row"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#9A6700" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.1"/><path d="M10 6.1v4.2l2.7 1.6"/></svg><span><b>2 staff certifications</b> expire within 14 days</span></div>
+                  </div>
+                  <div class="grp grp--done">
+                    <p class="grp__h"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#2F5D48" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.4l4.2 4.2L16.4 5.6"/></svg> Already handled <span class="grp__n">12</span></p>
+                    <div class="row"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#2F5D48" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.4l4.2 4.2L16.4 5.6"/></svg><span>3 payment reminders sent</span></div>
+                    <div class="row"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#2F5D48" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.4l4.2 4.2L16.4 5.6"/></svg><span>New hire paperwork received</span></div>
+                    <div class="row"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#2F5D48" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.4l4.2 4.2L16.4 5.6"/></svg><span>4 customer follow-ups scheduled</span></div>
+                    <div class="row"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#2F5D48" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.4l4.2 4.2L16.4 5.6"/></svg><span>Weekly summary prepared</span></div>
+                  </div>
+                  <div class="today">
+                    <div class="today__c"><p class="today__k">Today</p><p class="today__v">6 appointments</p></div>
+                    <div class="today__c"><p class="today__k">Staff</p><p class="today__v">2 actions</p></div>
+                    <div class="today__c"><p class="today__k">Receivables</p><p class="today__v">$4,850</p></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tabpanel" role="tabpanel" id="p-mail" aria-labelledby="tab-mail" hidden>
+              <div class="mail">
+                <div class="mail__h"><b>Your Tuesday summary</b>from AutomateSmall &middot; 6:30am</div>
+                <div class="mail__b">
+                  <p>Good morning, Sarah.</p>
+                  <p><b>One thing needs your decision:</b> approve Friday&rsquo;s schedule change.</p>
+                  <p><b>Four need your attention:</b></p>
+                  <ul>
+                    <li>2 invoices overdue, $1,340 total</li>
+                    <li>2 staff certifications expire within 14 days</li>
+                  </ul>
+                  <p><b>Twelve things were handled overnight,</b> including 3 payment reminders sent, new hire paperwork received, and 4 customer follow-ups scheduled.</p>
+                  <p>Today: 6 appointments, 2 staff actions, $4,850 receivables outstanding.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="tabpanel" role="tabpanel" id="p-sms" aria-labelledby="tab-sms" hidden>
+              <div class="sms">
+                <div class="bubble">Morning Sarah. 1 decision: approve Friday&rsquo;s schedule change. 2 invoices overdue ($1,340). 2 certifications expire in 14 days. 12 things handled. Reply HOLD to pause today&rsquo;s reminders.</div>
+                <p class="sms__time">6:30am</p>
+              </div>
+            </div>
+          </div>
+          <p class="exnote"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#5A5D61" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.1"/><path d="M10 9.2v4.2"/><path d="M10 6.4h.01"/></svg><span>Example. Yours is built around the tools you already use.</span></p>
+        </div>
+      </div>
     </div>
   </div>
 </section>

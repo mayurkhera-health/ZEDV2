@@ -107,8 +107,8 @@ if os.path.exists('robots.txt'):
 # A bulk edit once deleted the whole trust band and the FAQ section wrapper
 # without any other check noticing, because the page still parsed and the line
 # count went up. These assertions are cheap and would have caught it.
-EXPECTED_SECTIONS = ['recognition', 'teams', 'how', 'view', 'time',
-                     'story', 'pricing', 'own', 'faq', 'final']
+EXPECTED_SECTIONS = ['recognition', 'story', 'teams', 'time',
+                     'pricing', 'own', 'faq', 'final']
 found = set(re.findall(r'<section[^>]*id="([^"]+)"', home))
 for sec in EXPECTED_SECTIONS:
     if sec not in found:
@@ -121,9 +121,23 @@ for needle, what in [('class="trust"', 'the trust band'),
     if needle not in home:
         fail('index.html is missing %s (%s).' % (what, needle))
 
+# The FAQ was cut from 12 to 7 deliberately: the audit asked for 5-7 high-value
+# questions, and five of the twelve repeated reassurance the page already makes
+# elsewhere. Both bounds matter -- too few and the objections go unanswered,
+# too many and the page is padding again.
 n_faq = home.count('<details>')
-if n_faq < 10:
-    fail('index.html has only %d FAQ entries; expected at least 10.' % n_faq)
+if not (5 <= n_faq <= 8):
+    fail('index.html has %d FAQ entries; the target is 5-8 high-value questions.' % n_faq)
+
+# The structured copy is what search engines read. It silently carried
+# placeholder prices for weeks, so it is now checked against the page.
+import json as _json
+_ld = _json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', home, re.S).group(1))
+_faq = [g for g in _ld['@graph'] if g.get('@type') == 'FAQPage']
+if _faq and len(_faq[0]['mainEntity']) != n_faq:
+    fail('index.html shows %d FAQ entries but its structured data lists %d. '
+         'They must match, or search results quote answers the page does not give.'
+         % (n_faq, len(_faq[0]['mainEntity'])))
 
 # Every rail chip must point at a section that exists.
 for sec in re.findall(r'data-sec="([^"]+)"', home):
