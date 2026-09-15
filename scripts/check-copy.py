@@ -251,16 +251,43 @@ if forms_are_dead and not ('collects nothing at all' in privacy or privacy_says_
          'but privacy.html does not say so. One of the two is a false statement '
          'about data handling.')
 
-if forms_use_mailto and not (privacy_says_mailto and privacy_says_nothing_sent):
-    fail('the forms hand the message to the visitor\'s own email app (composeMail '
-         'in site.js), but privacy.html does not explain that. It must say the page '
-         'opens your own email app and sends nothing itself, or the page describes '
-         'a mechanism the site does not use.')
+# mailto means two different things depending on whether an endpoint exists:
+# the only way anything reaches us, or the fallback when the POST fails. The
+# privacy page has to describe whichever one is true.
+if forms_use_mailto and not forms_post:
+    if not (privacy_says_mailto and privacy_says_nothing_sent):
+        fail('with no endpoint configured, the mail app is the ONLY way anything '
+             'reaches us. privacy.html must say the page opens your own email app '
+             'and sends nothing itself.')
+
+if forms_use_mailto and forms_post:
+    if not privacy_says_mailto:
+        fail('the forms post to an endpoint but still fall back to the visitor\'s '
+             'mail app when that fails. privacy.html does not mention the fallback, '
+             'so it describes only half of what can happen.')
 
 if forms_post and privacy_says_nothing_sent:
     fail('something in the site now posts to a server, but privacy.html still tells '
          'visitors the site sends nothing anywhere. Update the privacy page BEFORE '
          'the change goes live, not after.')
+
+# Whoever receives the data has to be named, and named in the section that is
+# about who receives it. Checking the whole page would pass on the fonts
+# paragraph alone, which says nothing about where an enquiry goes.
+if forms_post:
+    _raw_privacy = io.open('privacy.html', encoding='utf-8').read()
+    _m = re.search(r'Who else can see it</h2>(.*?)<h2', _raw_privacy, re.S)
+    _section = re.sub(r'\s+', ' ', TAG.sub(' ', _m.group(1))) if _m else ''
+    if not _section:
+        fail('privacy.html has no "Who else can see it" section, so nothing says '
+             'where an enquiry goes.')
+    else:
+        for who in ['Google', 'Fly']:
+            if who not in _section:
+                fail('privacy.html\'s "Who else can see it" section does not name '
+                     '%s, which handles enquiry data or hosting. Name every '
+                     'processor there, or the page is vague exactly where it most '
+                     'needs to be specific.' % who)
 
 if forms_use_mailto and not re.search(r'mail-preview|ask-preview', home + io.open('book.html', encoding='utf-8').read() + io.open('services.html', encoding='utf-8').read()):
     fail('a mailto form has no on-screen fallback. mailto: silently does nothing '

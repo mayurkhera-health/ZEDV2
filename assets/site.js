@@ -18,7 +18,7 @@ var CONTACT = 'mayurk@automatesmall.com';
    See docs/form-endpoint-setup.md. While this is empty the forms fall back to
    opening the visitor's mail app, which works but is clunky -- so this is the
    one string that turns a real form on. */
-var FORM_ENDPOINT = '';
+var FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwQ5wxMI5_mhf8HHvgHG7j-gYcr-P0q1031JHxX36Yl3oglPXoISf_im4BhYXQzhIFEZA/exec';
 
 /* Content-Type is deliberately text/plain, not application/json. Anything else
    makes the browser send a CORS preflight, and Apps Script does not answer
