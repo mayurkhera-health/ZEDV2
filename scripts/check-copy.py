@@ -102,7 +102,7 @@ if os.path.exists('robots.txt'):
 # without any other check noticing, because the page still parsed and the line
 # count went up. These assertions are cheap and would have caught it.
 EXPECTED_SECTIONS = ['recognition', 'teams', 'how', 'view', 'time',
-                     'story', 'pricing', 'people', 'faq', 'final']
+                     'story', 'pricing', 'own', 'faq', 'final']
 found = set(re.findall(r'<section[^>]*id="([^"]+)"', home))
 for sec in EXPECTED_SECTIONS:
     if sec not in found:

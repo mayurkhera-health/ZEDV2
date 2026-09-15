@@ -75,7 +75,7 @@ p{ margin:0; }
 .lede{ font-size:clamp(18px,1.9vw,21px); line-height:1.55; color:var(--ink-soft); max-width:min(680px,68ch); }
 .small,.caption{ font-size:15px; line-height:1.5; color:var(--ink-soft); }
 
-/* Eyebrow: sentence case, ink-soft, 15-16px/600. Hero and C10 only. */
+/* Eyebrow: sentence case, ink-soft, 15-16px/600. Used sparingly. */
 .eyebrow{ font-size:16px; font-weight:600; color:var(--ink-soft); margin:0 0 12px; }
 
 .hand{ font-family:var(--hand); font-weight:400; }
@@ -403,7 +403,7 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
 .pr__t{ font-family:var(--display); font-weight:700; font-size:17px; margin-bottom:5px; }
 .pr__d{ font-size:15.5px; color:var(--ink-soft); }
 
-/* ---------- C10 people ---------- */
+/* ---------- C10 you own it (.people/.portrait: about.html) ---------- */
 .people{ display:grid; gap:clamp(26px,3.6vw,48px); align-items:start; }
 .people > *{ min-width:0; }
 @media (min-width:860px){ .people{ grid-template-columns:300px minmax(0,1fr); } }
