@@ -85,7 +85,7 @@ ship.
 |---|---|
 | Prices: assessment, first project, care plan | `index.html` C9, `assessment.html`, FAQ |
 | Sample assessment pages | `assessment.html` |
-| Legal entity, address, contact email, phone, city, region | `privacy.html`, `terms.html`, footer |
+| Legal entity name, registered address and governing jurisdiction | `privacy.html`, `terms.html` |
 | Booking scheduler (A1.8) | `assets/site.js`, `booking()` |
 | Written permission from Food Explorers, and the one real number | `food-explorers.html` |
 | Absolute `og:image` URL, canonical tags, sitemap | blocked on choosing a production domain |
