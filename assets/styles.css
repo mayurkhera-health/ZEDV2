@@ -490,6 +490,14 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
 .field .err{ display:flex; gap:7px; align-items:center; font-size:14.5px; color:var(--status-attention); font-weight:600; }
 .field .err[hidden]{ display:none; }
 .formdone{ padding:clamp(20px,3vw,28px); background:var(--ledger-tint); border:1px solid #BDD3C4; border-radius:var(--r-card); }
+/* Forms that are not connected yet. Deliberately NOT the green success
+   treatment: "nothing was sent" must not look like "sent". */
+.notlive{ padding:14px 16px; background:var(--sticky-tint); border:1px solid #E2CE87;
+  border-radius:var(--r-card); font-size:15.5px; line-height:1.5; color:var(--ink); }
+.notlive b{ font-weight:600; }
+.notlive p + p{ margin-top:8px; color:var(--ink-soft); }
+.notlive--form{ margin-bottom:20px; }
+.formdone.notlive, .ask__done.notlive{ background:var(--sticky-tint); border-color:#E2CE87; }
 .formdone[hidden]{ display:none; }
 .hp{ position:absolute; left:-9999px; }
 

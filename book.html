@@ -61,6 +61,11 @@
           <ul class="tags" id="booking-chip-list" style="list-style:none;margin:0;padding:0"></ul>
         </div>
 
+        <div class="notlive notlive--form">
+          <p><b>This form isn&rsquo;t connected yet.</b> It will check what you type and confirm on screen, but nothing reaches us and nobody will call you.</p>
+          <p>To reach us now, email us &mdash; the address is at the bottom of this page.</p>
+        </div>
+
         <form class="form" id="walkthrough" novalidate>
           <div class="field">
             <label for="biz">What kind of business?</label>
@@ -102,12 +107,13 @@
           <div class="hp" aria-hidden="true"><label for="company-website">Leave this blank</label><input type="text" id="company-website" tabindex="-1" autocomplete="off"></div>
 
           <div class="btn-row"><button class="btn btn--primary" type="submit">Find a time</button></div>
-          <p class="small">We use what you tell us to prepare for the call. Nothing else. We reply within one business day.</p>
+          <p class="small">Once this is connected we&rsquo;ll use what you tell us to prepare for the call, and nothing else.</p>
         </form>
 
-        <div class="formdone" id="walkthrough-done" hidden>
-          <h2 style="font-size:clamp(22px,2.6vw,28px)">Thanks &mdash; that&rsquo;s everything we need.</h2>
-          <p style="margin-top:14px;color:var(--ink-soft)">We&rsquo;ll read it before we call, so you won&rsquo;t have to explain it twice. Expect a reply with a couple of times to choose from.</p>
+        <div class="formdone notlive" id="walkthrough-done" hidden>
+          <h2 style="font-size:clamp(22px,2.6vw,28px)">Nothing was sent.</h2>
+          <p style="margin-top:14px;color:var(--ink-soft)">This form isn&rsquo;t connected yet, so your answers stayed in your browser and nobody has them. Sorry for the detour &mdash; we should have stopped you sooner.</p>
+          <p style="margin-top:8px;color:var(--ink-soft)">If you want a walkthrough, email us. The address is at the bottom of this page.</p>
           <!-- LAUNCH: replace this panel with the embedded scheduler (A1.8) and
                pass the answers above into the booking notes. -->
         </div>

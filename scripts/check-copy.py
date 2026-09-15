@@ -175,6 +175,23 @@ if not analytics_installed and not claims_no_analytics:
     fail('privacy.html no longer states that the site has no analytics, but no '
          'analytics provider is installed. Say what is actually true.')
 
+# --- Dead forms may not promise a reply --------------------------------------
+# The booking form said "expect a reply with a couple of times to choose from",
+# the services box said "we'll come back to you within a business day", and the
+# drawer said "Sent. Check your inbox in a minute." All three transmitted
+# nothing. A promise made to someone who just handed over their email is the
+# worst thing on a site to get wrong, so it is guarded rather than remembered.
+PROMISES = ['check your inbox', 'expect a reply', 'come back to you within',
+            'read it before we call']
+if forms_are_dead:
+    for page in pages:
+        flat = re.sub(r'\s+', ' ', TAG.sub(' ', COMMENT.sub(' ', io.open(page, encoding='utf-8').read()))).lower()
+        for promise in PROMISES:
+            if promise in flat:
+                fail('%s promises "%s" while the forms still transmit nothing '
+                     '(site.js carries a NOTE FOR LAUNCH). Say what actually '
+                     'happens, or connect the form.' % (page, promise))
+
 # --- The README must not contradict the site it documents --------------------
 # A stale README line ("the case-study slot is out of the page") survived the
 # case study going live, was read by an outside auditor, and came back as a
