@@ -21,7 +21,14 @@ placeholders on five pages. This makes the launch checklist runnable:
 prints exactly what is still blocking launch, and exits non-zero until the
 list is empty.
 """
-import glob, io, os, re, sys
+import glob, io, os, re, signal, sys
+
+# Piping this into `head` closes the pipe early and Python turns that into a
+# BrokenPipeError traceback, which reads like the checker crashed. It didn't.
+try:
+    signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+except (AttributeError, ValueError):
+    pass   # not POSIX, or not on the main thread
 
 PRODUCTION = ('--production' in sys.argv or
               os.environ.get('AUTOMATESMALL_ENV') == 'production')
