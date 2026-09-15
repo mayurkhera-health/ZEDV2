@@ -262,7 +262,7 @@
                 <div class="panel__body">
                   <div class="grp grp--decide">
                     <p class="grp__h"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#A9472A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.2l7.2 13.2H2.8z"/><path d="M10 8.4v3.2"/><path d="M10 14.1h.01"/></svg> Needs your decision <span class="grp__n">1</span></p>
-                    <div class="row"><span>Approve Friday&rsquo;s schedule change</span><button class="row__act" type="button">Approve</button></div>
+                    <div class="row"><span>Approve Friday&rsquo;s schedule change</span><button class="row__act" type="button" id="demo-approve" data-demo-approve>Approve</button></div>
                   </div>
                   <div class="grp grp--attn">
                     <p class="grp__h"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#9A6700" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.1"/><path d="M10 6.1v4.2l2.7 1.6"/></svg> Needs your attention <span class="grp__n">4</span></p>
@@ -566,7 +566,7 @@
 </main>
 
 <!-- Sticky check pill -->
-<button class="pill" type="button" id="pill"><b id="pill-n">0</b> <span id="pill-word">picked</span>. See what we&rsquo;d look at first</button>
+<button class="pill" type="button" id="pill">View results <span aria-hidden="true">&middot;</span> <b id="pill-n">0</b> <span id="pill-word">selected</span></button>
 
 <!-- Result panel -->
 <div class="scrim" id="scrim" hidden></div>
@@ -588,7 +588,9 @@
         <select id="drawer-industry"><option value="">All</option><option value="home">Home services &amp; trades</option><option value="studios">Studios &amp; learning centers</option><option value="professional">Professional services</option><option value="retail">Retail &amp; specialty</option><option value="health">Health &amp; dental practices</option><option value="childcare">Childcare &amp; after-school</option><option value="construction">Construction</option></select>
       </div>
       <ol class="picked" id="drawer-list"></ol>
-      <p class="timeline" id="drawer-time"></p>
+      <p class="timeline" id="drawer-time" hidden></p>
+      <p class="timeline" id="drawer-time-prompt" hidden>Want to know what this is costing you in time?
+        <a href="#time" data-close-drawer>Estimate my admin time</a></p>
       <p class="caveat"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#5A5D61" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.1"/><path d="M10 9.2v4.2"/><path d="M10 6.4h.01"/></svg><span>This is a starting point based on your answers, not a quote. A 30-minute walkthrough tells us much more.</span></p>
     </div>
   </div>

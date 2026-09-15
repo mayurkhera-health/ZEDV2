@@ -14,6 +14,9 @@
     statements: [],
     industry: null,
     hoursPerWeek: 10,
+    /* 10 is the slider's starting position, not something the visitor told us.
+       Until they move it, we may not say "you said". */
+    hoursConfirmed: false,
     teamCount: 0,
     teamHoursEach: 0,
     timeBackChoice: null
@@ -152,10 +155,22 @@
   (function nav() {
     var bar = $('#nav'), btn = $('#nav-toggle'), panel = $('#nav-panel');
     if (btn && panel) {
-      btn.addEventListener('click', function () {
-        var open = panel.classList.toggle('is-open');
+      var setOpen = function (open) {
+        panel.classList.toggle('is-open', open);
         btn.setAttribute('aria-expanded', String(open));
         btn.textContent = open ? 'Close' : 'Menu';
+      };
+      btn.addEventListener('click', function () {
+        setOpen(!panel.classList.contains('is-open'));
+      });
+      /* Escape closes the menu and puts focus back on the toggle, so a keyboard
+         user is not stranded inside a panel they cannot dismiss. Matches what
+         the result drawer already does. */
+      document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        if (!panel.classList.contains('is-open')) return;
+        setOpen(false);
+        btn.focus();
       });
     }
     if (bar) {
@@ -163,6 +178,26 @@
       window.addEventListener('scroll', onScroll, { passive: true });
       onScroll();
     }
+  })();
+
+  /* The Approve button in the example dashboard looked live and did nothing --
+     the same defect as the forms that confirmed without sending. It is a demo,
+     so it now says so when pressed, and undoes itself. */
+  (function demoApprove() {
+    var btn = document.querySelector('[data-demo-approve]');
+    if (!btn) return;
+    var label = btn.textContent;
+    btn.addEventListener('click', function () {
+      if (btn.classList.contains('is-done')) {          // press again to reset
+        btn.classList.remove('is-done');
+        btn.textContent = label;
+        btn.removeAttribute('aria-live');
+        return;
+      }
+      btn.classList.add('is-done');
+      btn.setAttribute('aria-live', 'polite');
+      btn.textContent = '\u2713 Approved \u2014 example only';
+    });
   })();
 
   /* ------------------------------------------------------------- C1/C6 stacks */
@@ -237,7 +272,11 @@
     var finalInView = finalSeen;
     pill.classList.toggle('is-on', n > 0 && !drawerOpen && !finalInView);
     $('#pill-n').textContent = String(n);
-    $('#pill-word').textContent = n === 1 ? 'picked' : 'picked';
+    $('#pill-word').textContent = 'selected';
+    /* The visible label is deliberately terse so it stays on one line at 320px.
+       Screen readers get the full sentence. */
+    pill.setAttribute('aria-label',
+      'View results: ' + n + (n === 1 ? ' problem' : ' problems') + ' selected');
   }
 
   (function wall() {
@@ -353,12 +392,19 @@
     // Count-up runs when the slider is released, not on every step (B8).
     function release() { countTo(annualHours()); track('calculator_set', { hours: check.hoursPerWeek }); }
 
-    slider.addEventListener('input', function () { setSlider(); big.textContent = 'About ' + num(annualHours()) + ' hours a year'; shown = annualHours(); });
+    slider.addEventListener('input', function () {
+      /* Only a real input event means the visitor chose this number. setSlider()
+         also runs once at init to paint the default, so the flag cannot live
+         inside it. */
+      check.hoursConfirmed = true;
+      setSlider(); big.textContent = 'About ' + num(annualHours()) + ' hours a year'; shown = annualHours();
+    });
     slider.addEventListener('change', release);
     slider.addEventListener('keyup', release);
 
     toggle.addEventListener('change', function () {
       fields.hidden = !toggle.checked;
+      check.hoursConfirmed = true;
       if (!toggle.checked) { check.teamCount = 0; check.teamHoursEach = 0; peopleOut.textContent = '0'; each.value = 0; eachOut.textContent = '0'; }
       paintText();
     });
@@ -446,13 +492,24 @@
     });
 
     var a = annualHours();
+    var timeEl = $('#drawer-time'), promptEl = $('#drawer-time-prompt');
+    if (!check.hoursConfirmed) {
+      /* They picked statements but never touched the calculator. Anything we
+         print here would be the default dressed up as their own answer, so
+         invite them to set it instead of inventing it. */
+      timeEl.hidden = true;
+      if (promptEl) promptEl.hidden = false;
+      return;
+    }
+    if (promptEl) promptEl.hidden = true;
+    timeEl.hidden = false;
     var txt = 'You said about ' + check.hoursPerWeek + (check.hoursPerWeek >= 20 ? '+' : '') +
               ' hours a week. That’s around ' + atLeast() + num(a) + ' hours a year, or ' +
               workWeeks(a) + ' full work weeks.';
     if (check.timeBackChoice) {
       txt += " That's a lot of room to " + check.timeBackChoice.charAt(0).toLowerCase() + check.timeBackChoice.slice(1) + '.';
     }
-    $('#drawer-time').textContent = txt;
+    timeEl.textContent = txt;
   }
 
   function trapFocus(e) {
@@ -506,6 +563,29 @@
     });
   }
   if (pill) pill.addEventListener('click', function () { openPanel(); });
+  /* The "estimate my admin time" link inside the drawer: close the panel
+     first, otherwise the calculator scrolls underneath an open overlay. */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('[data-close-drawer]');
+    if (!a) return;
+    closePanel();
+  });
+
+  /* Must be declared BEFORE booking() runs. It used to sit after the IIFE:
+     var hoists the declaration but not the assignment, so STATEMENT_TEXT was
+     undefined at execution and STATEMENT_TEXT[id] threw. The wrapper had
+     already been un-hidden, which is why "From your check" rendered above an
+     empty list instead of staying hidden. */
+  var STATEMENT_TEXT = {
+    R1: 'Entering the same information in three places',
+    R2: 'Follow-ups only happen if I remember',
+    R3: 'Spreadsheets everywhere',
+    R4: 'Five systems, still no clear picture',
+    R5: 'Checking employee paperwork by hand',
+    R6: 'Invoices going out late',
+    R7: 'How we do things lives in someone’s head',
+    R8: 'Chasing people for forms'
+  };
 
   /* ------------------------------------------------------- D4 booking prefill */
   (function booking() {
@@ -515,16 +595,25 @@
     try { saved = JSON.parse(sessionStorage.getItem('automatesmall.check') || 'null'); } catch (e) {}
     if (saved) {
       if (saved.industry) { var s = $('#biz'); if (s) s.value = saved.industry; }
+      /* Stored IDs can outlive the questions that produced them -- an old tab,
+         a bookmarked session, or a statement we renamed. Drop anything we can
+         no longer name rather than showing the visitor a raw "R9", and leave
+         the recap hidden if nothing survives. Un-hide only after we know we
+         have something to put in it. */
       var chipWrap = $('#booking-chips');
-      if (chipWrap && saved.statements && saved.statements.length) {
-        chipWrap.hidden = false;
+      var known = (saved.statements || []).filter(function (id) {
+        return Object.prototype.hasOwnProperty.call(STATEMENT_TEXT, id);
+      });
+      if (chipWrap && known.length) {
         var ul = $('#booking-chip-list');
-        saved.statements.forEach(function (id) {
+        ul.innerHTML = '';
+        known.forEach(function (id) {
           var li = document.createElement('li');
           li.className = 'tag';
-          li.textContent = (STATEMENT_TEXT[id] || id);
+          li.textContent = STATEMENT_TEXT[id];
           ul.appendChild(li);
         });
+        chipWrap.hidden = false;
       }
     }
     form.addEventListener('submit', function (e) {
@@ -549,16 +638,6 @@
     });
   })();
 
-  var STATEMENT_TEXT = {
-    R1: 'Entering the same information in three places',
-    R2: 'Follow-ups only happen if I remember',
-    R3: 'Spreadsheets everywhere',
-    R4: 'Five systems, still no clear picture',
-    R5: 'Checking employee paperwork by hand',
-    R6: 'Invoices going out late',
-    R7: 'How we do things lives in someone’s head',
-    R8: 'Chasing people for forms'
-  };
 })();
 
 /* "Not seeing yours?" — same posture as the booking form: validates, confirms,

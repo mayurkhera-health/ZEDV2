@@ -131,15 +131,15 @@
         <p>Thirteen is what owners ask us for most. It isn&rsquo;t everything. If the thing eating your week isn&rsquo;t on that list, we want to hear it.</p>
         <p class="small" style="margin-top:10px"><b>This box isn&rsquo;t connected yet</b> &mdash; it confirms on screen but sends nothing. Email us instead for now; the address is at the bottom of the page.</p>
       </div>
-      <form class="ask__box" id="ask" novalidate>
+      <form class="ask__box" id="ask" method="post" novalidate>
         <label class="vh" for="ask-what">What takes up too much of your time?</label>
-        <textarea id="ask-what" rows="3" placeholder="We&#39;re still chasing insurance certificates by hand every renewal&hellip;"></textarea>
+        <textarea id="ask-what" name="what_takes_time" required rows="3" placeholder="We&#39;re still chasing insurance certificates by hand every renewal&hellip;"></textarea>
         <div class="ask__row">
           <label class="vh" for="ask-email">Your email</label>
-          <input type="email" id="ask-email" placeholder="you@yourbusiness.com" autocomplete="email">
+          <input type="email" id="ask-email" name="email" required placeholder="you@yourbusiness.com" autocomplete="email">
           <button class="btn btn--primary" type="submit">Send it over</button>
         </div>
-        <p class="ask__note">No sign-up. Not connected yet &mdash; see the note on the left.</p>
+        <p class="ask__note">No sign-up. Not connected yet &mdash; see the note on the left. <a href="privacy.html">Privacy</a>.</p>
       </form>
       <p class="ask__done notlive" id="ask-done" hidden><b>Nothing was sent.</b> This box isn&rsquo;t connected yet, so what you typed stayed in your browser. Email us instead &mdash; the address is at the bottom of this page.</p>
     </div>

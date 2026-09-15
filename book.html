@@ -66,10 +66,10 @@
           <p>To reach us now, email us &mdash; the address is at the bottom of this page.</p>
         </div>
 
-        <form class="form" id="walkthrough" novalidate>
+        <form class="form" id="walkthrough" method="post" novalidate>
           <div class="field">
             <label for="biz">What kind of business?</label>
-            <select id="biz" data-required aria-describedby="biz-err">
+            <select id="biz" name="business_type" required data-required aria-describedby="biz-err">
               <option value="">Choose one</option>
               <option value="home">Home services &amp; trades</option>
               <option value="studios">Studios &amp; learning centers</option>
@@ -85,9 +85,9 @@
 
           <div class="field">
             <label for="size">Roughly how many people work there?</label>
-            <select id="size" data-required aria-describedby="size-err">
+            <select id="size" name="team_size" required data-required aria-describedby="size-err">
               <option value="">Choose one</option>
-              <option>1&ndash;5</option><option>6&ndash;15</option><option>16&ndash;50</option><option>50+</option>
+              <option value="1-5">1&ndash;5</option><option value="6-15">6&ndash;15</option><option value="16-50">16&ndash;50</option><option value="50+">50+</option>
             </select>
             <p class="err" id="size-err" hidden><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="#B3261E" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.1"/><path d="M10 6.3v4.4"/><path d="M10 13.6h.01"/></svg><span>Pick the closest range.</span></p>
           </div>
@@ -95,19 +95,19 @@
           <div class="field">
             <label for="pain">What eats up the most time? <span style="font-weight:400;color:var(--ink-soft)">(optional)</span></label>
             <p class="hint" id="pain-hint">The thing you&rsquo;d hand to somebody else tomorrow if you could.</p>
-            <textarea id="pain" aria-describedby="pain-hint"></textarea>
+            <textarea id="pain" name="what_takes_time" aria-describedby="pain-hint"></textarea>
           </div>
 
           <div class="field">
             <label for="email">Where should we reply?</label>
-            <input type="email" id="email" data-required aria-describedby="email-err" autocomplete="email">
+            <input type="email" id="email" name="email" required data-required autocomplete="email" aria-describedby="email-err" autocomplete="email">
             <p class="err" id="email-err" hidden><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="#B3261E" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.1"/><path d="M10 6.3v4.4"/><path d="M10 13.6h.01"/></svg><span>We need an email address so we can reply to you.</span></p>
           </div>
 
-          <div class="hp" aria-hidden="true"><label for="company-website">Leave this blank</label><input type="text" id="company-website" tabindex="-1" autocomplete="off"></div>
+          <div class="hp" aria-hidden="true"><label for="company-website">Leave this blank</label><input type="text" id="company-website" name="company_website" tabindex="-1" autocomplete="off"></div>
 
           <div class="btn-row"><button class="btn btn--primary" type="submit">Reach out to us</button></div>
-          <p class="small">Once this is connected we&rsquo;ll use what you tell us to prepare for the call, and nothing else.</p>
+          <p class="small">Once this is connected we&rsquo;ll use what you tell us to prepare for the call, and nothing else. <a href="privacy.html">What we do with your details</a>.</p>
         </form>
 
         <div class="formdone notlive" id="walkthrough-done" hidden>
