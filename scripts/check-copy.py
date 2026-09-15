@@ -361,6 +361,20 @@ if cost_q and 'quoted' not in cost_q.group(0).lower():
     fail('the "How much does this cost?" answer no longer says pricing is quoted. '
          'If the model changed, update the pricing steps and services.html too.')
 
+# --- The two industry pickers must offer the same choices --------------------
+# A choice made in the result drawer is carried into the booking form through
+# sessionStorage. If the lists drift, a visitor picks something in one and the
+# other silently falls back to "Choose one".
+_drawer = re.search(r'id="drawer-industry".*?</select>', home, re.S)
+_biz    = re.search(r'id="biz".*?</select>', io.open('book.html', encoding='utf-8').read(), re.S)
+if _drawer and _biz:
+    _dv = re.findall(r'value="([a-z]*)"', _drawer.group(0))
+    _bv = re.findall(r'value="([a-z]*)"', _biz.group(0))
+    if _dv != _bv:
+        fail('the drawer industry list and the booking form list differ (%s). A '
+             'choice made in one cannot prefill the other.'
+             % ', '.join(sorted(set(_dv) ^ set(_bv)) or ['order differs']))
+
 # --- The README must not contradict the site it documents --------------------
 # A stale README line ("the case-study slot is out of the page") survived the
 # case study going live, was read by an outside auditor, and came back as a
