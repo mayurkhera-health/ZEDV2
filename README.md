@@ -13,7 +13,7 @@ python3 -m http.server 8080
 index.html                  Home — C1–C12 in order
 how-it-works.html           D2 — the five steps expanded, plus engagement
 assessment.html             D1 — exactly what the assessment delivers
-about.html                  D3 — founder, what AutomateSmall is, who we're for
+about.html                  D3 — what AutomateSmall is, who we're for
 book.html                   D4 — three questions, then the scheduler
 privacy.html / terms.html   Plain-language, with a summary at the top
 404.html                    Styled, uses the site's own stylesheet
@@ -85,8 +85,6 @@ ship.
 | What | Where |
 |---|---|
 | Prices: assessment, first project, care plan | `index.html` C9, `assessment.html`, FAQ |
-| Founder name and 80–120 word note | `index.html` C10, `about.html` |
-| Founder photograph (real, not a studio shot) | `.portrait` blocks |
 | Sample assessment pages | `assessment.html` |
 | Legal entity, address, contact email, phone, city, region | `privacy.html`, `terms.html`, footer |
 | Booking scheduler (A1.8) | `assets/site.js`, `booking()` |

@@ -73,7 +73,7 @@ p{ margin:0; }
 .prose{ max-width:min(680px,68ch); }
 .prose p + p{ margin-top:1em; }
 .lede{ font-size:clamp(18px,1.9vw,21px); line-height:1.55; color:var(--ink-soft); max-width:min(680px,68ch); }
-.small,.caption{ font-size:15px; line-height:1.5; color:var(--ink-soft); }
+.small{ font-size:15px; line-height:1.5; color:var(--ink-soft); }
 
 /* Eyebrow: sentence case, ink-soft, 15-16px/600. Used sparingly. */
 .eyebrow{ font-size:16px; font-weight:600; color:var(--ink-soft); margin:0 0 12px; }
@@ -337,27 +337,11 @@ a:hover{ color:var(--brick-deep); }
 .bubble + .bubble{ margin-top:10px; }
 .sms__time{ margin-top:8px; font-size:14px; color:var(--ink-soft); }
 
-/* ---------- C7 plate ---------- */
+/* ---------- C7 chips (recognition wall, booking recall) ---------- */
 .chips{ display:flex; flex-wrap:wrap; gap:9px; }
 .chip{ min-height:44px; padding:10px 16px; border:1px solid var(--line); border-radius:999px; background:var(--card); color:var(--ink-soft); font:600 15.5px var(--body); cursor:pointer; }
 .chip:hover{ color:var(--ink); border-color:var(--ink-soft); }
 .chip[aria-checked="true"],.chip[aria-pressed="true"]{ background:var(--ink); border-color:var(--ink); color:var(--paper); }
-.filterbar{ margin-bottom:clamp(24px,3vw,32px); }
-
-.cards{ display:grid; gap:16px; }
-.cards > *{ min-width:0; }
-@media (min-width:720px){ .cards{ grid-template-columns:1fr 1fr; } }
-.wf{ display:flex; flex-direction:column; gap:12px; padding:clamp(18px,2.3vw,24px); background:var(--card); border:1px solid var(--line); border-radius:var(--r-card); }
-.wf[hidden]{ display:none; }
-.wf__t{ font-family:var(--display); font-weight:700; font-size:19px; }
-.wf__out{ font-weight:500; }
-.wf__flow{ font-size:15px; color:var(--ink-soft); line-height:1.55; overflow-wrap:anywhere; }
-.wf__flow i{ font-style:normal; color:var(--line); padding:0 4px; }
-.wf__ex{ font-size:15.5px; color:var(--ledger); font-weight:500; padding-left:13px; border-left:2px solid var(--ledger); }
-.wf__ex[hidden]{ display:none; }
-.wf__you{ margin-top:auto; padding-top:12px; border-top:1px dashed var(--line); display:flex; gap:9px; align-items:flex-start; font-size:15px; color:var(--ink-soft); }
-.wf__you svg{ flex:none; margin-top:3px; }
-.wf__you b{ color:var(--ink); font-weight:600; }
 
 /* ---------- C8 calculator ---------- */
 .calc{ display:grid; gap:clamp(24px,3.4vw,44px); align-items:start; }
@@ -403,14 +387,11 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
 .pr__t{ font-family:var(--display); font-weight:700; font-size:17px; margin-bottom:5px; }
 .pr__d{ font-size:15.5px; color:var(--ink-soft); }
 
-/* ---------- C10 you own it (.people/.portrait: about.html) ---------- */
-.people{ display:grid; gap:clamp(26px,3.6vw,48px); align-items:start; }
-.people > *{ min-width:0; }
-@media (min-width:860px){ .people{ grid-template-columns:300px minmax(0,1fr); } }
-.portrait{ aspect-ratio:4/5; display:grid; place-items:center; padding:24px; text-align:center; background:var(--paper-deep); border:1px solid var(--line); border-radius:var(--r-card); }
-.portrait__n{ font-family:var(--display); font-weight:700; font-size:38px; color:var(--line); margin-bottom:10px; }
-.portrait__t{ font-size:14px; color:var(--ink-soft); max-width:22ch; line-height:1.45; }
+/* ---------- C10 you own it ---------- */
 .own{ margin-top:clamp(32px,4vw,48px); padding-top:clamp(26px,3vw,34px); border-top:1px solid var(--line); }
+/* The rule above separates .own from a block above it. It is now the first
+   thing in its section, where that leaves a border floating over nothing. */
+.own:first-child{ margin-top:0; padding-top:0; border-top:0; }
 .own__list{ list-style:none; margin:16px 0 0; padding:0; display:grid; gap:10px; }
 @media (min-width:680px){ .own__list{ grid-template-columns:1fr 1fr; } }
 .own__list li{ display:flex; gap:10px; align-items:flex-start; font-weight:500; }
