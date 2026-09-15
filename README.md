@@ -102,15 +102,27 @@ are correct rather than merely present.
 | Prices: assessment, first project, care plan | `index.html` C9, `assessment.html`, FAQ |
 | Sample assessment pages | `assessment.html` |
 | Legal entity name, registered address and governing jurisdiction | `privacy.html`, `terms.html` |
-| Booking scheduler (A1.8) | `assets/site.js`, `booking()` |
-| The one real number in the case study; and written permission if the client is ever to be named for real | `kitchen-club.html` |
-| Absolute `og:image` URL, canonical tags, sitemap | blocked on choosing a production domain |
+| A real number in the case study, and written permission if the client is ever to be named for real | `kitchen-club.html` |
 | Real recognition statements from 8–10 owner interviews (A1.6) | `index.html` C2 |
+| Founder name, photo and story | removed at the owner's instruction — see *Deliberately absent* |
+| Where credentials are stored and who has access | the "Is my data safe?" answer says neither |
 
-The booking form and the "not seeing yours?" box both **validate and confirm
-but transmit nothing**. Each warns the visitor before and after submitting.
-Connect them to a relay (Formspree or similar) or take those paths down
-before launch.
+Nothing in that table blocks launch. `check-copy.py --production` is the
+authority on what does, and as of 16 Sep 2026 it lists only the three
+indexing switches.
+
+### The forms are live
+
+Both the walkthrough form and the "not seeing yours?" box POST to a Google
+Apps Script web app running in the owner's own account, which emails the
+enquiry on with Reply-To set to the visitor. Confirmed working end to end on
+16 Sep 2026, including the part I could not test from a sandbox: Apps Script
+does return the CORS header the browser needs to read the reply, so the POST
+path resolves rather than silently falling back.
+
+The mail-app fallback is still there and still wired. It is now a safety net
+for an endpoint that is down or unreachable, not the normal path. Setup and
+the script itself are in `docs/form-endpoint-setup.md`.
 
 ## Deliberately absent
 
