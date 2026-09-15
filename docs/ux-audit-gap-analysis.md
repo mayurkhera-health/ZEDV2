@@ -20,7 +20,7 @@ the result drawer does.
 | 4 | False personalization ("You said…") | **Missing** — confirmed |
 | 5 | Mobile floating CTA | **Missing** — confirmed, 160×132px at 320px |
 | 6 | Hero doesn't say what this is | **Partially implemented** |
-| 7 | Reorganize 13 services | **Conflicts with your instruction — needs your call** |
+| 7 | Reorganize 13 services | **Decided: keep flat. Closed.** |
 | 8 | Move proof earlier | **Missing** + needs owner input |
 | 9 | Calculator claims | **Missing** — confirmed |
 | 10 | Simplify buying journey | **Missing** — confirmed, 3 competing systems |
@@ -144,19 +144,29 @@ the audience ("3–50 people") is only in an eyebrow.
 Weaker than the audit implies, but the direction is right. **Needs your call**
 — this is brand voice, not a defect.
 
-## 7 — Reorganize services · CONFLICTS WITH YOUR INSTRUCTION
+## 7 — Reorganize services · DECIDED: KEEP FLAT · closed
 
 The audit wants the 13 services grouped into 3–4 problem groups.
 
-**You told me the opposite on 15 Sep:** *"i dont want you to start by clubing
-the services into groups. Keep them separate for now.. you have that later on
-the page 'Or take a bundle'."* I implemented that (`71b24f4`).
+**The owner has decided against it, twice.** First on 15 Sep: *"i dont want
+you to start by clubing the services into groups. Keep them separate for now..
+you have that later on the page 'Or take a bundle'."* Then again on 16 Sep,
+after the grouping was proposed a second time and stopped mid-edit: *"Keep
+them flat, don't group them."*
 
-Current state: 13 flat `.svc` cards + a bundles section below — which is
-close to what the audit asks for, just ordered the other way round.
+Current and intended state: 13 flat `.svc` cards, with the bundles section
+below for anyone who wants them packaged. That already gives a visitor both
+routes — pick one problem, or take a set — just in the opposite order to the
+audit's preference.
 
-**I am not reversing your explicit instruction on an auditor's say-so.** Tell
-me which you want.
+**This is settled. Do not re-raise it from the audit document.** If it is
+revisited it should be because the owner asks, or because real visitor
+behaviour says the flat list is not working — not because a finding list
+still has it open.
+
+Still outstanding regardless of grouping, and needing owner input rather than
+a layout change: what each service includes and excludes, any prerequisites,
+and a typical timeline.
 
 Also missing per finding, regardless of grouping: what's included/excluded,
 prerequisites, timeline, and a "Discuss this problem" CTA that carries the
@@ -290,10 +300,10 @@ input preservation on failure, the end-to-end test enquiry, privacy rewrite.
 **Batch 3 — needs prices**
 Single pricing source of truth across all five surfaces.
 
-**Batch 4 — content restructure, your call on each**
-Hero positioning · services grouping (conflicts with your instruction) ·
-proof earlier · homepage shortening · unified buying journey · calculator
-framing.
+**Batch 4 — content restructure** (done, commit `2c4e47e`)
+Hero positioning · proof earlier · homepage shortening · unified buying
+journey. Services grouping was declined by the owner; calculator framing
+(finding 9) is the one item from this batch still open.
 
 **Batch 5 — production hardening**
 Titles now; canonical, absolute og, sitemap once a domain exists. Analytics
