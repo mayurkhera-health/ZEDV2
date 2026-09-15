@@ -122,21 +122,27 @@ for page in pages:
                  'Use a placeholder, or redact it.' % (page, addr))
 
 # --- Indexability, in whichever direction the mode requires -------------------
-_nginx  = io.open('nginx.conf', encoding='utf-8').read() if os.path.exists('nginx.conf') else ''
-_robots = io.open('robots.txt', encoding='utf-8').read() if os.path.exists('robots.txt') else ''
+# Two hosts, two ways of setting headers: nginx.conf on Fly, _headers on
+# Cloudflare Pages. Whichever exists has to agree with the mode, or the launch
+# step gets done on one and forgotten on the other.
+_nginx   = io.open('nginx.conf', encoding='utf-8').read() if os.path.exists('nginx.conf') else ''
+_cfhdrs  = io.open('_headers', encoding='utf-8').read() if os.path.exists('_headers') else ''
+_robots  = io.open('robots.txt', encoding='utf-8').read() if os.path.exists('robots.txt') else ''
 
 if PRODUCTION:
     # The inverse of the staging rule. Shipping to a real domain with the
     # staging guards still on means nobody ever finds the site.
-    if 'noindex' in _nginx:
-        fail('nginx.conf still sends X-Robots-Tag: noindex. Remove it before '
-             'production, or the live site will never be indexed.')
+    for _name, _txt in [('nginx.conf', _nginx), ('_headers', _cfhdrs)]:
+        if 'noindex' in _txt:
+            fail('%s still sends X-Robots-Tag: noindex. Remove it before '
+                 'production, or the live site will never be indexed.' % _name)
     if re.search(r'^\s*Disallow:\s*/\s*$', _robots, re.M):
         fail('robots.txt still has a blanket "Disallow: /". Remove it before '
              'production, or crawlers will skip the whole site.')
 else:
-    if _nginx and 'noindex' not in _nginx:
-        fail('nginx.conf is missing the noindex header (staging carries placeholders).')
+    for _name, _txt in [('nginx.conf', _nginx), ('_headers', _cfhdrs)]:
+        if _txt and 'noindex' not in _txt:
+            fail('%s is missing the noindex header (staging carries placeholders).' % _name)
     if _robots and 'Disallow: /' not in _robots:
         fail('robots.txt is not disallowing crawlers.')
 

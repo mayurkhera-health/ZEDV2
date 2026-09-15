@@ -1,0 +1,19 @@
+# Cloudflare Pages headers. This replaces what nginx.conf does on Fly.
+#
+# STAGING ONLY -- X-Robots-Tag keeps the site out of search results while it
+# still carries placeholders. Removing it is a deliberate launch step, and
+# scripts/check-copy.py --production fails while it is still here.
+/*
+  X-Robots-Tag: noindex, nofollow, noarchive
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Cache-Control: no-cache
+
+# Assets are not fingerprinted -- styles.css and site.js never change name --
+# so they revalidate rather than being held. Fingerprint them at launch and a
+# long max-age can go back here.
+/assets/*
+  X-Robots-Tag: noindex, nofollow, noarchive
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Cache-Control: no-cache
