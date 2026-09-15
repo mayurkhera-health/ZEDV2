@@ -81,7 +81,13 @@ for line in re.findall(r'data-ex-health="([^"]*)"', home):
 # Nothing resembling a live address may reach a published page; the only
 # addresses allowed are the obvious example one on the booking form and the
 # marked [contact email] placeholders.
-ALLOWED_EMAILS = {'you@yourbusiness.com'}
+#
+# mayurk@automatesmall.com is the business contact address and is meant to be
+# public -- it is in the footer of every page and on both legal pages. It is
+# listed here deliberately, as an allowlist entry, so that adding it did not
+# mean weakening or disabling the check that keeps every OTHER real address
+# out. Anything not on this list still fails the build.
+ALLOWED_EMAILS = {'you@yourbusiness.com', 'mayurk@automatesmall.com'}
 for page in pages:
     raw = io.open(page, encoding='utf-8').read()
     for addr in set(re.findall(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}', raw)):
