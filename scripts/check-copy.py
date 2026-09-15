@@ -122,40 +122,25 @@ for page in pages:
                  'Use a placeholder, or redact it.' % (page, addr))
 
 # --- Indexability, in whichever direction the mode requires -------------------
-# Two hosts, two ways of setting headers: nginx.conf on Fly, _headers on
-# Cloudflare Pages. Whichever exists has to agree with the mode, or the launch
-# step gets done on one and forgotten on the other.
-_nginx   = io.open('nginx.conf', encoding='utf-8').read() if os.path.exists('nginx.conf') else ''
+# One host now: Cloudflare Pages, configured by _headers. The Fly build and
+# its nginx.conf were deleted on 16 Sep 2026, so the two-host rules that used
+# to live here are gone with it.
 _cfhdrs  = io.open('_headers', encoding='utf-8').read() if os.path.exists('_headers') else ''
 _robots  = io.open('robots.txt', encoding='utf-8').read() if os.path.exists('robots.txt') else ''
 
 if PRODUCTION:
     # The inverse of the staging rule. Shipping to a real domain with the
     # staging guards still on means nobody ever finds the site.
-    # _headers is the LIVE host (Cloudflare Pages -> automatesmall.com).
     if 'noindex' in _cfhdrs:
         fail('_headers still sends X-Robots-Tag: noindex. Remove it, or the '
              'live site will never be indexed.')
-
-    # nginx.conf is the Fly build, which is now a stale duplicate of the same
-    # site on a different hostname. The rule INVERTS for it: two indexable
-    # copies compete with each other, and the older one has no canonical tags.
-    # It must keep noindex for as long as the app exists at all.
-    if _nginx and 'noindex' not in _nginx:
-        fail('nginx.conf (the Fly build) has lost its noindex. Fly is a stale '
-             'duplicate of the live site -- if it is indexable it competes with '
-             'automatesmall.com. Put it back, or shut the Fly app down and '
-             'delete nginx.conf, fly.toml and the Dockerfile.')
     if re.search(r'^\s*Disallow:\s*/\s*$', _robots, re.M):
         fail('robots.txt still has a blanket "Disallow: /". Remove it before '
              'production, or crawlers will skip the whole site.')
 else:
-    for _name, _txt in [('nginx.conf', _nginx), ('_headers', _cfhdrs)]:
-        if _txt and 'noindex' not in _txt:
-            fail('%s is missing the noindex header (staging carries placeholders).' % _name)
-    # Staging mode no longer describes reality now that the site is live; the
-    # production gate is the one that matters. Left in place for a future
-    # pre-launch branch.
+    # Staging mode is for a pre-launch branch, not for main, which is live.
+    if _cfhdrs and 'noindex' not in _cfhdrs:
+        fail('_headers is missing the noindex header (staging carries placeholders).')
     if _robots and 'Disallow: /' not in _robots:
         fail('robots.txt is not disallowing crawlers.')
 
@@ -421,7 +406,6 @@ if PRODUCTION:
     print('  No placeholders. The live site is indexable and crawlable.')
     print('\n  Things this cannot see from the repository:')
     print('    - whether automatesmall.com actually resolves and serves this build')
-    print('    - whether the old Fly app is still running a stale copy of the site')
     print('    - whether the sitemap has been submitted in Google Search Console')
 elif found_placeholders:
     # Visible every run so these cannot quietly pile up again.

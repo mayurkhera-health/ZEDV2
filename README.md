@@ -57,7 +57,7 @@ It fails the build on:
   carry *Example. Yours is built around the tools you already use.*
 - **No all-caps labels (B3).**
 - **No patient-record examples (A1.4)** in any health-industry line.
-- **Staging stays non-indexable** while `nginx.conf` and `robots.txt` exist.
+- **Production is indexable.** `_headers` and `robots.txt` say so, and the production gate enforces it.
 
 ## The shared check (C0)
 
@@ -87,7 +87,7 @@ python3 scripts/check-copy.py --production # the launch gate: placeholders are f
 ```
 
 Staging still insists the site stays out of search results. Production inverts
-that: it fails if `nginx.conf` still sends `noindex` or `robots.txt` still has
+that: it fails if `_headers` still sends `noindex` or `robots.txt` still has
 a blanket `Disallow: /`, because shipping with the staging guards on means
 nobody ever finds the site.
 
@@ -148,70 +148,52 @@ the script itself are in `docs/form-endpoint-setup.md`.
   real gap for a trust-led service business: there is currently no person on
   the site for a visitor to buy.
 
-## Staging on Fly.io
+## Hosting — Cloudflare Pages
+
+Live at **https://automatesmall.com** since 16 Sep 2026. Fly.io was retired the
+same day; the Dockerfile, `nginx.conf`, `fly.toml` and both deploy scripts were
+deleted, along with the GitHub workflow that had failed on every one of its 21
+runs for want of a `FLY_API_TOKEN` nobody ever set.
+
+There is no deploy command any more. Push to `main` and Cloudflare builds it.
+
+| Pages setting | Value |
+|---|---|
+| Framework preset | None |
+| Build command | `bash scripts/build.sh` |
+| Build output directory | `dist` |
+| Production branch | `main` |
+
+`scripts/build.sh` assembles only what a visitor should see: the ten pages,
+`robots.txt`, `sitemap.xml`, `assets/`, `_headers`, and a version stamp. It
+exists because Pages publishes a directory, and the repository root contains
+`docs/` — including a UX audit describing everything unfinished about the site.
+
+`_headers` does what `nginx.conf` used to: nosniff, referrer policy, and
+`Cache-Control: no-cache` while `styles.css` and `site.js` are unfingerprinted.
+Fingerprint them and a long `max-age` can go back.
 
 ### Telling a current deploy from a stale one
 
 Every build stamps its commit at `/version.txt`:
 
 ```bash
-curl -s https://automatesmall-staging.fly.dev/version.txt   # -> c644f82
-git rev-parse --short HEAD                                  # should match
+curl -s https://automatesmall.com/version.txt
+git rev-parse --short HEAD
 ```
 
-Both deploy scripts now refuse to run from a checkout that is behind
-`origin`, pass the commit into the image, and compare the live value after
-deploying. This existed because it didn't: an old build sat on staging
-looking current, and nothing on the page or in the output could tell you.
-`SKIP_SYNC_CHECK=1` overrides the refusal if you really mean it.
+Those should match. This exists because once they didn't: an old build sat on
+staging looking current, and nothing on the page or in any deploy output could
+tell you which was which. On Pages the stamp comes from `CF_PAGES_COMMIT_SHA`.
 
+### Indexing
 
-The app is `automatesmall-staging`, a **new, standalone Fly app**. It has no
-relationship to `fuelup-youth` (the frozen AthFuelPath rollback snapshot);
-`scripts/deploy-staging.sh` refuses to deploy if `fly.toml` ever names it.
+The site is indexable. `_headers` sends no `X-Robots-Tag`, `robots.txt` allows
+everything and points at the sitemap.
 
-```
-Dockerfile                  nginx:1.27-alpine serving the files on :8080
-nginx.conf                  routing, noindex headers, gzip, 404
-fly.toml                    app config, scales to zero when idle
-scripts/deploy-staging.sh   guarded deploy
-robots.txt                  Disallow: / — staging must not be indexed
-404.html                    styled, uses the site's own stylesheet
-```
-
-First deploy, from a machine with `flyctl` installed and logged in:
-
-```bash
-cd ZEDV2
-flyctl apps create automatesmall-staging      # name must be free across all of Fly
-flyctl deploy --app automatesmall-staging --ha=false
-```
-
-After that, use the guarded script — it refuses to deploy a dirty tree, so the
-live URL always corresponds to a commit:
-
-```bash
-./scripts/deploy-staging.sh
-```
-
-Lands at `https://automatesmall-staging.fly.dev`.
-
-### Cost
-
-`min_machines_running = 0` and `auto_stop_machines = "stop"`. The machine stops
-when idle and starts on the next request, so an unvisited staging site runs no
-compute. First request after an idle period takes an extra moment to wake.
-
-Fly runs a VM to serve 146KB of static files. If cost or simplicity matters more
-than keeping everything on one vendor, Cloudflare Pages or Netlify would host
-this for free with no Dockerfile — the site is plain static output, so moving it
-is a drag-and-drop.
-
-### Not indexable, on purpose
-
-`X-Robots-Tag: noindex, nofollow, noarchive` is set **once**, in `nginx.conf`,
-plus `robots.txt`. That is deliberately the only place, so there is one line to
-delete at launch. Do not add a second copy in `fly.toml`.
+To hide work in progress, push a branch — Cloudflare serves previews on their
+own hostnames — rather than putting `noindex` back on production.
+`scripts/check-copy.py --production` fails if it reappears.
 
 ### Before showing it to anyone outside the business
 

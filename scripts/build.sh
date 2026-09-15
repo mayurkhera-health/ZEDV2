@@ -2,7 +2,7 @@
 # Assemble the publishable site into dist/.
 #
 # Cloudflare Pages publishes a DIRECTORY, so without this it would publish the
-# repository root -- including docs/, scripts/, the Dockerfile and the UX audit,
+# repository root -- including docs/, scripts/ and the UX audit,
 # which is internal commentary about the site being unfinished. Only what a
 # visitor should see goes into dist/.
 set -euo pipefail
