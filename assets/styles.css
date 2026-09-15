@@ -644,8 +644,6 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
   border-radius:var(--r-panel); box-shadow:var(--shadow-panel); background:var(--card); }
 .cs-shot figcaption{ margin-top:12px; font-size:15.5px; color:var(--ink-soft); max-width:min(680px,68ch); }
 
-.cs-number{ display:block; margin-top:20px; padding:14px 16px; white-space:normal;
-  max-width:min(680px,68ch); line-height:1.5; }
 
 /* ==========================================================================
    Services catalogue. Two taxonomies live on this page — functional groups

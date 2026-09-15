@@ -13,6 +13,7 @@ mkdir -p dist
 
 cp ./*.html dist/
 cp robots.txt dist/
+[ -f sitemap.xml ] && cp sitemap.xml dist/
 cp -R assets dist/assets
 [ -f _headers ] && cp _headers dist/_headers
 
