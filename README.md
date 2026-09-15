@@ -78,8 +78,24 @@ reads as "about 500 hours a year, or 12.5 full work weeks."
 
 ## Before launch — the A1 decisions and every placeholder
 
-Search for `tofill` and for `PHOTO SLOT`. Nothing with a yellow highlight may
-ship.
+Nothing with a yellow highlight may ship. That is no longer a note you have to
+remember -- it is a gate you can run:
+
+```bash
+python3 scripts/check-copy.py              # staging: placeholders allowed, listed every run
+python3 scripts/check-copy.py --production # the launch gate: placeholders are failures
+```
+
+Staging still insists the site stays out of search results. Production inverts
+that: it fails if `nginx.conf` still sends `noindex` or `robots.txt` still has
+a blanket `Disallow: /`, because shipping with the staging guards on means
+nobody ever finds the site.
+
+Run the production gate to see exactly what is still blocking launch. Three
+things it deliberately does NOT check, because they cannot be checked from the
+repo: canonical tags and an absolute `og:image` (both need the real domain), a
+test enquiry actually sent and received, and whether the legal entity details
+are correct rather than merely present.
 
 | What | Where |
 |---|---|

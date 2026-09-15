@@ -4,9 +4,28 @@
 Run before every deploy. CI runs this too; it is the single source of truth
 for the rules, so they cannot drift between a local check and the pipeline.
 
-    python3 scripts/check-copy.py
+    python3 scripts/check-copy.py              # staging (default)
+    python3 scripts/check-copy.py --production # the launch gate
+
+STAGING allows placeholders -- that is the point of staging -- but prints an
+inventory of them on every run so they can never quietly accumulate. It also
+insists the site stays out of search results.
+
+PRODUCTION inverts both. Placeholders become hard failures, and the staging
+noindex must be GONE. The README has always said "nothing with a yellow
+highlight may ship"; until now nothing enforced it, so the build passed with
+placeholders on five pages. This makes the launch checklist runnable:
+
+    python3 scripts/check-copy.py --production
+
+prints exactly what is still blocking launch, and exits non-zero until the
+list is empty.
 """
 import glob, io, os, re, sys
+
+PRODUCTION = ('--production' in sys.argv or
+              os.environ.get('AUTOMATESMALL_ENV') == 'production')
+MODE = 'PRODUCTION' if PRODUCTION else 'staging'
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(ROOT)
@@ -95,13 +114,50 @@ for page in pages:
             fail('%s contains what looks like a real email address (%s). '
                  'Use a placeholder, or redact it.' % (page, addr))
 
-# --- Staging must not be indexable ------------------------------------------
-if os.path.exists('nginx.conf'):
-    if 'noindex' not in io.open('nginx.conf', encoding='utf-8').read():
+# --- Indexability, in whichever direction the mode requires -------------------
+_nginx  = io.open('nginx.conf', encoding='utf-8').read() if os.path.exists('nginx.conf') else ''
+_robots = io.open('robots.txt', encoding='utf-8').read() if os.path.exists('robots.txt') else ''
+
+if PRODUCTION:
+    # The inverse of the staging rule. Shipping to a real domain with the
+    # staging guards still on means nobody ever finds the site.
+    if 'noindex' in _nginx:
+        fail('nginx.conf still sends X-Robots-Tag: noindex. Remove it before '
+             'production, or the live site will never be indexed.')
+    if re.search(r'^\s*Disallow:\s*/\s*$', _robots, re.M):
+        fail('robots.txt still has a blanket "Disallow: /". Remove it before '
+             'production, or crawlers will skip the whole site.')
+else:
+    if _nginx and 'noindex' not in _nginx:
         fail('nginx.conf is missing the noindex header (staging carries placeholders).')
-if os.path.exists('robots.txt'):
-    if 'Disallow: /' not in io.open('robots.txt', encoding='utf-8').read():
+    if _robots and 'Disallow: /' not in _robots:
         fail('robots.txt is not disallowing crawlers.')
+
+# --- Placeholders: inventoried on staging, fatal in production ----------------
+# The README has always said nothing with a yellow highlight may ship. This is
+# that rule, in code. Kept as one list so the README and the gate cannot drift.
+PLACEHOLDERS = [
+    (r'class="tofill"',               'a yellow [placeholder] span'),
+    (r'PHOTO SLOT',                   'an unfilled photo slot'),
+    (r'automatesmall\.example',       'the example domain in structured data'),
+    (r'Sample pages to be added',     'a promised sample that does not exist'),
+    (r'\[legal entity name',          'the legal entity blank'),
+    (r'\[contact email\]',            'the contact email blank'),
+    (r'\[price to be confirmed\]',    'an unset price'),
+    (r'\[fixed price\]',              'an unset price'),
+    (r'\[\$X',                         'an unset price'),
+    (r'goes here before',             'an editorial instruction left in the copy'),
+]
+found_placeholders = []
+for page in pages:
+    raw = io.open(page, encoding='utf-8').read()
+    for pattern, what in PLACEHOLDERS:
+        for _ in re.finditer(pattern, raw, re.I):
+            found_placeholders.append((page, what))
+
+if PRODUCTION:
+    for page, what in found_placeholders:
+        fail('%s still contains %s. Nothing with a yellow highlight may ship.' % (page, what))
 
 # --- Structural spine of the home page ---------------------------------------
 # A bulk edit once deleted the whole trust band and the FAQ section wrapper
@@ -273,12 +329,33 @@ if os.path.exists('README.md'):
 
 # --- Report -----------------------------------------------------------------
 if fails:
-    print('Copy checks FAILED:\n')
+    print('Copy checks FAILED (%s mode):\n' % MODE)
     for f in fails:
         print('  - %s' % f)
+    if PRODUCTION and found_placeholders:
+        print('\n  %d placeholder(s) block launch. Fill them, or run without '
+              '--production to deploy to staging.' % len(found_placeholders))
     sys.exit(1)
 
-print('Copy checks passed (%d pages).' % len(pages))
+print('Copy checks passed (%d pages, %s mode).' % (len(pages), MODE))
 print('  "AI": 1 visible mention, in the FAQ, as the spec requires.')
 print('  Banned vocabulary: none. Unsupported proof: none.')
 print('  Mockup captions: %d. All-caps labels: none.' % body.count(cap))
+
+if PRODUCTION:
+    print('  No placeholders. Staging noindex and robots disallow are both off.')
+    print('\n  Not checked here, and still yours to confirm before launch:')
+    print('    - canonical tags and an absolute og:image (both need the real domain)')
+    print('    - a test enquiry sent end to end and received')
+    print('    - legal entity name, registered address and governing jurisdiction')
+elif found_placeholders:
+    # Visible every run so these cannot quietly pile up again.
+    print('\n  %d placeholder(s) still on the site. Fine for staging, fatal at '
+          'launch -- run with --production to see them as failures:' % len(found_placeholders))
+    seen = set()
+    for page, what in found_placeholders:
+        if (page, what) in seen:
+            continue
+        seen.add((page, what))
+        n = sum(1 for pg, w in found_placeholders if (pg, w) == (page, what))
+        print('    %-22s %s%s' % (page, what, (' x%d' % n) if n > 1 else ''))
