@@ -138,6 +138,22 @@ before launch.
 
 ## Staging on Fly.io
 
+### Telling a current deploy from a stale one
+
+Every build stamps its commit at `/version.txt`:
+
+```bash
+curl -s https://automatesmall-staging.fly.dev/version.txt   # -> c644f82
+git rev-parse --short HEAD                                  # should match
+```
+
+Both deploy scripts now refuse to run from a checkout that is behind
+`origin`, pass the commit into the image, and compare the live value after
+deploying. This existed because it didn't: an old build sat on staging
+looking current, and nothing on the page or in the output could tell you.
+`SKIP_SYNC_CHECK=1` overrides the refusal if you really mean it.
+
+
 The app is `automatesmall-staging`, a **new, standalone Fly app**. It has no
 relationship to `fuelup-youth` (the frozen AthFuelPath rollback snapshot);
 `scripts/deploy-staging.sh` refuses to deploy if `fly.toml` ever names it.

@@ -22,7 +22,35 @@ if [ "$APP" = "$FORBIDDEN" ]; then
   die "Refusing: '$FORBIDDEN' is a frozen rollback snapshot for another project."
 fi
 
-say "1. Checking flyctl"
+say "1. Checking this checkout is current"
+# The script deploys the working directory, not origin. An old checkout
+# therefore produces a successful deploy of stale code -- which is exactly
+# what happened once: a build with the pre-batch-2 drawer sat on staging
+# looking current. Refuse rather than repeat it.
+if [ -z "${SKIP_SYNC_CHECK:-}" ] && git rev-parse --git-dir >/dev/null 2>&1; then
+  BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+  if git fetch origin "$BRANCH" --quiet 2>/dev/null; then
+    LOCAL="$(git rev-parse HEAD)"
+    REMOTE="$(git rev-parse FETCH_HEAD)"
+    BEHIND="$(git rev-list --count "$LOCAL..$REMOTE" 2>/dev/null || echo 0)"
+    if [ "${BEHIND:-0}" -gt 0 ]; then
+      die "This checkout is $BEHIND commit(s) behind origin/$BRANCH.
+
+Deploying now would ship the older code and look like it worked.
+
+  git pull            then run this again
+  SKIP_SYNC_CHECK=1 ./scripts/first-deploy.sh   to deploy anyway"
+    fi
+  fi
+  if [ -n "$(git status --porcelain)" ]; then
+    echo "  note: uncommitted changes will be included in this deploy"
+  fi
+  ok "on $BRANCH at $(git rev-parse --short HEAD), up to date with origin"
+else
+  ok "not a git checkout; skipping the sync check"
+fi
+
+say "2. Checking flyctl"
 if ! command -v flyctl >/dev/null 2>&1; then
   die "flyctl is not installed. Run:
 
@@ -34,16 +62,16 @@ then run this script again."
 fi
 ok "$(flyctl version | head -1)"
 
-say "2. Checking you're signed in"
+say "3. Checking you're signed in"
 if ! flyctl auth whoami >/dev/null 2>&1; then
   die "Not signed in. Run 'flyctl auth login' and try again."
 fi
 ok "signed in as $(flyctl auth whoami 2>/dev/null)"
 
-say "3. Checking the site before shipping it"
+say "4. Checking the site before shipping it"
 python3 scripts/check-copy.py
 
-say "4. Making sure fly.toml points at $APP"
+say "5. Making sure fly.toml points at $APP"
 TOML_APP="$(grep -E '^app[[:space:]]*=' fly.toml | head -1 | cut -d'"' -f2)"
 if [ "$TOML_APP" != "$APP" ]; then
   echo "  fly.toml says '$TOML_APP', you asked for '$APP'. Updating fly.toml."
@@ -56,7 +84,7 @@ if [ "$TOML_APP" != "$APP" ]; then
 fi
 ok "fly.toml targets $APP"
 
-say "5. Making sure the app exists"
+say "6. Making sure the app exists"
 if flyctl apps list 2>/dev/null | awk '{print $1}' | grep -qx "$APP"; then
   ok "$APP already exists"
 else
@@ -70,13 +98,22 @@ account, so this one is probably taken. Pick another and re-run:
   ok "created $APP"
 fi
 
-say "6. Deploying"
-flyctl deploy --app "$APP" --ha=false --remote-only
+say "7. Deploying"
+SHA="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+flyctl deploy --app "$APP" --ha=false --remote-only --build-arg "GIT_SHA=$SHA"
 
 URL="https://$APP.fly.dev"
-say "7. Checking what actually shipped"
+say "8. Checking what actually shipped"
 sleep 4
 if curl -fsS "$URL/healthz" | grep -q ok; then ok "the site is up"; else bad "healthz did not answer"; fi
+LIVE="$(curl -fsS "$URL/version.txt" 2>/dev/null | tr -d '[:space:]' || true)"
+if [ "$LIVE" = "$SHA" ]; then
+  ok "live site is serving $SHA (the commit you just deployed)"
+else
+  bad "LIVE SITE REPORTS '${LIVE:-nothing}' BUT YOU DEPLOYED '$SHA'"
+  echo "      The deploy did not take, or an old machine is still serving."
+  echo "      Check:  flyctl status -a $APP   and   flyctl logs -a $APP"
+fi
 if curl -fsSI "$URL" | grep -qi 'x-robots-tag: *noindex'; then
   ok "noindex header present (staging will not be crawled)"
 else
