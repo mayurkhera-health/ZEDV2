@@ -103,7 +103,7 @@ for line in re.findall(r'data-ex-health="([^"]*)"', home):
         fail('health example mentions patient records: %r (A1.4)' % line)
 
 # --- No real personal data in the pages -------------------------------------
-# The Food Explorers screenshots contain a real instructor name and email.
+# The Kitchen Club screenshots contain a real instructor name and email.
 # Nothing resembling a live address may reach a published page; the only
 # addresses allowed are the obvious example one on the booking form and the
 # marked [contact email] placeholders.
@@ -368,7 +368,7 @@ if cost_q and 'quoted' not in cost_q.group(0).lower():
 if os.path.exists('README.md'):
     readme = io.open('README.md', encoding='utf-8').read()
     for present, claim, what in [
-            (os.path.exists('food-explorers.html'),
+            (os.path.exists('kitchen-club.html'),
              'case-study slot', 'the case study is live but README still calls it absent'),
             (os.path.exists('assets/og.png'),
              'PLACEHOLDER: render the hero desk', 'og.png exists but README still calls it a placeholder')]:

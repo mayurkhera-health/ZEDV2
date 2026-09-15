@@ -103,7 +103,7 @@ are correct rather than merely present.
 | Sample assessment pages | `assessment.html` |
 | Legal entity name, registered address and governing jurisdiction | `privacy.html`, `terms.html` |
 | Booking scheduler (A1.8) | `assets/site.js`, `booking()` |
-| Written permission from Food Explorers, and the one real number | `food-explorers.html` |
+| The one real number in the case study; and written permission if the client is ever to be named for real | `kitchen-club.html` |
 | Absolute `og:image` URL, canonical tags, sitemap | blocked on choosing a production domain |
 | Real recognition statements from 8–10 owner interviews (A1.6) | `index.html` C2 |
 

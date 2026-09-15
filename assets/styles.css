@@ -599,7 +599,7 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
 
 /* ==========================================================================
    Case study template (.cs-*). Reusable: the next case study copies
-   food-explorers.html and changes only the words and the two screenshots.
+   kitchen-club.html and changes only the words and the two screenshots.
    Text holds the spec's 680px reading measure; screenshots break out wider
    so the type inside them stays legible.
    ========================================================================== */
