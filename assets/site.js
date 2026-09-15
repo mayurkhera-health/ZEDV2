@@ -14,6 +14,54 @@
    copy button. Never rely on the navigation alone. */
 var CONTACT = 'mayurk@automatesmall.com';
 
+/* The Google Apps Script web app that receives enquiries and emails them on.
+   See docs/form-endpoint-setup.md. While this is empty the forms fall back to
+   opening the visitor's mail app, which works but is clunky -- so this is the
+   one string that turns a real form on. */
+var FORM_ENDPOINT = '';
+
+/* Content-Type is deliberately text/plain, not application/json. Anything else
+   makes the browser send a CORS preflight, and Apps Script does not answer
+   preflights. The body is still JSON; the script parses postData.contents. */
+function postLead(payload) {
+  return fetch(FORM_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload),
+    redirect: 'follow'
+  }).then(function (res) {
+    if (!res.ok) { throw new Error('http ' + res.status); }
+    return res.json();
+  }).then(function (data) {
+    if (!data || data.ok !== true) { throw new Error((data && data.error) || 'rejected'); }
+    return data;
+  });
+}
+
+/* One place that decides what a submit does, so both forms behave the same.
+   Resolves 'sent' when the endpoint took it, 'mailto' when we fell back.
+   A failure is never silent and never loses what the visitor typed. */
+function deliver(mail, payload, onState) {
+  if (!FORM_ENDPOINT) {
+    onState('mailto');
+    window.location.href = mail.url;
+    return Promise.resolve('mailto');
+  }
+  onState('sending');
+  return postLead(payload).then(function () {
+    onState('sent');
+    return 'sent';
+  }, function (err) {
+    /* Endpoint down, offline, or CORS refused. Rather than tell someone their
+       enquiry vanished, hand them the mail-app route that always worked. */
+    if (window.console && console.warn) { console.warn('form post failed:', err); }
+    onState('mailto');
+    window.location.href = mail.url;
+    return 'mailto';
+  });
+}
+
+
 function composeMail(subject, lines) {
   var body = lines.filter(Boolean).join('\n');
   /* Keep the URL comfortably under the ~2000 char limit some mail clients
@@ -695,17 +743,32 @@ function wireCopy(btn, getText) {
         picked.length ? '\nFrom the 2-minute check:\n' + picked.join('\n') : ''
       ]);
 
-      var done = $('#walkthrough-done');
+      var done = $('#walkthrough-done'), btn = form.querySelector('button[type=submit]');
+      if (btn.disabled) { return; }               // no double submits
       $('#mail-preview').textContent = mail.body;
       $('#mail-to').textContent = CONTACT;
-      form.hidden = true;
-      done.hidden = false;
-      done.setAttribute('tabindex', '-1');
-      done.focus();
-      track('booking_complete', {});
-      /* Navigate last. If no mail handler is registered nothing visible
-         happens, and the panel above is already showing the text to copy. */
-      window.location.href = mail.url;
+
+      var label = btn.textContent;
+      deliver(mail, {
+        subject: 'Walkthrough request \u2014 ' + bizSel.options[bizSel.selectedIndex].text,
+        body: mail.body,
+        email: $('#email').value.trim(),
+        company_website: $('#company-website').value
+      }, function (state) {
+        if (state === 'sending') {
+          btn.disabled = true;
+          btn.textContent = 'Sending\u2026';
+          return;
+        }
+        btn.disabled = false;
+        btn.textContent = label;
+        done.setAttribute('data-state', state);   // 'sent' or 'mailto'
+        form.hidden = true;
+        done.hidden = false;
+        done.setAttribute('tabindex', '-1');
+        done.focus();
+        track('booking_complete', { via: state });
+      });
     });
     wireCopy($('#mail-copy'), function () { return $('#mail-preview').textContent; });
   })();
@@ -729,13 +792,25 @@ function wireCopy(btn, getText) {
       email && email.value.trim() ? '\nMy email: ' + email.value.trim() : ''
     ]);
     document.querySelector('#ask-preview').textContent = mail.body;
-    form.hidden = true;
     var done = document.querySelector('#ask-done');
-    done.hidden = false;
-    done.setAttribute('tabindex', '-1');
-    done.focus();
-    (window.dataLayer = window.dataLayer || []).push({ event: 'service_request_sent' });
-    window.location.href = mail.url;
+    var btn = form.querySelector('button[type=submit]');
+    if (btn.disabled) { return; }
+    var label = btn.textContent;
+    deliver(mail, {
+      subject: 'A service that isn\u2019t on your list',
+      body: mail.body,
+      email: email && email.value.trim(),
+      company_website: ''
+    }, function (state) {
+      if (state === 'sending') { btn.disabled = true; btn.textContent = 'Sending\u2026'; return; }
+      btn.disabled = false; btn.textContent = label;
+      done.setAttribute('data-state', state);
+      form.hidden = true;
+      done.hidden = false;
+      done.setAttribute('tabindex', '-1');
+      done.focus();
+      (window.dataLayer = window.dataLayer || []).push({ event: 'service_request_sent', via: state });
+    });
   });
   wireCopy(document.querySelector('#ask-copy'), function () {
     return document.querySelector('#ask-preview').textContent;

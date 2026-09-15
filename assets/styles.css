@@ -533,6 +533,11 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
 .notlive--form{ margin-bottom:20px; }
 .formdone.notlive, .ask__done.notlive{ background:var(--sticky-tint); border-color:#E2CE87; }
 .formdone[hidden]{ display:none; }
+/* A confirmation panel shows exactly one of these. "sent" is the normal
+   path; "mailto" only appears when the endpoint could not be reached. */
+[data-state="sent"] .onlymailto,
+[data-state="mailto"] .onlysent{ display:none; }
+[data-state="sent"]{ background:var(--ledger-tint); border-color:#BDD3C4; }
 /* The composed email, shown so a visitor with no mail handler is never
    left with nothing. Wraps rather than scrolling sideways. */
 .mailbox{ margin-top:14px; padding:14px 16px; background:var(--paper-deep);

@@ -233,7 +233,15 @@ privacy = re.sub(r'\s+', ' ', privacy)
 # build failure rather than something to notice later.
 forms_are_dead = 'NOTE FOR LAUNCH' in js
 forms_use_mailto = 'mailto:' in js and 'composeMail' in js
-forms_post = bool(re.search(r"(fetch\(|XMLHttpRequest|action=\"https)", js + home))
+# Not "is there a fetch in the file" -- the delivery helper always contains one.
+# What matters is whether an endpoint is actually configured, because until it
+# is, every submit still falls back to the visitor's mail app and the site
+# genuinely sends nothing. The moment a URL is pasted in, this flips and the
+# privacy page has to have been updated first.
+_endpoint = re.search(r"var FORM_ENDPOINT\s*=\s*'([^']*)'", js)
+forms_post = bool(_endpoint and _endpoint.group(1).strip())
+if not forms_post:
+    forms_post = bool(re.search(r'action="https', home))
 
 privacy_says_mailto = 'opens your own email app' in privacy
 privacy_says_nothing_sent = 'sends nothing anywhere' in privacy

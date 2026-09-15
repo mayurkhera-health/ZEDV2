@@ -141,11 +141,14 @@
         </div>
         <p class="ask__note">No sign-up. We reply within one business day. <a href="privacy.html">Privacy</a>.</p>
       </form>
-      <div class="ask__done" id="ask-done" hidden>
-        <p><b>Your email app should be opening.</b> Check the message over and press send.</p>
-        <p class="small" style="margin-top:10px">Nothing happened? Copy this and send it to mayurk@automatesmall.com however you normally would.</p>
-        <pre class="mailbox" id="ask-preview"></pre>
-        <button class="btn btn--ghost" type="button" id="ask-copy" style="margin-top:10px">Copy this message</button>
+      <div class="ask__done" id="ask-done" data-state="mailto" hidden>
+        <p class="onlysent"><b>Thanks &mdash; we&rsquo;ve got it.</b> We read every one, and we&rsquo;ll come back to you within a business day.</p>
+        <div class="onlymailto">
+          <p><b>Your email app should be opening.</b> We couldn&rsquo;t send it for you just now, so check the message over and press send.</p>
+          <p class="small" style="margin-top:10px">Nothing happened? Copy this and send it to mayurk@automatesmall.com however you normally would.</p>
+          <pre class="mailbox" id="ask-preview"></pre>
+          <button class="btn btn--ghost" type="button" id="ask-copy" style="margin-top:10px">Copy this message</button>
+        </div>
       </div>
     </div>
   </div>

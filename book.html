@@ -107,14 +107,20 @@
           <p class="small">Once this is connected we&rsquo;ll use what you tell us to prepare for the call, and nothing else. <a href="privacy.html">What we do with your details</a>.</p>
         </form>
 
-        <div class="formdone" id="walkthrough-done" hidden>
-          <h2 style="font-size:clamp(22px,2.6vw,28px)">Your email app should be opening.</h2>
-          <p style="margin-top:14px;color:var(--ink-soft)">We&rsquo;ve written the message for you &mdash; check it over and press send. It goes to <b id="mail-to">mayurk@automatesmall.com</b>, and we reply within one business day.</p>
-          <p style="margin-top:14px;color:var(--ink-soft)"><b>Nothing happened?</b> Some browsers have no email app attached. Copy the message below and send it however you normally would.</p>
-          <pre class="mailbox" id="mail-preview"></pre>
-          <div class="btn-row" style="margin-top:12px">
-            <button class="btn btn--ghost" type="button" id="mail-copy">Copy this message</button>
-            <a class="btn btn--ghost" href="mailto:mayurk@automatesmall.com">Open mail app again</a>
+        <div class="formdone" id="walkthrough-done" data-state="mailto" hidden>
+          <div class="onlysent">
+            <h2 style="font-size:clamp(22px,2.6vw,28px)">Thanks &mdash; we&rsquo;ve got it.</h2>
+            <p style="margin-top:14px;color:var(--ink-soft)">We read every one before replying, so you won&rsquo;t have to explain it twice. You&rsquo;ll hear from us within one business day, at the address you gave.</p>
+          </div>
+          <div class="onlymailto">
+            <h2 style="font-size:clamp(22px,2.6vw,28px)">Your email app should be opening.</h2>
+            <p style="margin-top:14px;color:var(--ink-soft)">We couldn&rsquo;t send it for you just now, so we&rsquo;ve written the message instead &mdash; check it over and press send. It goes to <b id="mail-to">mayurk@automatesmall.com</b>, and we reply within one business day.</p>
+            <p style="margin-top:14px;color:var(--ink-soft)"><b>Nothing happened?</b> Some browsers have no email app attached. Copy the message below and send it however you normally would.</p>
+            <pre class="mailbox" id="mail-preview"></pre>
+            <div class="btn-row" style="margin-top:12px">
+              <button class="btn btn--ghost" type="button" id="mail-copy">Copy this message</button>
+              <a class="btn btn--ghost" href="mailto:mayurk@automatesmall.com">Open mail app again</a>
+            </div>
           </div>
           <!-- LAUNCH: point the form at the email relay (Formspree or similar),
                set Reply-To to the visitor's address, and replace this panel with
