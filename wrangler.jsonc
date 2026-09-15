@@ -5,7 +5,12 @@
   // Created because the Cloudflare dashboard now routes "connect a repo" into
   // the Workers flow rather than Pages, and a Workers build runs
   // `npx wrangler deploy`, which needs this file to know what to deploy.
-  "name": "automatesmall",
+  // MUST match the Worker that already exists, or a deploy creates a second
+  // one and leaves the first serving whatever it last had. The first build
+  // ran with no config, so wrangler generated {"directory": "."} and shipped
+  // the repository root -- .git included. Redeploying over the same name is
+  // what replaces that asset manifest.
+  "name": "zedv2",
   "compatibility_date": "2026-09-15",
 
   "assets": {
