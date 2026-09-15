@@ -150,17 +150,37 @@ js = io.open('assets/site.js', encoding='utf-8').read()
 privacy = TAG.sub(' ', COMMENT.sub(' ', io.open('privacy.html', encoding='utf-8').read()))
 privacy = re.sub(r'\s+', ' ', privacy)
 
+# How do the forms actually reach us? Exactly one of these must be true, and
+# privacy.html must describe whichever it is. The site has already shipped a
+# privacy page that described a mechanism it did not have; this makes that a
+# build failure rather than something to notice later.
 forms_are_dead = 'NOTE FOR LAUNCH' in js
-says_it_collects_nothing = 'collects nothing at all' in privacy
+forms_use_mailto = 'mailto:' in js and 'composeMail' in js
+forms_post = bool(re.search(r"(fetch\(|XMLHttpRequest|action=\"https)", js + home))
 
-if forms_are_dead and not says_it_collects_nothing:
+privacy_says_mailto = 'opens your own email app' in privacy
+privacy_says_nothing_sent = 'sends nothing anywhere' in privacy
+
+if forms_are_dead and not ('collects nothing at all' in privacy or privacy_says_nothing_sent):
     fail('site.js still carries a NOTE FOR LAUNCH, so the forms transmit nothing, '
-         'but privacy.html no longer says the site collects nothing. One of the '
-         'two is now a false statement about data handling.')
-if not forms_are_dead and says_it_collects_nothing:
-    fail('the forms look connected (no NOTE FOR LAUNCH in site.js) but privacy.html '
-         'still tells visitors the site collects nothing. Update the privacy page '
-         'BEFORE the forms go live, not after.')
+         'but privacy.html does not say so. One of the two is a false statement '
+         'about data handling.')
+
+if forms_use_mailto and not (privacy_says_mailto and privacy_says_nothing_sent):
+    fail('the forms hand the message to the visitor\'s own email app (composeMail '
+         'in site.js), but privacy.html does not explain that. It must say the page '
+         'opens your own email app and sends nothing itself, or the page describes '
+         'a mechanism the site does not use.')
+
+if forms_post and privacy_says_nothing_sent:
+    fail('something in the site now posts to a server, but privacy.html still tells '
+         'visitors the site sends nothing anywhere. Update the privacy page BEFORE '
+         'the change goes live, not after.')
+
+if forms_use_mailto and not re.search(r'mail-preview|ask-preview', home + io.open('book.html', encoding='utf-8').read() + io.open('services.html', encoding='utf-8').read()):
+    fail('a mailto form has no on-screen fallback. mailto: silently does nothing '
+         'for a visitor with no mail handler, so the composed message must always '
+         'be shown with a way to copy it.')
 
 ANALYTICS = ['plausible', 'fathom', 'umami', 'gtag(', 'googletagmanager',
              'matomo', 'segment.com', 'posthog']

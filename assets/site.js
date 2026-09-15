@@ -1,4 +1,58 @@
 /* AutomateSmall — spec v2. No dependencies. Everything degrades without JS. */
+/* Shared by the main bundle AND the standalone ask() block below it. These
+   used to live inside the main IIFE, where ask() could not see them: the
+   services box threw a ReferenceError on submit and its panel never
+   appeared. Module scope is deliberate. */
+/* ---------------------------------------------------------------- mailto
+   There is no backend and no third-party form relay. The forms compose an
+   email and hand it to the visitor's own mail app. Two consequences worth
+   knowing: the message arrives FROM the visitor, so Reply just works; and
+   the site itself still transmits and stores nothing.
+
+   mailto: silently does nothing for someone in webmail with no handler
+   registered, so every caller must also render the text on screen with a
+   copy button. Never rely on the navigation alone. */
+var CONTACT = 'mayurk@automatesmall.com';
+
+function composeMail(subject, lines) {
+  var body = lines.filter(Boolean).join('\n');
+  /* Keep the URL comfortably under the ~2000 char limit some mail clients
+     and Windows shells impose. The full text is always shown on screen, so
+     truncating here loses nothing. */
+  var url = 'mailto:' + CONTACT +
+            '?subject=' + encodeURIComponent(subject) +
+            '&body=' + encodeURIComponent(body);
+  if (url.length > 1900) {
+    url = 'mailto:' + CONTACT + '?subject=' + encodeURIComponent(subject) +
+          '&body=' + encodeURIComponent(body.slice(0, 1200) +
+            '\n\n[Message shortened so it would open. The full version is on the website.]');
+  }
+  return { url: url, body: body, subject: subject };
+}
+
+function wireCopy(btn, getText) {
+  if (!btn) return;
+  var label = btn.textContent;
+  btn.addEventListener('click', function () {
+    var text = getText();
+    var done = function () {
+      btn.textContent = 'Copied';
+      window.setTimeout(function () { btn.textContent = label; }, 2500);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
+    } else { fallback(text, done); }
+  });
+  function fallback(text, done) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:-1000px;left:-1000px';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (err) {}
+    document.body.removeChild(ta);
+  }
+}
+
 (function () {
   'use strict';
 
@@ -628,14 +682,32 @@
         if (bad) { ok = false; if (!firstBad) firstBad = f; }
       });
       if (!ok) { firstBad.focus(); return; }
-      // NOTE FOR LAUNCH: embed the scheduler here (A1.8) and pass these
-      // answers into the booking notes. Nothing is transmitted yet.
+
+      var bizSel = $('#biz'), sizeSel = $('#size');
+      var picked = $$('#booking-chip-list li').map(function (li) { return '  - ' + li.textContent; });
+      var mail = composeMail('Walkthrough request \u2014 ' + (bizSel.options[bizSel.selectedIndex].text), [
+        'I\u2019d like a free 30-minute walkthrough.',
+        '',
+        'Kind of business: ' + bizSel.options[bizSel.selectedIndex].text,
+        'Roughly how many people: ' + sizeSel.options[sizeSel.selectedIndex].text,
+        'Email: ' + $('#email').value.trim(),
+        $('#pain').value.trim() ? '\nWhat eats up the most time:\n' + $('#pain').value.trim() : '',
+        picked.length ? '\nFrom the 2-minute check:\n' + picked.join('\n') : ''
+      ]);
+
+      var done = $('#walkthrough-done');
+      $('#mail-preview').textContent = mail.body;
+      $('#mail-to').textContent = CONTACT;
       form.hidden = true;
-      $('#walkthrough-done').hidden = false;
-      $('#walkthrough-done').setAttribute('tabindex', '-1');
-      $('#walkthrough-done').focus();
+      done.hidden = false;
+      done.setAttribute('tabindex', '-1');
+      done.focus();
       track('booking_complete', {});
+      /* Navigate last. If no mail handler is registered nothing visible
+         happens, and the panel above is already showing the text to copy. */
+      window.location.href = mail.url;
     });
+    wireCopy($('#mail-copy'), function () { return $('#mail-preview').textContent; });
   })();
 
 })();
@@ -650,12 +722,22 @@
     e.preventDefault();
     var what = document.querySelector('#ask-what');
     if (!what.value.trim()) { what.focus(); return; }
-    // NOTE FOR LAUNCH: connect this to the inbox that actually gets read.
+    var email = document.querySelector('#ask-email');
+    var mail = composeMail('A service that isn\u2019t on your list', [
+      'The thing eating my week:',
+      what.value.trim(),
+      email && email.value.trim() ? '\nMy email: ' + email.value.trim() : ''
+    ]);
+    document.querySelector('#ask-preview').textContent = mail.body;
     form.hidden = true;
     var done = document.querySelector('#ask-done');
     done.hidden = false;
     done.setAttribute('tabindex', '-1');
     done.focus();
     (window.dataLayer = window.dataLayer || []).push({ event: 'service_request_sent' });
+    window.location.href = mail.url;
+  });
+  wireCopy(document.querySelector('#ask-copy'), function () {
+    return document.querySelector('#ask-preview').textContent;
   });
 })();

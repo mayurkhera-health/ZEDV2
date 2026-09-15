@@ -61,10 +61,7 @@
           <ul class="tags" id="booking-chip-list" style="list-style:none;margin:0;padding:0"></ul>
         </div>
 
-        <div class="notlive notlive--form">
-          <p><b>This form isn&rsquo;t connected yet.</b> It will check what you type and confirm on screen, but nothing reaches us and nobody will call you.</p>
-          <p>To reach us now, email us &mdash; the address is at the bottom of this page.</p>
-        </div>
+        <p class="small" style="margin-bottom:18px">Filling this in opens your own email app with the answers written out, addressed to us. Nothing is sent from this page &mdash; you press send. <a href="privacy.html">What we do with your details</a>.</p>
 
         <form class="form" id="walkthrough" method="post" novalidate>
           <div class="field">
@@ -110,10 +107,15 @@
           <p class="small">Once this is connected we&rsquo;ll use what you tell us to prepare for the call, and nothing else. <a href="privacy.html">What we do with your details</a>.</p>
         </form>
 
-        <div class="formdone notlive" id="walkthrough-done" hidden>
-          <h2 style="font-size:clamp(22px,2.6vw,28px)">Nothing was sent.</h2>
-          <p style="margin-top:14px;color:var(--ink-soft)">This form isn&rsquo;t connected yet, so your answers stayed in your browser and nobody has them. Sorry for the detour &mdash; we should have stopped you sooner.</p>
-          <p style="margin-top:8px;color:var(--ink-soft)">If you want a walkthrough, email us. The address is at the bottom of this page.</p>
+        <div class="formdone" id="walkthrough-done" hidden>
+          <h2 style="font-size:clamp(22px,2.6vw,28px)">Your email app should be opening.</h2>
+          <p style="margin-top:14px;color:var(--ink-soft)">We&rsquo;ve written the message for you &mdash; check it over and press send. It goes to <b id="mail-to">mayurk@automatesmall.com</b>, and we reply within one business day.</p>
+          <p style="margin-top:14px;color:var(--ink-soft)"><b>Nothing happened?</b> Some browsers have no email app attached. Copy the message below and send it however you normally would.</p>
+          <pre class="mailbox" id="mail-preview"></pre>
+          <div class="btn-row" style="margin-top:12px">
+            <button class="btn btn--ghost" type="button" id="mail-copy">Copy this message</button>
+            <a class="btn btn--ghost" href="mailto:mayurk@automatesmall.com">Open mail app again</a>
+          </div>
           <!-- LAUNCH: point the form at the email relay (Formspree or similar),
                set Reply-To to the visitor's address, and replace this panel with
                a real confirmation. Update privacy.html in the same commit --

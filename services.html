@@ -129,7 +129,7 @@
       <div class="ask__copy">
         <h2>Not seeing yours?</h2>
         <p>Thirteen is what owners ask us for most. It isn&rsquo;t everything. If the thing eating your week isn&rsquo;t on that list, we want to hear it.</p>
-        <p class="small" style="margin-top:10px"><b>This box isn&rsquo;t connected yet</b> &mdash; it confirms on screen but sends nothing. Email us instead for now; the address is at the bottom of the page.</p>
+        <p class="small" style="margin-top:10px">Sending it opens your own email app with the message written out. Nothing leaves this page until you press send.</p>
       </div>
       <form class="ask__box" id="ask" method="post" novalidate>
         <label class="vh" for="ask-what">What takes up too much of your time?</label>
@@ -139,9 +139,14 @@
           <input type="email" id="ask-email" name="email" required placeholder="you@yourbusiness.com" autocomplete="email">
           <button class="btn btn--primary" type="submit">Send it over</button>
         </div>
-        <p class="ask__note">No sign-up. Not connected yet &mdash; see the note on the left. <a href="privacy.html">Privacy</a>.</p>
+        <p class="ask__note">No sign-up. We reply within one business day. <a href="privacy.html">Privacy</a>.</p>
       </form>
-      <p class="ask__done notlive" id="ask-done" hidden><b>Nothing was sent.</b> This box isn&rsquo;t connected yet, so what you typed stayed in your browser. Email us instead &mdash; the address is at the bottom of this page.</p>
+      <div class="ask__done" id="ask-done" hidden>
+        <p><b>Your email app should be opening.</b> Check the message over and press send.</p>
+        <p class="small" style="margin-top:10px">Nothing happened? Copy this and send it to mayurk@automatesmall.com however you normally would.</p>
+        <pre class="mailbox" id="ask-preview"></pre>
+        <button class="btn btn--ghost" type="button" id="ask-copy" style="margin-top:10px">Copy this message</button>
+      </div>
     </div>
   </div>
 </section>
