@@ -89,7 +89,8 @@ ship.
 | Legal entity, address, contact email, phone, city, region | `privacy.html`, `terms.html`, footer |
 | Booking scheduler (A1.8) | `assets/site.js`, `booking()` |
 | "Email me this list" mailer | `assets/site.js`, drawer submit handler |
-| Open Graph image (desk end state, 1200×630) | `assets/og.png`, referenced in `index.html` |
+| Written permission from Food Explorers, and the one real number | `food-explorers.html` |
+| Absolute `og:image` URL, canonical tags, sitemap | blocked on choosing a production domain |
 | Real recognition statements from 8–10 owner interviews (A1.6) | `index.html` C2 |
 
 The booking form and "Email me this list" both **validate and confirm but
@@ -103,10 +104,14 @@ transmit nothing**. Connect them or take those paths down before launch.
   of the first client, per B7.
 - **Tool names and logos.** A3.6 permits them only for tools we have actually
   worked in. The tools strip lists categories until that is true.
-- **The case-study slot.** Built as a comment in C10, out of the page until at
-  least two real, permissioned case studies exist (A3.4).
 - **Resources, blog, industry pages.** An empty section makes a new company
   look thin.
+- **Any founder or company history.** The founder photo slot, the unwritten
+  story and the ZEDventures explainer were all removed on 15 Sep 2026 at the
+  owner's instruction. The only human trace left is "Built by ZEDventures"
+  in the footer. This is a deliberate state, not an oversight, but it is a
+  real gap for a trust-led service business: there is currently no person on
+  the site for a visitor to buy.
 
 ## Staging on Fly.io
 

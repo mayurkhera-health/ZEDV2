@@ -124,6 +124,65 @@ for sec in re.findall(r'data-sec="([^"]+)"', home):
     if sec not in found:
         fail('the section rail links to #%s, which does not exist.' % sec)
 
+# --- Every referenced local file must exist ----------------------------------
+# og.png was declared in index.html for weeks and never existed, so every link
+# shared to LinkedIn or Slack fetched a 404. The earlier version of this check
+# only looked at src= and href=, and og:image uses content=.
+for page in pages:
+    raw = io.open(page, encoding='utf-8').read()
+    refs = set(re.findall(r'(?:src|href|content)="((?:assets|scripts)/[^"]+)"', raw))
+    for ref in refs:
+        if not os.path.exists(ref.split('?')[0].split('#')[0]):
+            fail('%s references %s, which does not exist on disk.' % (page, ref))
+
+# --- The privacy page must describe the site that actually exists ------------
+# It claimed "we receive what you typed" while every form transmitted nothing,
+# and claimed privacy-friendly analytics while none were installed. Both were
+# false statements of fact about data handling on a public page. These two
+# checks tie the copy to the code, in both directions, so neither can drift.
+js = io.open('assets/site.js', encoding='utf-8').read()
+privacy = TAG.sub(' ', COMMENT.sub(' ', io.open('privacy.html', encoding='utf-8').read()))
+privacy = re.sub(r'\s+', ' ', privacy)
+
+forms_are_dead = 'NOTE FOR LAUNCH' in js
+says_it_collects_nothing = 'collects nothing at all' in privacy
+
+if forms_are_dead and not says_it_collects_nothing:
+    fail('site.js still carries a NOTE FOR LAUNCH, so the forms transmit nothing, '
+         'but privacy.html no longer says the site collects nothing. One of the '
+         'two is now a false statement about data handling.')
+if not forms_are_dead and says_it_collects_nothing:
+    fail('the forms look connected (no NOTE FOR LAUNCH in site.js) but privacy.html '
+         'still tells visitors the site collects nothing. Update the privacy page '
+         'BEFORE the forms go live, not after.')
+
+ANALYTICS = ['plausible', 'fathom', 'umami', 'gtag(', 'googletagmanager',
+             'matomo', 'segment.com', 'posthog']
+html_and_js = ''.join(io.open(f, encoding='utf-8').read() for f in pages) + js
+analytics_installed = any(a in html_and_js.lower() for a in ANALYTICS)
+claims_no_analytics = 'no analytics on it' in privacy
+
+if analytics_installed and claims_no_analytics:
+    fail('an analytics provider is installed but privacy.html still says there is '
+         'no analytics on the site. Name the provider on the privacy page.')
+if not analytics_installed and not claims_no_analytics:
+    fail('privacy.html no longer states that the site has no analytics, but no '
+         'analytics provider is installed. Say what is actually true.')
+
+# --- The README must not contradict the site it documents --------------------
+# A stale README line ("the case-study slot is out of the page") survived the
+# case study going live, was read by an outside auditor, and came back as a
+# finding. Docs that drift produce confident, wrong advice.
+if os.path.exists('README.md'):
+    readme = io.open('README.md', encoding='utf-8').read()
+    for present, claim, what in [
+            (os.path.exists('food-explorers.html'),
+             'case-study slot', 'the case study is live but README still calls it absent'),
+            (os.path.exists('assets/og.png'),
+             'PLACEHOLDER: render the hero desk', 'og.png exists but README still calls it a placeholder')]:
+        if present and claim in readme:
+            fail('README.md is stale: %s.' % what)
+
 # --- Report -----------------------------------------------------------------
 if fails:
     print('Copy checks FAILED:\n')
