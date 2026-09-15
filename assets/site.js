@@ -7,8 +7,9 @@
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
   /* ---------------------------------------------------------------- C0 state
-     Nothing here is stored or transmitted until the visitor presses
-     "Email me this list" or books a walkthrough. No account, no sign-up. */
+     Nothing here is stored or transmitted. Answers reach the booking page
+     through sessionStorage only, written when the visitor presses the
+     booking button. No account, no sign-up. */
   var check = {
     statements: [],
     industry: null,
@@ -418,7 +419,6 @@
     empty.hidden = has;
     body.hidden = !has;
     $('#drawer-book').hidden = !has;
-    $('#drawer-email-wrap').hidden = !has;
     if (!has) return;
 
     var list = $('#drawer-list');
@@ -503,15 +503,6 @@
       try { sessionStorage.setItem('automatesmall.check', JSON.stringify(check)); } catch (err) {}
       track('booking_start', { from: 'drawer' });
       window.location.href = 'book.html';
-    });
-    $('#drawer-email').addEventListener('submit', function (e) {
-      e.preventDefault();
-      var f = $('#drawer-email-addr');
-      if (!f.value.trim() || f.value.indexOf('@') < 0) { f.focus(); return; }
-      // NOTE FOR LAUNCH: connect to the mailer. Nothing leaves the browser yet.
-      $('#drawer-email').hidden = true;
-      $('#drawer-sent').hidden = false;
-      track('email_list_sent', { statements: check.statements.length });
     });
   }
   if (pill) pill.addEventListener('click', function () { openPanel(); });

@@ -63,8 +63,7 @@ It fails the build on:
 
 One client-side state object drives the hero CTA, the recognition wall, the
 calculator and the result panel. **Nothing is stored or sent** until the
-visitor presses "Email me this list" or books a walkthrough. No account, no
-sign-up. Answers travel to the booking page through `sessionStorage`, written
+visitor books a walkthrough. No account, no sign-up. Answers travel to the booking page through `sessionStorage`, written
 only when they press the booking button.
 
 Scoring is exactly as specified: each selected statement adds one point to
@@ -88,13 +87,14 @@ ship.
 | Sample assessment pages | `assessment.html` |
 | Legal entity, address, contact email, phone, city, region | `privacy.html`, `terms.html`, footer |
 | Booking scheduler (A1.8) | `assets/site.js`, `booking()` |
-| "Email me this list" mailer | `assets/site.js`, drawer submit handler |
 | Written permission from Food Explorers, and the one real number | `food-explorers.html` |
 | Absolute `og:image` URL, canonical tags, sitemap | blocked on choosing a production domain |
 | Real recognition statements from 8–10 owner interviews (A1.6) | `index.html` C2 |
 
-The booking form and "Email me this list" both **validate and confirm but
-transmit nothing**. Connect them or take those paths down before launch.
+The booking form and the "not seeing yours?" box both **validate and confirm
+but transmit nothing**. Each warns the visitor before and after submitting.
+Connect them to a relay (Formspree or similar) or take those paths down
+before launch.
 
 ## Deliberately absent
 
@@ -106,6 +106,13 @@ transmit nothing**. Connect them or take those paths down before launch.
   worked in. The tools strip lists categories until that is true.
 - **Resources, blog, industry pages.** An empty section makes a new company
   look thin.
+- **"Email me this list."** The result panel used to offer to mail the visitor
+  their own list. Removed 15 Sep 2026: it was the only thing on the site
+  that sent mail TO a stranger, which needs a transactional sender, SPF/DKIM
+  on the domain and a serverless function to hold the key -- a lot of
+  machinery, and a domain-reputation risk, to save a screenshot. Its opt-in
+  checkbox was also the site's only marketing consent; there is now no
+  mailing list anywhere, and privacy.html says so.
 - **Any founder or company history.** The founder photo slot, the unwritten
   story and the ZEDventures explainer were all removed on 15 Sep 2026 at the
   owner's instruction. The only human trace left is "Built by ZEDventures"

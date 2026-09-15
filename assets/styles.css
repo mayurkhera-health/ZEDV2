@@ -471,11 +471,6 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
 .caveat{ display:flex; gap:9px; font-size:14.5px; color:var(--ink-soft); line-height:1.5; }
 .caveat svg{ flex:none; margin-top:3px; }
 .drawer select,.drawer input[type=email]{ width:100%; min-height:48px; padding:12px 14px; font:400 17px var(--body); color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:9px; }
-.emailrow{ display:grid; gap:10px; }
-.optin{ display:flex; gap:10px; align-items:flex-start; font-size:15px; color:var(--ink-soft); }
-.optin input{ width:20px; height:20px; margin-top:2px; accent-color:var(--ledger); flex:none; }
-.drawer__ok{ padding:14px 16px; background:var(--ledger-tint); border:1px solid #BDD3C4; border-radius:11px; font-weight:600; }
-.drawer__ok[hidden]{ display:none; }
 
 /* ---------- Forms ---------- */
 .form{ display:grid; gap:22px; max-width:min(620px,68ch); }

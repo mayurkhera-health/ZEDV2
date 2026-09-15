@@ -101,12 +101,12 @@
           <div class="field">
             <label for="email">Where should we reply?</label>
             <input type="email" id="email" data-required aria-describedby="email-err" autocomplete="email">
-            <p class="err" id="email-err" hidden><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="#B3261E" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.1"/><path d="M10 6.3v4.4"/><path d="M10 13.6h.01"/></svg><span>We need an email address to send you a time.</span></p>
+            <p class="err" id="email-err" hidden><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="#B3261E" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.1"/><path d="M10 6.3v4.4"/><path d="M10 13.6h.01"/></svg><span>We need an email address so we can reply to you.</span></p>
           </div>
 
           <div class="hp" aria-hidden="true"><label for="company-website">Leave this blank</label><input type="text" id="company-website" tabindex="-1" autocomplete="off"></div>
 
-          <div class="btn-row"><button class="btn btn--primary" type="submit">Find a time</button></div>
+          <div class="btn-row"><button class="btn btn--primary" type="submit">Reach out to us</button></div>
           <p class="small">Once this is connected we&rsquo;ll use what you tell us to prepare for the call, and nothing else.</p>
         </form>
 
@@ -114,8 +114,10 @@
           <h2 style="font-size:clamp(22px,2.6vw,28px)">Nothing was sent.</h2>
           <p style="margin-top:14px;color:var(--ink-soft)">This form isn&rsquo;t connected yet, so your answers stayed in your browser and nobody has them. Sorry for the detour &mdash; we should have stopped you sooner.</p>
           <p style="margin-top:8px;color:var(--ink-soft)">If you want a walkthrough, email us. The address is at the bottom of this page.</p>
-          <!-- LAUNCH: replace this panel with the embedded scheduler (A1.8) and
-               pass the answers above into the booking notes. -->
+          <!-- LAUNCH: point the form at the email relay (Formspree or similar),
+               set Reply-To to the visitor's address, and replace this panel with
+               a real confirmation. Update privacy.html in the same commit --
+               check-copy.py fails the build otherwise. -->
         </div>
       </div>
 
