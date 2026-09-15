@@ -129,9 +129,19 @@ a:hover{ color:var(--brick-deep); }
 .nav{ position:sticky; top:0; z-index:40; background:var(--paper); border-bottom:1px solid var(--line); transition:padding .18s ease; }
 .nav__inner{ display:flex; align-items:center; gap:16px; min-height:72px; }
 .nav.is-stuck .nav__inner{ min-height:62px; }
-.nav__logo{ display:inline-flex; align-items:center; gap:9px; margin-right:auto; font-family:var(--display); font-weight:700; font-size:20px; letter-spacing:-.02em; color:var(--ink); text-decoration:none; }
+.nav__logo{ display:inline-flex; align-items:flex-start; gap:10px; margin-right:auto; font-family:var(--display); font-weight:700; font-size:20px; letter-spacing:-.02em; color:var(--ink); text-decoration:none; }
+/* Wordmark over tagline. The mark stays vertically centred against the pair,
+   so the lockup reads as one object rather than an icon beside two lines. */
+.nav__name{ display:flex; flex-direction:column; justify-content:center; line-height:1.05; }
+.nav__tag{ font-family:var(--body); font-weight:500; font-size:11.5px; letter-spacing:.04em;
+  text-transform:none; color:var(--ink-soft); margin-top:3px; white-space:nowrap; }
+/* The header is already tight at phone widths and the "Menu" button has
+   clipped there before. The tagline is decorative, so it goes first. */
+@media (max-width:560px){ .nav__tag{ display:none; } }
 .nav__logo:hover{ color:var(--ink); }
-.nav__mark{ width:22px; height:22px; flex:none; }
+.nav__mark{ width:22px; height:22px; flex:none; margin-top:1px; }
+/* Without a tagline there is only one line, so centre it again. */
+.nav__logo:not(:has(.nav__tag)){ align-items:center; }
 .nav__links{ display:none; gap:22px; align-items:center; }
 .nav__links a{ color:var(--ink-soft); text-decoration:none; font-size:16px; font-weight:500; padding:10px 0; }
 .nav__links a:hover,.nav__links a[aria-current="page"]{ color:var(--ink); }

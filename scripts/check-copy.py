@@ -212,6 +212,37 @@ if forms_are_dead:
                      '(site.js carries a NOTE FOR LAUNCH). Say what actually '
                      'happens, or connect the form.' % (page, promise))
 
+# --- The site must tell one story about money --------------------------------
+# It used to say "Clear steps. Fixed prices." on the home page above four empty
+# price placeholders, while services.html said pricing is quoted after the
+# walkthrough. A visitor reading both could not tell whether a price list
+# existed. The model now is: nothing is published, everything is quoted after
+# the free walkthrough, and the promise is a fixed number in writing.
+PRICE_PLACEHOLDERS = ['[$X', '[$Y', '[fixed price]', '[price to be confirmed]',
+                      '[price]', '[1&ndash;2 weeks]', '[2&ndash;6 weeks]']
+for page in pages:
+    raw = io.open(page, encoding='utf-8').read()
+    for ph in PRICE_PLACEHOLDERS:
+        if ph in raw:
+            fail('%s still carries the price placeholder %s. The site quotes after '
+                 'the walkthrough; it does not publish numbers.' % (page, ph))
+
+# A published figure in a price slot means someone switched models halfway.
+# Scoped to .pstep__price so the $640 invoice in the desk illustration -- a
+# customer's invoice, not our price -- does not trip it.
+for page in pages:
+    raw = io.open(page, encoding='utf-8').read()
+    for slot in re.findall(r'<span class="pstep__price">(.*?)</span>', raw, re.S):
+        if re.search(r'[$\u00a3\u20ac]\s*\d', TAG.sub('', slot)):
+            fail('%s publishes a figure in a price slot (%s) while the rest of the '
+                 'site says pricing is quoted after the walkthrough. Change every '
+                 'surface together or none.' % (page, TAG.sub('', slot).strip()))
+
+cost_q = re.search(r'How much does this cost\?.{0,900}', home, re.S)
+if cost_q and 'quoted' not in cost_q.group(0).lower():
+    fail('the "How much does this cost?" answer no longer says pricing is quoted. '
+         'If the model changed, update the pricing steps and services.html too.')
+
 # --- The README must not contradict the site it documents --------------------
 # A stale README line ("the case-study slot is out of the page") survived the
 # case study going live, was read by an outside auditor, and came back as a
