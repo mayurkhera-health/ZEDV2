@@ -571,7 +571,10 @@ function wireCopy(btn, getText) {
 
     var list = $('#drawer-list');
     list.innerHTML = '';
-    score().forEach(function (w, n) {
+    var ranked = score();
+    var countEl = $('#drawer-count');
+    if (countEl) { countEl.textContent = ranked.length + (ranked.length === 1 ? ' area' : ' areas'); }
+    ranked.forEach(function (w, n) {
       var card = WORKFLOWS[w];
       if (!card) return;
       var li = document.createElement('li');

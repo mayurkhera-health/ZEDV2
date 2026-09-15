@@ -421,7 +421,13 @@
         <label for="drawer-industry">What kind of business? (optional)</label>
         <select id="drawer-industry"><option value="">All</option><option value="home">Home services &amp; trades</option><option value="studios">Studios &amp; learning centers</option><option value="professional">Professional services</option><option value="retail">Retail &amp; specialty</option><option value="health">Health &amp; dental practices</option><option value="childcare">Childcare &amp; after-school</option><option value="construction">Construction</option></select>
       </div>
-      <ol class="picked" id="drawer-list"></ol>
+      <div>
+        <div class="picked-head">
+          <span class="picked-head__t">Where we&rsquo;d start</span>
+          <span class="picked-head__n" id="drawer-count"></span>
+        </div>
+        <ol class="picked" id="drawer-list"></ol>
+      </div>
       <p class="timeline" id="drawer-time" hidden></p>
       <p class="timeline" id="drawer-time-prompt" hidden>Want to know what this is costing you in time?
         <a href="#time" data-close-drawer>Estimate my admin time</a></p>
