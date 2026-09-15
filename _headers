@@ -1,10 +1,9 @@
-# Cloudflare Pages headers. This replaces what nginx.conf does on Fly.
+# Cloudflare Pages headers for automatesmall.com. LIVE as of 16 Sep 2026.
 #
-# STAGING ONLY -- X-Robots-Tag keeps the site out of search results while it
-# still carries placeholders. Removing it is a deliberate launch step, and
-# scripts/check-copy.py --production fails while it is still here.
+# The staging X-Robots-Tag was removed on launch. Do not put it back here to
+# hide a work-in-progress -- use a preview branch, which Cloudflare serves on
+# its own hostname, and leave production indexable.
 /*
-  X-Robots-Tag: noindex, nofollow, noarchive
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Cache-Control: no-cache
@@ -13,7 +12,6 @@
 # so they revalidate rather than being held. Fingerprint them at launch and a
 # long max-age can go back here.
 /assets/*
-  X-Robots-Tag: noindex, nofollow, noarchive
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Cache-Control: no-cache

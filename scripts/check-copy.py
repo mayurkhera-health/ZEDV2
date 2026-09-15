@@ -132,10 +132,20 @@ _robots  = io.open('robots.txt', encoding='utf-8').read() if os.path.exists('rob
 if PRODUCTION:
     # The inverse of the staging rule. Shipping to a real domain with the
     # staging guards still on means nobody ever finds the site.
-    for _name, _txt in [('nginx.conf', _nginx), ('_headers', _cfhdrs)]:
-        if 'noindex' in _txt:
-            fail('%s still sends X-Robots-Tag: noindex. Remove it before '
-                 'production, or the live site will never be indexed.' % _name)
+    # _headers is the LIVE host (Cloudflare Pages -> automatesmall.com).
+    if 'noindex' in _cfhdrs:
+        fail('_headers still sends X-Robots-Tag: noindex. Remove it, or the '
+             'live site will never be indexed.')
+
+    # nginx.conf is the Fly build, which is now a stale duplicate of the same
+    # site on a different hostname. The rule INVERTS for it: two indexable
+    # copies compete with each other, and the older one has no canonical tags.
+    # It must keep noindex for as long as the app exists at all.
+    if _nginx and 'noindex' not in _nginx:
+        fail('nginx.conf (the Fly build) has lost its noindex. Fly is a stale '
+             'duplicate of the live site -- if it is indexable it competes with '
+             'automatesmall.com. Put it back, or shut the Fly app down and '
+             'delete nginx.conf, fly.toml and the Dockerfile.')
     if re.search(r'^\s*Disallow:\s*/\s*$', _robots, re.M):
         fail('robots.txt still has a blanket "Disallow: /". Remove it before '
              'production, or crawlers will skip the whole site.')
@@ -143,6 +153,9 @@ else:
     for _name, _txt in [('nginx.conf', _nginx), ('_headers', _cfhdrs)]:
         if _txt and 'noindex' not in _txt:
             fail('%s is missing the noindex header (staging carries placeholders).' % _name)
+    # Staging mode no longer describes reality now that the site is live; the
+    # production gate is the one that matters. Left in place for a future
+    # pre-launch branch.
     if _robots and 'Disallow: /' not in _robots:
         fail('robots.txt is not disallowing crawlers.')
 
@@ -405,11 +418,11 @@ print('  Banned vocabulary: none. Unsupported proof: none.')
 print('  Mockup captions: %d. All-caps labels: none.' % body.count(cap))
 
 if PRODUCTION:
-    print('  No placeholders. Staging noindex and robots disallow are both off.')
-    print('\n  Not checked here, and still yours to confirm before launch:')
-    print('    - canonical tags and an absolute og:image (both need the real domain)')
-    print('    - a test enquiry sent end to end and received')
-    print('    - legal entity name, registered address and governing jurisdiction')
+    print('  No placeholders. The live site is indexable and crawlable.')
+    print('\n  Things this cannot see from the repository:')
+    print('    - whether automatesmall.com actually resolves and serves this build')
+    print('    - whether the old Fly app is still running a stale copy of the site')
+    print('    - whether the sitemap has been submitted in Google Search Console')
 elif found_placeholders:
     # Visible every run so these cannot quietly pile up again.
     print('\n  %d placeholder(s) still on the site. Fine for staging, fatal at '

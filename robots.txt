@@ -1,5 +1,5 @@
-# Staging site — not for indexing.
+# automatesmall.com — live.
 User-agent: *
-Disallow: /
+Allow: /
 
 Sitemap: https://automatesmall.com/sitemap.xml
