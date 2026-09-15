@@ -12,6 +12,10 @@ Go to <https://script.google.com> → **New project**. Name it
 // Where enquiries land. Change this and redeploy if it ever moves.
 var TO = 'mayurk@automatesmall.com';
 
+// Display name on the notification. Without this, some mail clients show the
+// bare address, which looks like machine output rather than a message.
+var FROM_NAME = 'Mayur Khera';
+
 function doPost(e) {
   try {
     var data = JSON.parse((e && e.postData && e.postData.contents) || '{}');
@@ -25,6 +29,7 @@ function doPost(e) {
 
     var options = {
       to: TO,
+      name: FROM_NAME,
       subject: String(data.subject || 'Website enquiry').slice(0, 200),
       body: body
     };
@@ -93,6 +98,26 @@ The URL is not a secret in the password sense — it is in the page source, as
 every form endpoint is — but do not post it publicly. Anyone with it can send
 you email. If it is ever abused, **Deploy → Manage deployments → Archive**
 kills it and a new deployment gives you a fresh URL.
+
+## The sender name people actually see
+
+`FROM_NAME` above only affects the notification the script sends **to you**.
+
+When you **reply to a prospect**, the name they see comes from your Google
+account, not from anything in this repo. Set it once:
+
+- **Gmail** → Settings → See all settings → **Accounts** → "Send mail as" →
+  **edit info** next to `mayurk@automatesmall.com` → set the name to
+  `Mayur Khera` → Save.
+- **Workspace**, if your admin manages it: Google Admin → Directory → Users →
+  your account → the name there is what recipients see.
+
+That is the one that matters commercially. A reply from "Mayur Khera" reads
+like a person; one from a bare address reads like a system.
+
+Note that Apps Script can change the display name but not the address it
+sends from -- that is always the Google account running the script, unless
+you have configured a verified alias in Gmail.
 
 ## Changing it later
 
