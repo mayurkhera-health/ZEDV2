@@ -239,7 +239,8 @@ git rev-parse --short HEAD
 
 Those should match. This exists because once they didn't: an old build sat on
 staging looking current, and nothing on the page or in any deploy output could
-tell you which was which. On Pages the stamp comes from `CF_PAGES_COMMIT_SHA`.
+tell you which was which. The stamp comes from `WORKERS_CI_COMMIT_SHA` on
+Workers Builds, `CF_PAGES_COMMIT_SHA` on Pages, and `git rev-parse` locally.
 
 ### Indexing
 
@@ -250,13 +251,37 @@ To hide work in progress, push a branch — Cloudflare serves previews on their
 own hostnames — rather than putting `noindex` back on production.
 `scripts/check-copy.py --production` fails if it reappears.
 
+`scripts/build.sh` makes that safe on its own. It reads the branch from
+`WORKERS_CI_BRANCH` / `CF_PAGES_BRANCH` (falling back to `git`), and anything
+that is not `main` gets a `Disallow: /` robots.txt, an `X-Robots-Tag:
+noindex, nofollow` header, and no sitemap. Both robots.txt and the header,
+because robots.txt asks a crawler not to fetch while the header tells one that
+already fetched not to index — and a preview URL pasted into a chat gets
+fetched.
+
+The repository's own `_headers` and `robots.txt` are never touched by this;
+only the built output is. That is deliberate. `--production` reads the files,
+so if the gate read the build instead it could be fooled by the branch it
+happened to run on.
+
+Check a preview before sharing it:
+
+```bash
+WORKERS_CI_BRANCH=staging bash scripts/build.sh
+grep -c noindex dist/_headers   # 1
+cat dist/robots.txt             # Disallow: /
+ls dist/sitemap.xml             # should not exist
+```
+
 ### Before showing it to anyone outside the business
 
-The staging build still carries a placeholder founder name, a placeholder
-founder photograph, placeholder legal entity details, and a booking form that
-validates but transmits nothing. That is fine for the five-owner test in the
-section below — those owners are being asked about the copy, not the company
-details — but nothing here should be sent to a prospect as finished.
+This section used to list what was still fake: a placeholder founder name and
+photograph, placeholder legal entity details, and a booking form that
+validated but transmitted nothing. None of that is true any more — the founder
+block was removed rather than filled, the entity details are real, the forms
+post to a live endpoint, and `--production` reports no placeholders. Kept as a
+heading because the question it asks is permanent: run the production gate and
+read its output before sending a link to anyone outside the business.
 
 ## Pre-launch test (Part F)
 
