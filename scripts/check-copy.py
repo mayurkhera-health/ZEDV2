@@ -354,6 +354,19 @@ for page in pages:
                  'site says pricing is quoted after the walkthrough. Change every '
                  'surface together or none.' % (page, TAG.sub('', slot).strip()))
 
+# The owner does not want the site committing to a fixed price. These phrases
+# all promise it, with or without the words: a "fixed number in writing" is the
+# same undertaking as a "fixed price", and "we don't bill by the hour" is its
+# other half. Removed 16 Sep 2026; guarded so they cannot drift back in.
+PRICE_COMMITMENTS = ['fixed price', 'fixed scope', 'fixed number',
+                     'hourly meter', 'bill by the hour']
+for page in pages:
+    flat = re.sub(r'\s+', ' ', visible(io.open(page, encoding='utf-8').read())).lower()
+    for phrase in PRICE_COMMITMENTS:
+        if phrase in flat:
+            fail('%s says "%s". The site quotes before work starts; it does not '
+                 'commit to the price being fixed.' % (page, phrase))
+
 cost_q = re.search(r'How much does this cost\?.{0,900}', home, re.S)
 if cost_q and 'quoted' not in cost_q.group(0).lower():
     fail('the "How much does this cost?" answer no longer says pricing is quoted. '
