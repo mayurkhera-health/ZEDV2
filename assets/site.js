@@ -170,6 +170,17 @@ function wireCopy(btn, getText) {
     R8: 'Chasing people for forms'
   };
 
+  /* Answers used to reach sessionStorage only when the booking button was
+     pressed, so anyone who filled the check in and then hesitated lost the
+     lot on reload -- including the free text they had just written out. Save
+     on every change instead. Same store, same scope, same promise in
+     privacy.html: it stays on the device and the browser clears it with the
+     tab. */
+  var STORE = 'automatesmall.check';
+  function save() {
+    try { sessionStorage.setItem(STORE, JSON.stringify(check)); } catch (e) {}
+  }
+
   /* E4 — analytics. Pushes to dataLayer; swap in any privacy-friendly tool. */
   function track(event, props) {
     (window.dataLayer = window.dataLayer || []).push(
@@ -410,6 +421,31 @@ function wireCopy(btn, getText) {
     });
   })();
 
+  /* Come back to the tab and your answers are still there. Restored before
+     anything paints, and defensively: a stored shape can outlive the
+     questions that produced it, so each field is checked against what exists
+     now rather than trusted. */
+  (function restore() {
+    var saved = null;
+    try { saved = JSON.parse(sessionStorage.getItem(STORE) || 'null'); } catch (e) {}
+    if (!saved || !$('#wall')) return;
+
+    (saved.statements || []).forEach(function (id) {
+      var el = $('.stmt[data-id="' + id + '"]');
+      if (!el) return;                       /* a statement we have since renamed */
+      el.setAttribute('aria-pressed', 'true');
+      check.statements.push(id);
+    });
+    if (saved.industry && $('#drawer-industry option[value="' + saved.industry + '"]')) {
+      applyIndustry(saved.industry);
+    }
+    if (SIZE_LABELS[saved.size]) check.size = saved.size;
+    if (TIME_BANDS[saved.timeBand]) check.timeBand = saved.timeBand;
+    if (saved.priority === 'same' || WORKFLOWS[saved.priority]) check.priority = saved.priority;
+    if (typeof saved.notes === 'string') check.notes = saved.notes.slice(0, 600);
+    check.hoursConfirmed = false;            /* the slider is back at its default */
+  })();
+
   /* ------------------------------------------------- C2 the recognition wall */
   var pill = $('#pill');
 
@@ -476,6 +512,7 @@ function wireCopy(btn, getText) {
         if (on && at === -1) check.statements.push(id);
         if (!on && at > -1) check.statements.splice(at, 1);
         track('statement_toggle', { id: id, selected: on });
+        save();
         refresh();
       });
     });
@@ -529,6 +566,7 @@ function wireCopy(btn, getText) {
     check.industry = key === 'all' ? null : key;
     var sel = $('#drawer-industry');
     if (sel) sel.value = check.industry || '';
+    save();
   }
 
   /* -------------------------------------------------------- C8 the calculator */
@@ -904,6 +942,7 @@ function wireCopy(btn, getText) {
 
     chipGroup('#dq-size', function (v) {
       check.size = v;
+      save();
       track('check_size_set', { size: v || 'cleared' });
     });
 
@@ -912,12 +951,14 @@ function wireCopy(btn, getText) {
       /* A band chosen here is the more recent answer, so it replaces whatever
          the slider said rather than being overruled by it. */
       check.hoursConfirmed = false;
+      save();
       track('check_time_band_set', { band: v || 'cleared' });
       renderPanel();
     });
 
     chipGroup('#dq-pain', function (v) {
       check.priority = v;
+      save();
       track('check_priority_set', { workflow: v || 'cleared' });
     });
 
@@ -925,6 +966,7 @@ function wireCopy(btn, getText) {
     if (notesEl) {
       notesEl.addEventListener('input', function () {
         check.notes = notesEl.value;
+        save();
         paintNoteCount();
       });
       /* Length only. What an owner types about their own business is the one
@@ -937,7 +979,7 @@ function wireCopy(btn, getText) {
 
     $('#drawer-book').addEventListener('click', function () {
       if (!industryAnswered()) return;
-      try { sessionStorage.setItem('automatesmall.check', JSON.stringify(check)); } catch (err) {}
+      save();
       track('booking_start', {
         from: 'drawer',
         statements: check.statements.length,
