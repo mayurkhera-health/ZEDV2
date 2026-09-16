@@ -413,18 +413,44 @@ function wireCopy(btn, getText) {
   /* ------------------------------------------------- C2 the recognition wall */
   var pill = $('#pill');
 
+  var pillWrap = $('#pillwrap');
+  var wallPassed = false;       /* scrolled clean past the wall */
+  var promptDismissed = false;  /* asked once, told no */
+
   function refreshPill() {
-    if (!pill) return;
+    if (!pill || !pillWrap) return;
     var n = check.statements.length;
     var drawerOpen = panelEl && !panelEl.hidden;
-    var finalInView = finalSeen;
-    pill.classList.toggle('is-on', n > 0 && !drawerOpen && !finalInView);
-    $('#pill-n').textContent = String(n);
-    $('#pill-word').textContent = 'selected';
-    /* The visible label is deliberately terse so it stays on one line at 320px.
-       Screen readers get the full sentence. */
-    pill.setAttribute('aria-label',
-      'View results: ' + n + (n === 1 ? ' problem' : ' problems') + ' selected');
+    var blocked = drawerOpen || finalSeen;
+    /* Two modes. With selections it returns you to your results. With none,
+       once the wall is behind you, it returns you to the wall -- otherwise
+       scrolling past the one interactive section on the page is a one-way
+       trip, and that section is the whole point. */
+    var prompt = n === 0 && wallPassed && !promptDismissed;
+    pillWrap.classList.toggle('is-on', !blocked && (n > 0 || prompt));
+    $('#pill-results').hidden = prompt;
+    $('#pill-prompt').hidden = !prompt;
+    $('#pill-x').hidden = !prompt;
+    if (prompt) {
+      pill.setAttribute('aria-label', 'Try the 2-minute check: go to the list');
+    } else {
+      $('#pill-n').textContent = String(n);
+      $('#pill-word').textContent = 'selected';
+      /* The visible label is deliberately terse so it stays on one line at
+         320px. Screen readers get the full sentence. */
+      pill.setAttribute('aria-label',
+        'View results: ' + n + (n === 1 ? ' problem' : ' problems') + ' selected');
+    }
+  }
+
+  function goToWall() {
+    var wallEl = $('#wall');
+    if (!wallEl) return;
+    wallEl.scrollIntoView({ behavior: reduced.matches ? 'auto' : 'smooth', block: 'center' });
+    window.setTimeout(function () {
+      var f = $('.stmt', wallEl);
+      if (f) f.focus();
+    }, reduced.matches ? 0 : 500);
   }
 
   (function wall() {
@@ -434,7 +460,10 @@ function wireCopy(btn, getText) {
 
     function refresh() {
       var n = check.statements.length;
-      count.textContent = n === 0 ? 'Nothing picked yet' : n + (n === 1 ? ' picked' : ' picked');
+      /* The button beside this is disabled at zero. Left as a status line
+         ("nothing picked yet") that reads as a dead section; as an
+         instruction it explains what the disabled button is waiting for. */
+      count.textContent = n === 0 ? 'Pick at least one' : n + ' picked';
       cta.disabled = n === 0;
       refreshPill();
     }
@@ -466,6 +495,22 @@ function wireCopy(btn, getText) {
       var first = $('.stmt', wallEl);
       window.setTimeout(function () { first.focus(); }, reduced.matches ? 0 : 500);
     });
+  })();
+
+  /* Two things at once: settle the notes in the first time the panel is
+     reached, and notice when the whole section has gone by untouched. */
+  (function watchWall() {
+    var sec = $('#recognition'), panel = $('.wall-panel');
+    if (!sec || !('IntersectionObserver' in window)) return;
+    /* Armed only now. If this script or the observer never runs, the cards are
+       never hidden in the first place. */
+    if (panel && !reduced.matches) panel.classList.add('is-armed');
+    new IntersectionObserver(function (entries) {
+      var e = entries[0];
+      if (e.isIntersecting && panel) panel.classList.add('is-in');
+      wallPassed = !e.isIntersecting && e.boundingClientRect.top < 0;
+      refreshPill();
+    }, { threshold: 0.12 }).observe(sec);
   })();
 
   // Hide the pill once the final CTA is on screen.
@@ -902,7 +947,25 @@ function wireCopy(btn, getText) {
       window.location.href = 'book.html';
     });
   }
-  if (pill) pill.addEventListener('click', function () { openPanel(); });
+  if (pill) {
+    pill.addEventListener('click', function () {
+      if (check.statements.length === 0) {
+        /* Nothing to show yet, so opening the panel on its empty state would
+           only send them back here with an extra click. Go straight there. */
+        track('check_prompt_click', {});
+        goToWall();
+        return;
+      }
+      openPanel();
+    });
+  }
+  if ($('#pill-x')) {
+    $('#pill-x').addEventListener('click', function () {
+      promptDismissed = true;
+      track('check_prompt_dismiss', {});
+      refreshPill();
+    });
+  }
   /* The "estimate my admin time" link inside the drawer: close the panel
      first, otherwise the calculator scrolls underneath an open overlay. */
   document.addEventListener('click', function (e) {

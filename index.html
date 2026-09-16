@@ -140,7 +140,7 @@
         <button type="button" class="stmt" aria-pressed="false" data-id="R8" data-maps="W7 W4"><span class="stmt__box" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="#2F5D48" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.4l4.2 4.2L16.4 5.6"/></svg></span><span>Chasing people for forms and documents eats my week.</span></button>
     </div>
     <div class="wall__bar">
-      <p class="wall__count" id="wall-count" aria-live="polite">Nothing picked yet</p>
+      <p class="wall__count" id="wall-count" aria-live="polite">Pick at least one</p>
       <button class="btn btn--primary" type="button" id="wall-cta" disabled>See what we&rsquo;d look at first</button>
     </div>
     </div>
@@ -403,7 +403,15 @@
 </main>
 
 <!-- Sticky check pill -->
-<button class="pill" type="button" id="pill">View results <span aria-hidden="true">&middot;</span> <b id="pill-n">0</b> <span id="pill-word">selected</span></button>
+<div class="pillwrap" id="pillwrap">
+  <button class="pill" type="button" id="pill">
+    <span id="pill-results">View results <span aria-hidden="true">&middot;</span> <b id="pill-n">0</b> <span id="pill-word">selected</span></span>
+    <span id="pill-prompt" hidden>Try the 2-minute check</span>
+  </button>
+  <button class="pill__x" type="button" id="pill-x" aria-label="Hide this" hidden>
+    <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>
+  </button>
+</div>
 
 <!-- Result panel -->
 <div class="scrim" id="scrim" hidden></div>

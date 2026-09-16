@@ -456,29 +456,71 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
 .tidy__s{ margin-left:auto; font-size:14px; font-weight:600; color:var(--ledger); }
 .tidy__s--you{ color:var(--brick); }
 
-/* ---------- Sticky check pill ---------- */
+/* ---------- Sticky check pill ----------
+   Two jobs in one control. With selections it is a way back to your results.
+   With none, once you have scrolled past the wall without touching it, it is
+   the way back to the wall -- the section is the point of the page and
+   scrolling past it used to be a one-way trip. The prompt form carries a
+   dismiss; the results form does not, because a summary of your own answers
+   is not something you need to be able to get rid of. */
+.pillwrap{
+  position:fixed; z-index:35; display:none; align-items:center; gap:8px;
+  right:26px; bottom:26px;
+}
+.pillwrap.is-on{ display:flex; }
 .pill{
-  position:fixed; z-index:35; display:none; align-items:center; gap:10px;
+  display:inline-flex; align-items:center; gap:10px;
   min-height:52px; padding:12px 20px; border:0; border-radius:999px; cursor:pointer;
   background:var(--ink); color:var(--paper); font:600 16px var(--body);
   box-shadow:0 10px 28px -12px rgba(38,40,43,.6);
 }
-.pill.is-on{ display:inline-flex; }
+.pill__x{
+  flex:none; width:38px; height:38px; display:grid; place-items:center;
+  border:0; border-radius:999px; cursor:pointer;
+  background:var(--ink); color:var(--paper); opacity:.72;
+  box-shadow:0 10px 28px -12px rgba(38,40,43,.6);
+}
+.pill__x:hover{ opacity:1; }
+.pill__x[hidden]{ display:none; }
 .pill b{ font-variant-numeric:tabular-nums; }
 /* Below 720px this is a bottom action bar, not a floating blob. It used to be
    160x132px at 320px because the long label wrapped to four lines and covered
    the content behind it. */
 @media (max-width:719px){
-  .pill{
-    left:16px; right:16px; width:auto; transform:none;
+  .pillwrap{
+    left:16px; right:16px; width:auto;
     bottom:calc(14px + env(safe-area-inset-bottom, 0px));
-    justify-content:center; white-space:nowrap; min-height:48px; padding:12px 16px;
   }
-  .pill.is-on{ display:flex; }
+  .pill{
+    flex:1; justify-content:center; white-space:nowrap; min-height:48px; padding:12px 16px;
+  }
+  .pill__x{ width:44px; height:44px; }
   /* Keep the bar from sitting on top of the last thing on the page. */
-  body:has(.pill.is-on){ padding-bottom:78px; }
+  body:has(.pillwrap.is-on){ padding-bottom:78px; }
 }
-@media (min-width:720px){ .pill{ right:26px; bottom:26px; } }
+
+/* ---------- The wall settles in when you reach it ----------
+   A grid of checkbox cards reads as a list of features until something moves.
+   This is the cheapest honest way to say "these do something" -- it claims
+   nothing, it just stops the section looking inert.
+   `translate` rather than `transform`, because each note carries its own
+   rotation and a transform here would wipe it out. Armed by JS, so the cards
+   are never left invisible if the script or the observer is unavailable. */
+@media (prefers-reduced-motion:no-preference){
+  .wall-panel.is-armed .stmt{ opacity:0; translate:0 12px; }
+  .wall-panel.is-armed.is-in .stmt{
+    opacity:1; translate:0 0;
+    transition:opacity .42s ease, translate .5s cubic-bezier(.2,.7,.3,1);
+  }
+  .wall-panel.is-armed.is-in .stmt:nth-child(1){ transition-delay:0s }
+  .wall-panel.is-armed.is-in .stmt:nth-child(2){ transition-delay:.05s }
+  .wall-panel.is-armed.is-in .stmt:nth-child(3){ transition-delay:.10s }
+  .wall-panel.is-armed.is-in .stmt:nth-child(4){ transition-delay:.15s }
+  .wall-panel.is-armed.is-in .stmt:nth-child(5){ transition-delay:.20s }
+  .wall-panel.is-armed.is-in .stmt:nth-child(6){ transition-delay:.25s }
+  .wall-panel.is-armed.is-in .stmt:nth-child(7){ transition-delay:.30s }
+  .wall-panel.is-armed.is-in .stmt:nth-child(8){ transition-delay:.35s }
+}
 
 /* ---------- Result panel ---------- */
 .scrim{ position:fixed; inset:0; z-index:50; background:rgba(38,40,43,.42); opacity:0; transition:opacity .22s ease; }
