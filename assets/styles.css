@@ -241,6 +241,19 @@ a:hover{ color:var(--brick-deep); }
 .exnote svg{ flex:none; margin-top:3px; }
 
 /* ---------- C2 recognition wall ---------- */
+/* The board the notes are pinned to. This section is the whole point of the
+   page -- it is where a visitor first does something rather than reads -- and
+   unframed it read as loose page furniture. The frame makes it an instrument:
+   the question, the notes, and the action are one object.
+   Lighter than the section behind it, so white notes still lift off it. */
+.wall-panel{
+  padding:clamp(18px,2.6vw,30px);
+  background:var(--paper); border:1px solid var(--line);
+  border-radius:var(--r-card);
+  box-shadow:0 1px 2px rgba(38,40,43,.05), 0 10px 26px -20px rgba(38,40,43,.5);
+}
+@media (max-width:480px){ .wall-panel{ padding:15px 13px; } }
+
 .wall{ display:grid; grid-template-columns:1fr; gap:13px; }
 .wall > *{ min-width:0; }
 @media (min-width:700px){ .wall{ grid-template-columns:repeat(6,1fr); } }
@@ -253,22 +266,28 @@ a:hover{ color:var(--brick-deep); }
   transition:transform .22s ease, border-color .18s ease, background-color .18s ease;
 }
 @media (min-width:700px){
+  /* 6 columns, spans 3+3 / 2+2+2 / 2+2+2. Every row fills exactly. The old
+     order (3,2,2,3,2,2,2,2) summed to the same 18 but left a dead column on
+     rows one and two and stranded the eighth note alone on a fourth row --
+     which read as a broken grid rather than a deliberate scatter. */
   .stmt{ grid-column:span 2; }
-  .stmt--lg{ grid-column:span 3; font-size:19px; }
-  .stmt--sm{ grid-column:span 2; font-size:16px; }
+  .stmt--lg{ grid-column:span 3; font-size:18.5px; }
 }
-.stmt:nth-child(3n+1){ transform:rotate(-1.1deg); }
-.stmt:nth-child(3n+2){ transform:rotate(.9deg); }
-.stmt:nth-child(3n){ transform:rotate(-.5deg); }
+.stmt:nth-child(3n+1){ transform:rotate(-.55deg); }
+.stmt:nth-child(3n+2){ transform:rotate(.45deg); }
+.stmt:nth-child(3n){ transform:rotate(-.25deg); }
+.stmt:hover{ transform:rotate(0deg) translateY(-1px); }
 .stmt:hover{ border-color:var(--ink-soft); }
 .stmt[aria-pressed="true"]{ transform:rotate(0deg); border:2px solid var(--ledger); padding:16px 17px; background:var(--card); }
 .stmt__box{ flex:none; width:22px; height:22px; margin-top:1px; border:1.5px solid var(--line); border-radius:5px; background:var(--paper); display:grid; place-items:center; }
 .stmt[aria-pressed="true"] .stmt__box{ border-color:var(--ledger); background:var(--ledger-tint); }
 .stmt__box svg{ opacity:0; }
 .stmt[aria-pressed="true"] .stmt__box svg{ opacity:1; }
-@media (max-width:699px){ .stmt{ transform:rotate(-.75deg); } .stmt:nth-child(even){ transform:rotate(.75deg); } }
+@media (max-width:699px){ .stmt{ transform:rotate(-.45deg); } .stmt:nth-child(even){ transform:rotate(.45deg); } }
 
-.wall__bar{ margin-top:26px; display:flex; flex-wrap:wrap; align-items:center; gap:16px; }
+.wall__bar{ margin-top:clamp(18px,2.2vw,24px); padding-top:clamp(16px,2vw,20px);
+  border-top:1px solid var(--line);
+  display:flex; flex-wrap:wrap; align-items:center; gap:16px; }
 .wall__count{ font-weight:600; font-variant-numeric:tabular-nums; }
 
 /* ---------- C4 teams ---------- */
