@@ -68,13 +68,49 @@ only when they press the booking button.
 
 Scoring is exactly as specified: each selected statement adds one point to
 each workflow it maps to; ties break by the chosen industry's priority order,
-then by the default order W3, W5, W8, W1, W7, W4, W6, W2. The mapping lives in
-`data-maps` on each statement and the industry lines in `data-ex-*` on each
-workflow card, so the copy and the logic cannot fall out of step.
+then by the default order W3, W5, W8, W1, W7, W4, W6, W2. The statement-to-
+workflow mapping lives in `data-maps` in `index.html`; the workflow titles,
+outcomes and per-industry example lines live in `WORKFLOWS` in
+`assets/site.js`.
 
 Verified: picking R2 + R5 + R6 with "Home services & trades" returns
 W3 (2 points), then W5 and W6 on the industry tie-break. 10 hours a week
 reads as "about 500 hours a year, or 12.5 full work weeks."
+
+### The questions are the same for every business
+
+The result panel asks four follow-ups and **every visitor gets the same
+four**, whatever they run. Industry is a filter on the *answers*, never on the
+questions -- it reorders the three workflows and picks which example sentence
+to show, and that is all it does. There are no per-industry question packs,
+because we have no owner interviews behind them and a question we invented is
+worse than one we didn't ask.
+
+| Question | Field | Where it goes |
+| --- | --- | --- |
+| How many people work there | `check.size` | prefills the booking form's "how many people" |
+| How much of the week goes to admin | `check.timeBand` | the time sentence, and the booking email |
+| Which of the three to fix first | `check.priority` | the booking email |
+| Anything specific to your business | `check.notes` | prefills the booking form's "what eats up the most time" |
+
+The last one is the only place the answers stop being identical, which is the
+point: consistent questions, one open field for what consistency can't reach.
+
+Two rules that the code comments also carry, because both have been broken
+before:
+
+- **Never quote a default back as an answer.** Time is a band, not a slider
+  reading, and "Not sure" produces no sentence at all -- the panel links to the
+  estimator instead of picking a number. Opening the team fields no longer sets
+  `hoursConfirmed`, which used to let the panel say "you said about 10 hours"
+  to someone who never touched the slider.
+- **Free text never reaches analytics.** `check_notes` records whether the box
+  was filled, not what was in it. Everything else the check collects is a fixed
+  value from a fixed list, so those events carry the value.
+
+The reason a workflow is on the list is the visitor's own selections, quoted
+back ("You picked: Invoices going out late"), not an assertion about their
+industry that we can't support.
 
 ## Before launch — the A1 decisions and every placeholder
 

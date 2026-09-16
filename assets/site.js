@@ -115,6 +115,17 @@ function wireCopy(btn, getText) {
   var check = {
     statements: [],
     industry: null,
+    /* The three universal follow-ups. Every visitor is asked the same ones
+       whatever business they run; `industry` only reorders the results, it
+       never changes the questions. Null means unanswered, and unanswered is
+       allowed to stay unanswered -- none of this gates the result. */
+    size: null,
+    timeBand: null,
+    priority: null,
+    /* ...and the one answer that is not the same for everybody. Free text,
+       so it goes to the booking email and to nothing else -- never to
+       analytics, never to a query string. */
+    notes: '',
     hoursPerWeek: 10,
     /* 10 is the slider's starting position, not something the visitor told us.
        Until they move it, we may not say "you said". */
@@ -122,6 +133,41 @@ function wireCopy(btn, getText) {
     teamCount: 0,
     teamHoursEach: 0,
     timeBackChoice: null
+  };
+
+  /* Bands, not a number. A band is what an owner actually knows about their
+     own week; a slider invites us to quote a precision nobody gave us. `low`
+     and `high` are hours per week; high === null means open-ended, and
+     hasRange false means we may make no arithmetic claim at all. */
+  var TIME_BANDS = {
+    'under5': { label: 'under 5 hours a week',  low: 0,  high: 5,    hasRange: true  },
+    '5to10':  { label: '5\u201310 hours a week',  low: 5,  high: 10,   hasRange: true  },
+    '10to20': { label: '10\u201320 hours a week', low: 10, high: 20,   hasRange: true  },
+    '20plus': { label: '20+ hours a week',      low: 20, high: null, hasRange: true  },
+    'unsure': { label: 'not sure',              low: 0,  high: null, hasRange: false }
+  };
+
+  /* Same four ranges as the booking form's "how many people" select, and the
+     same values, so the answer prefills instead of being asked twice. */
+  var SIZE_LABELS = {
+    '1-5':  '1\u20135 people',
+    '6-15': '6\u201315 people',
+    '16-50': '16\u201350 people',
+    '50+':  '50+ people'
+  };
+
+  /* Short labels for the recognition statements. Declared up here with the
+     other lookup tables after a `var` hoisting bug put it below its first
+     caller; keep every table in this block. */
+  var STATEMENT_TEXT = {
+    R1: 'Entering the same information in three places',
+    R2: 'Follow-ups only happen if I remember',
+    R3: 'Spreadsheets everywhere',
+    R4: 'Five systems, still no clear picture',
+    R5: 'Checking employee paperwork by hand',
+    R6: 'Invoices going out late',
+    R7: 'How we do things lives in someone\u2019s head',
+    R8: 'Chasing people for forms'
   };
 
   /* E4 — analytics. Pushes to dataLayer; swap in any privacy-friendly tool. */
@@ -500,13 +546,18 @@ function wireCopy(btn, getText) {
          inside it. */
       check.hoursConfirmed = true;
       setSlider(); big.textContent = 'About ' + num(annualHours()) + ' hours a year'; shown = annualHours();
+      /* Keep the drawer's band chip agreeing with the slider, so nobody is
+         asked the same question twice in two different shapes. */
+      check.timeBand = bandForHours(check.hoursPerWeek);
     });
     slider.addEventListener('change', release);
     slider.addEventListener('keyup', release);
 
     toggle.addEventListener('change', function () {
       fields.hidden = !toggle.checked;
-      check.hoursConfirmed = true;
+      /* This used to set hoursConfirmed, which let the panel quote the
+         slider's untouched default back as "you said". Opening the team
+         fields says nothing about the visitor's own hours. */
       if (!toggle.checked) { check.teamCount = 0; check.teamHoursEach = 0; peopleOut.textContent = '0'; each.value = 0; eachOut.textContent = '0'; }
       paintText();
     });
@@ -542,13 +593,18 @@ function wireCopy(btn, getText) {
   /* ------------------------------------------------------- C0 the result panel */
   var panelEl = $('#drawer'), scrim = $('#scrim'), lastFocus = null;
 
+  /* Returns [{ w, from }] -- `from` being the statement ids that put this
+     workflow on the list, so the panel can show why without inventing a
+     reason. */
   function score() {
-    var pts = {};
+    var pts = {}, from = {};
     check.statements.forEach(function (id) {
       var el = $('.stmt[data-id="' + id + '"]');
       if (!el) return;
       (el.getAttribute('data-maps') || '').split(/\s+/).forEach(function (w) {
-        if (w) pts[w] = (pts[w] || 0) + 1;
+        if (!w) return;
+        pts[w] = (pts[w] || 0) + 1;
+        (from[w] = from[w] || []).push(id);
       });
     });
     var prio = check.industry ? (INDUSTRY_PRIORITY[check.industry] || []) : [];
@@ -558,7 +614,50 @@ function wireCopy(btn, getText) {
     }
     return Object.keys(pts)
       .sort(function (a, b) { return (pts[b] - pts[a]) || (rank(a) - rank(b)); })
-      .slice(0, 3);
+      .slice(0, 3)
+      .map(function (w) { return { w: w, from: from[w] || [] }; });
+  }
+
+  /* Their words, not ours. "You picked X and Y" is something we can stand
+     behind; "businesses like yours struggle with X" is not. */
+  function whyLine(ids) {
+    var named = ids.map(function (id) { return STATEMENT_TEXT[id]; }).filter(Boolean);
+    if (!named.length) return null;
+    var last = named.pop();
+    return 'You picked: ' + (named.length ? named.join(', ') + ' and ' + last : last) + '.';
+  }
+
+  function bandForHours(h) {
+    if (h >= 20) return '20plus';
+    if (h >= 10) return '10to20';
+    if (h >= 5)  return '5to10';
+    return 'under5';
+  }
+
+  /* A range, never a point. "Not sure" gets no sentence at all -- we send them
+     to the estimator rather than picking a number on their behalf. */
+  function bandSentence() {
+    var b = TIME_BANDS[check.timeBand];
+    if (!b || !b.hasRange) return null;
+    var lo = b.low * 50, hi = b.high === null ? null : b.high * 50;
+    var head = 'You said ' + b.label + '. ';
+    if (hi === null) {
+      return head + 'That\u2019s ' + num(lo) + ' hours a year or more \u2014 ' +
+             workWeeks(lo) + ' full work weeks and up.';
+    }
+    if (lo === 0) {
+      return head + 'That\u2019s up to ' + num(hi) + ' hours a year, about ' +
+             workWeeks(hi) + ' full work weeks.';
+    }
+    return head + 'That\u2019s ' + num(lo) + '\u2013' + num(hi) + ' hours a year, or ' +
+           workWeeks(lo) + '\u2013' + workWeeks(hi) + ' full work weeks.';
+  }
+
+  function pressOne(wrap, value) {
+    if (!wrap) return;
+    $$('.chip', wrap).forEach(function (c) {
+      c.setAttribute('aria-pressed', String(c.getAttribute('data-v') === value));
+    });
   }
 
   function renderPanel() {
@@ -574,8 +673,8 @@ function wireCopy(btn, getText) {
     var ranked = score();
     var countEl = $('#drawer-count');
     if (countEl) { countEl.textContent = ranked.length + (ranked.length === 1 ? ' area' : ' areas'); }
-    ranked.forEach(function (w, n) {
-      var card = WORKFLOWS[w];
+    ranked.forEach(function (r, n) {
+      var card = WORKFLOWS[r.w];
       if (!card) return;
       var li = document.createElement('li');
       var b = document.createElement('span');
@@ -592,29 +691,85 @@ function wireCopy(btn, getText) {
         e.className = 'picked__e'; e.textContent = ex;
         d.appendChild(e);
       }
+      var why = whyLine(r.from);
+      if (why) {
+        var w = document.createElement('div');
+        w.className = 'picked__w'; w.textContent = why;
+        d.appendChild(w);
+      }
       li.appendChild(b); li.appendChild(d);
       list.appendChild(li);
     });
 
-    var a = annualHours();
+    /* The two universal chip questions. Neither changes the ranking; both
+       exist so the walkthrough starts further along. */
+    pressOne($('#dq-size'), check.size);
+    pressOne($('#dq-time'), check.timeBand);
+
+    /* "Which would you fix first?" is only a question when there is more than
+       one. Options come from what they actually flagged, so a stored answer
+       that no longer appears has to go. */
+    var painWrap = $('#dq-pain-wrap'), painChips = $('#dq-pain');
+    var ids = ranked.map(function (r) { return r.w; });
+    if (check.priority && check.priority !== 'same' && ids.indexOf(check.priority) === -1) {
+      check.priority = null;
+    }
+    if (painWrap && painChips) {
+      painWrap.hidden = ranked.length < 2;
+      painChips.innerHTML = '';
+      if (ranked.length >= 2) {
+        ranked.forEach(function (r) {
+          var card = WORKFLOWS[r.w];
+          if (!card) return;
+          var c = document.createElement('button');
+          c.type = 'button'; c.className = 'chip';
+          c.setAttribute('data-v', r.w);
+          c.setAttribute('aria-pressed', String(check.priority === r.w));
+          c.textContent = card.title;
+          painChips.appendChild(c);
+        });
+        var same = document.createElement('button');
+        same.type = 'button'; same.className = 'chip';
+        same.setAttribute('data-v', 'same');
+        same.setAttribute('aria-pressed', String(check.priority === 'same'));
+        same.textContent = 'All about the same';
+        painChips.appendChild(same);
+      }
+    }
+
+    var notes = $('#drawer-notes');
+    if (notes && notes.value !== check.notes) notes.value = check.notes;
+    paintNoteCount();
+
+    /* Time. A chosen band wins; a moved slider is more precise, so it wins
+       over the band it implied. Neither answered -- or "not sure" -- and we
+       say nothing and point at the estimator instead. */
     var timeEl = $('#drawer-time'), promptEl = $('#drawer-time-prompt');
-    if (!check.hoursConfirmed) {
-      /* They picked statements but never touched the calculator. Anything we
-         print here would be the default dressed up as their own answer, so
-         invite them to set it instead of inventing it. */
-      timeEl.hidden = true;
-      if (promptEl) promptEl.hidden = false;
-      return;
+    var txt = null;
+    if (check.hoursConfirmed) {
+      var a = annualHours();
+      txt = 'You said about ' + check.hoursPerWeek + (check.hoursPerWeek >= 20 ? '+' : '') +
+            ' hours a week. That\u2019s around ' + atLeast() + num(a) + ' hours a year, or ' +
+            workWeeks(a) + ' full work weeks.';
+    } else {
+      txt = bandSentence();
     }
-    if (promptEl) promptEl.hidden = true;
-    timeEl.hidden = false;
-    var txt = 'You said about ' + check.hoursPerWeek + (check.hoursPerWeek >= 20 ? '+' : '') +
-              ' hours a week. That’s around ' + atLeast() + num(a) + ' hours a year, or ' +
-              workWeeks(a) + ' full work weeks.';
-    if (check.timeBackChoice) {
-      txt += " That's a lot of room to " + check.timeBackChoice.charAt(0).toLowerCase() + check.timeBackChoice.slice(1) + '.';
+    if (txt && check.timeBackChoice) {
+      txt += ' That\u2019s a lot of room to ' +
+             check.timeBackChoice.charAt(0).toLowerCase() + check.timeBackChoice.slice(1) + '.';
     }
-    timeEl.textContent = txt;
+    timeEl.hidden = !txt;
+    if (txt) timeEl.textContent = txt;
+    if (promptEl) promptEl.hidden = !!txt;
+  }
+
+  function paintNoteCount() {
+    var notes = $('#drawer-notes'), out = $('#drawer-notes-count');
+    if (!notes || !out) return;
+    var max = Number(notes.getAttribute('maxlength')) || 600;
+    var left = max - notes.value.length;
+    out.hidden = left > 100;
+    out.textContent = left + (left === 1 ? ' character left' : ' characters left');
   }
 
   function trapFocus(e) {
@@ -661,9 +816,63 @@ function wireCopy(btn, getText) {
       track('industry_select', { industry: e.target.value || 'all', from: 'drawer' });
       renderPanel();
     });
+
+    /* Delegated, because the "fix first" chips are rebuilt whenever the
+       ranking changes. Chips are single-select and un-pressable: an answer
+       given by accident can be taken back. */
+    function chipGroup(sel, onPick) {
+      var wrap = $(sel);
+      if (!wrap) return;
+      wrap.addEventListener('click', function (e) {
+        var c = e.target.closest && e.target.closest('.chip');
+        if (!c || !wrap.contains(c)) return;
+        var on = c.getAttribute('aria-pressed') !== 'true';
+        pressOne(wrap, on ? c.getAttribute('data-v') : null);
+        onPick(on ? c.getAttribute('data-v') : null);
+      });
+    }
+
+    chipGroup('#dq-size', function (v) {
+      check.size = v;
+      track('check_size_set', { size: v || 'cleared' });
+    });
+
+    chipGroup('#dq-time', function (v) {
+      check.timeBand = v;
+      /* A band chosen here is the more recent answer, so it replaces whatever
+         the slider said rather than being overruled by it. */
+      check.hoursConfirmed = false;
+      track('check_time_band_set', { band: v || 'cleared' });
+      renderPanel();
+    });
+
+    chipGroup('#dq-pain', function (v) {
+      check.priority = v;
+      track('check_priority_set', { workflow: v || 'cleared' });
+    });
+
+    var notesEl = $('#drawer-notes');
+    if (notesEl) {
+      notesEl.addEventListener('input', function () {
+        check.notes = notesEl.value;
+        paintNoteCount();
+      });
+      /* Length only. What an owner types about their own business is the one
+         answer on this page that is theirs, and it goes to the booking email
+         and nowhere else -- never to analytics. */
+      notesEl.addEventListener('blur', function () {
+        track('check_notes', { filled: check.notes.trim().length > 0 });
+      });
+    }
+
     $('#drawer-book').addEventListener('click', function () {
       try { sessionStorage.setItem('automatesmall.check', JSON.stringify(check)); } catch (err) {}
-      track('booking_start', { from: 'drawer' });
+      track('booking_start', {
+        from: 'drawer',
+        statements: check.statements.length,
+        answered: [check.industry, check.size, check.timeBand, check.priority]
+          .filter(Boolean).length
+      });
       window.location.href = 'book.html';
     });
   }
@@ -676,30 +885,40 @@ function wireCopy(btn, getText) {
     closePanel();
   });
 
-  /* Must be declared BEFORE booking() runs. It used to sit after the IIFE:
-     var hoists the declaration but not the assignment, so STATEMENT_TEXT was
-     undefined at execution and STATEMENT_TEXT[id] threw. The wrapper had
-     already been un-hidden, which is why "From your check" rendered above an
-     empty list instead of staying hidden. */
-  var STATEMENT_TEXT = {
-    R1: 'Entering the same information in three places',
-    R2: 'Follow-ups only happen if I remember',
-    R3: 'Spreadsheets everywhere',
-    R4: 'Five systems, still no clear picture',
-    R5: 'Checking employee paperwork by hand',
-    R6: 'Invoices going out late',
-    R7: 'How we do things lives in someone’s head',
-    R8: 'Chasing people for forms'
-  };
-
   /* ------------------------------------------------------- D4 booking prefill */
   (function booking() {
     var form = $('#walkthrough');
     if (!form) return;
     var saved = null;
     try { saved = JSON.parse(sessionStorage.getItem('automatesmall.check') || 'null'); } catch (e) {}
+    /* Everything the drawer collected, rendered as "what you told us" and,
+       where the booking form asks the same question, filled in rather than
+       asked again. */
+    function recapRows(c) {
+      var rows = [];
+      var bizSel = $('#biz');
+      if (c.industry && bizSel) {
+        var opt = bizSel.querySelector('option[value="' + c.industry + '"]');
+        if (opt) rows.push(['Kind of business', opt.textContent]);
+      }
+      if (SIZE_LABELS[c.size]) rows.push(['People', SIZE_LABELS[c.size]]);
+      var band = TIME_BANDS[c.timeBand];
+      if (band) rows.push(['Time on admin', band.label.charAt(0).toUpperCase() + band.label.slice(1)]);
+      if (c.priority === 'same') rows.push(['Fix first', 'All about the same']);
+      else if (c.priority && WORKFLOWS[c.priority]) rows.push(['Fix first', WORKFLOWS[c.priority].title]);
+      return rows;
+    }
+
     if (saved) {
       if (saved.industry) { var s = $('#biz'); if (s) s.value = saved.industry; }
+      /* Same four values as the drawer chips, so this prefills exactly. */
+      var sizeEl = $('#size');
+      if (sizeEl && SIZE_LABELS[saved.size]) sizeEl.value = saved.size;
+      /* The free-text answer is the same question this form already asks, so
+         it lands in that field where the visitor can still edit it -- rather
+         than travelling invisibly in the email. */
+      var painEl = $('#pain');
+      if (painEl && !painEl.value && saved.notes) painEl.value = String(saved.notes).slice(0, 600);
       /* Stored IDs can outlive the questions that produced them -- an old tab,
          a bookmarked session, or a statement we renamed. Drop anything we can
          no longer name rather than showing the visitor a raw "R9", and leave
@@ -720,6 +939,23 @@ function wireCopy(btn, getText) {
         });
         chipWrap.hidden = false;
       }
+      var answersEl = $('#booking-answers');
+      var rows = recapRows(saved);
+      if (answersEl && rows.length) {
+        answersEl.innerHTML = '';
+        rows.forEach(function (r) {
+          var li = document.createElement('li');
+          var k = document.createElement('b');
+          k.textContent = r[0] + ': ';
+          var v = document.createElement('span');
+          v.className = 'recap__v';
+          v.textContent = r[1];
+          li.appendChild(k); li.appendChild(v);
+          answersEl.appendChild(li);
+        });
+        answersEl.hidden = false;
+        if (chipWrap) chipWrap.hidden = false;
+      }
     }
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -736,6 +972,11 @@ function wireCopy(btn, getText) {
 
       var bizSel = $('#biz'), sizeSel = $('#size');
       var picked = $$('#booking-chip-list li').map(function (li) { return '  - ' + li.textContent; });
+      /* The chip answers travel too, minus the two the form itself already
+         asks -- repeating them in the email would just be noise. */
+      var checkAnswers = (saved ? recapRows(saved) : [])
+        .filter(function (r) { return r[0] !== 'Kind of business' && r[0] !== 'People'; })
+        .map(function (r) { return '  - ' + r[0] + ': ' + r[1]; });
       var mail = composeMail('Walkthrough request \u2014 ' + (bizSel.options[bizSel.selectedIndex].text), [
         'I\u2019d like a free 30-minute walkthrough.',
         '',
@@ -743,7 +984,8 @@ function wireCopy(btn, getText) {
         'Roughly how many people: ' + sizeSel.options[sizeSel.selectedIndex].text,
         'Email: ' + $('#email').value.trim(),
         $('#pain').value.trim() ? '\nWhat eats up the most time:\n' + $('#pain').value.trim() : '',
-        picked.length ? '\nFrom the 2-minute check:\n' + picked.join('\n') : ''
+        picked.length ? '\nFrom the 2-minute check:\n' + picked.join('\n') : '',
+        checkAnswers.length ? '\nAlso from the check:\n' + checkAnswers.join('\n') : ''
       ]);
 
       var done = $('#walkthrough-done'), btn = form.querySelector('button[type=submit]');

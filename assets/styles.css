@@ -531,6 +531,25 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
    for anyone who cannot see it. */
 .picked__e{ margin-top:9px; padding-left:11px; border-left:2px solid var(--ledger);
   font-size:14.5px; line-height:1.5; color:var(--ledger); }
+/* The line that says why a result is on the list. It quotes the visitor's own
+   selections back rather than asserting a reason we cannot know. */
+.picked__w{ margin-top:8px; font-size:14px; line-height:1.45; color:var(--ink-faint); }
+
+/* ---------- Universal follow-up questions in the result panel ----------
+   Same questions for every business. They sit under the results because the
+   results are what the visitor pressed the button for; these sharpen the
+   walkthrough, they do not gate it. */
+.dq{ display:grid; gap:18px; padding:18px; background:var(--paper-deep);
+  border:1px solid var(--line); border-radius:var(--r-card); }
+.dq__h{ font-size:14.5px; line-height:1.5; color:var(--ink-soft); }
+.dq__q{ display:grid; gap:10px; }
+.dq__q[hidden]{ display:none; }
+.dq__l{ font-weight:600; font-size:16px; line-height:1.35; }
+.dq .chip{ font-size:15px; padding:9px 14px; }
+/* A drawer is not a page: the 130px form textarea swallows the panel. */
+.dq__free textarea{ min-height:84px; }
+@media (max-width:480px){ .dq{ padding:15px; gap:16px; } }
+
 .timeline{ padding:15px 16px; background:var(--card); border:1px solid var(--line); border-radius:11px; font-size:15.5px; line-height:1.5; }
 .caveat{ display:flex; gap:9px; font-size:14.5px; color:var(--ink-soft); line-height:1.5; }
 .caveat svg{ flex:none; margin-top:3px; }
@@ -548,6 +567,16 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
 .field textarea{ min-height:130px; resize:vertical; line-height:1.5; }
 .field .err{ display:flex; gap:7px; align-items:center; font-size:14.5px; color:var(--status-attention); font-weight:600; }
 .field .err[hidden]{ display:none; }
+/* "What you told us" on the booking page. The drawer shows these answers as
+   pressed chips; by the time the visitor is on this page they can't see them
+   any more, so the recap is where it earns its place. */
+.recap{ display:grid; gap:7px; margin:14px 0 0; padding:14px 16px; list-style:none;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--r-card);
+  font-size:15px; line-height:1.5; }
+.recap[hidden]{ display:none; }
+.recap b{ font-weight:600; }
+.recap .recap__v{ color:var(--ink-soft); }
+
 .formdone{ padding:clamp(20px,3vw,28px); background:var(--ledger-tint); border:1px solid #BDD3C4; border-radius:var(--r-card); }
 /* Forms that are not connected yet. Deliberately NOT the green success
    treatment: "nothing was sent" must not look like "sent". */

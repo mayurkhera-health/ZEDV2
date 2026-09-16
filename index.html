@@ -429,6 +429,47 @@
         </div>
         <ol class="picked" id="drawer-list"></ol>
       </div>
+
+      <!-- Universal follow-ups. Every visitor sees the same three questions
+           whatever business they run -- consistency is the point. Industry
+           only reorders the list above; it never changes what we ask. -->
+      <div class="dq" id="drawer-more">
+        <p class="dq__h">A few more questions, the same ones we ask everybody. They make the walkthrough shorter.</p>
+
+        <div class="dq__q">
+          <p class="dq__l" id="dq-size-l">Roughly how many people work there, including you?</p>
+          <div class="chips" id="dq-size" role="group" aria-labelledby="dq-size-l">
+            <button class="chip" type="button" aria-pressed="false" data-v="1-5">1&ndash;5</button>
+            <button class="chip" type="button" aria-pressed="false" data-v="6-15">6&ndash;15</button>
+            <button class="chip" type="button" aria-pressed="false" data-v="16-50">16&ndash;50</button>
+            <button class="chip" type="button" aria-pressed="false" data-v="50+">50+</button>
+          </div>
+        </div>
+
+        <div class="dq__q">
+          <p class="dq__l" id="dq-time-l">How much of your week goes to this kind of admin?</p>
+          <div class="chips" id="dq-time" role="group" aria-labelledby="dq-time-l">
+            <button class="chip" type="button" aria-pressed="false" data-v="under5">Under 5 hours</button>
+            <button class="chip" type="button" aria-pressed="false" data-v="5to10">5&ndash;10 hours</button>
+            <button class="chip" type="button" aria-pressed="false" data-v="10to20">10&ndash;20 hours</button>
+            <button class="chip" type="button" aria-pressed="false" data-v="20plus">20+ hours</button>
+            <button class="chip" type="button" aria-pressed="false" data-v="unsure">Not sure</button>
+          </div>
+        </div>
+
+        <div class="dq__q" id="dq-pain-wrap" hidden>
+          <p class="dq__l" id="dq-pain-l">Which of those would you fix first?</p>
+          <div class="chips" id="dq-pain" role="group" aria-labelledby="dq-pain-l"></div>
+        </div>
+      </div>
+
+      <!-- The one place the answers stop being the same for everybody. -->
+      <div class="field dq__free">
+        <label for="drawer-notes">Anything specific to your business we should know? <span style="font-weight:400;color:var(--ink-soft)">(optional)</span></label>
+        <p class="hint" id="drawer-notes-hint">Everything above is the same for every business. This is the part that isn&rsquo;t &mdash; a rule you work under, a system you&rsquo;re stuck with, the week that always goes wrong.</p>
+        <textarea id="drawer-notes" rows="3" maxlength="600" aria-describedby="drawer-notes-hint"></textarea>
+        <p class="hint" id="drawer-notes-count" aria-live="polite" hidden></p>
+      </div>
       <p class="timeline" id="drawer-time" hidden></p>
       <p class="timeline" id="drawer-time-prompt" hidden>Want to know what this is costing you in time?
         <a href="#time" data-close-drawer>Estimate my admin time</a></p>
