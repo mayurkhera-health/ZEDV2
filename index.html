@@ -419,8 +419,9 @@
     </div>
     <div id="drawer-result">
       <div class="field">
-        <label for="drawer-industry">What kind of business? (optional)</label>
-        <select id="drawer-industry"><option value="">All</option><option value="home">Home services &amp; trades</option><option value="studios">Studios &amp; learning centers</option><option value="professional">Professional services</option><option value="retail">Retail &amp; specialty</option><option value="health">Health &amp; dental practices</option><option value="childcare">Childcare &amp; after-school</option><option value="construction">Construction</option><option value="other">Something else</option></select>
+        <label for="drawer-industry">What kind of business?</label>
+        <select id="drawer-industry" aria-describedby="drawer-industry-err"><option value="">Choose one</option><option value="home">Home services &amp; trades</option><option value="studios">Studios &amp; learning centers</option><option value="professional">Professional services</option><option value="retail">Retail &amp; specialty</option><option value="health">Health &amp; dental practices</option><option value="childcare">Childcare &amp; after-school</option><option value="construction">Construction</option><option value="other">Something else</option></select>
+        <p class="err" id="drawer-industry-err" hidden><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="#B3261E" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.1"/><path d="M10 6.3v4.4"/><path d="M10 13.6h.01"/></svg><span>Pick the closest one so the list below is about your business, not businesses in general.</span></p>
       </div>
       <div>
         <div class="picked-head">

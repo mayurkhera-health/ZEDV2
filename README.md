@@ -79,19 +79,29 @@ reads as "about 500 hours a year, or 12.5 full work weeks."
 
 ### The questions are the same for every business
 
-The result panel asks four follow-ups and **every visitor gets the same
-four**, whatever they run. Industry is a filter on the *answers*, never on the
-questions -- it reorders the three workflows and picks which example sentence
-to show, and that is all it does. There are no per-industry question packs,
-because we have no owner interviews behind them and a question we invented is
-worse than one we didn't ask.
+The result panel asks the same questions of **every visitor**, whatever they
+run. Industry is a filter on the *answers*, never on the questions -- it
+reorders the three workflows and picks which example sentence to show, and that
+is all it does. There are no per-industry question packs, because we have no
+owner interviews behind them and a question we invented is worse than one we
+didn't ask.
 
-| Question | Field | Where it goes |
-| --- | --- | --- |
-| How many people work there | `check.size` | prefills the booking form's "how many people" |
-| How much of the week goes to admin | `check.timeBand` | the time sentence, and the booking email |
-| Which of the three to fix first | `check.priority` | the booking email |
-| Anything specific to your business | `check.notes` | prefills the booking form's "what eats up the most time" |
+| Question | Field | Required | Where it goes |
+| --- | --- | --- | --- |
+| What kind of business | `check.industry` | yes | reorders the results, picks the example line, prefills the booking form |
+| How many people work there | `check.size` | no | prefills the booking form's "how many people" |
+| How much of the week goes to admin | `check.timeBand` | no | the time sentence, and the booking email |
+| Which of the three to fix first | `check.priority` | no | the booking email |
+| Anything specific to your business | `check.notes` | no | prefills the booking form's "what eats up the most time" |
+
+Industry is the one the panel insists on, and the reason is not lead capture --
+the booking form already requires it, so no request reaches us without it. It
+is that the panel is headed "in a business like yours" and the per-industry
+line is the only genuinely tailored sentence in it. Showing the list to someone
+whose business we have not asked about means promising something we haven't
+done. It is enforced the way the booking form enforces the same question:
+an inline error on the attempt, never a disabled button with no explanation,
+and the results still render while it is unanswered.
 
 The last one is the only place the answers stop being identical, which is the
 point: consistent questions, one open field for what consistency can't reach.

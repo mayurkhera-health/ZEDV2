@@ -703,6 +703,12 @@ function wireCopy(btn, getText) {
 
     /* The two universal chip questions. Neither changes the ranking; both
        exist so the walkthrough starts further along. */
+    var bizErr = $('#drawer-industry-err');
+    if (bizErr && check.industry) {
+      bizErr.hidden = true;
+      $('#drawer-industry').setAttribute('aria-invalid', 'false');
+    }
+
     pressOne($('#dq-size'), check.size);
     pressOne($('#dq-time'), check.timeBand);
 
@@ -817,6 +823,25 @@ function wireCopy(btn, getText) {
       renderPanel();
     });
 
+    /* The one answer the panel insists on. Everything else here is optional
+       because the result stands without it; this one doesn't -- the panel is
+       headed "in a business like yours" and the per-industry line is the only
+       genuinely tailored sentence in it, so showing the list without knowing
+       the business means promising something we haven't done. Enforced the way
+       the booking form enforces the same question: an inline error on the
+       attempt, never a dead button with no explanation. */
+    function industryAnswered() {
+      var sel = $('#drawer-industry'), err = $('#drawer-industry-err');
+      var ok = !!check.industry;
+      if (err) err.hidden = ok;
+      if (sel) sel.setAttribute('aria-invalid', String(!ok));
+      if (!ok && sel) {
+        sel.scrollIntoView({ behavior: reduced.matches ? 'auto' : 'smooth', block: 'center' });
+        sel.focus();
+      }
+      return ok;
+    }
+
     /* Delegated, because the "fix first" chips are rebuilt whenever the
        ranking changes. Chips are single-select and un-pressable: an answer
        given by accident can be taken back. */
@@ -866,6 +891,7 @@ function wireCopy(btn, getText) {
     }
 
     $('#drawer-book').addEventListener('click', function () {
+      if (!industryAnswered()) return;
       try { sessionStorage.setItem('automatesmall.check', JSON.stringify(check)); } catch (err) {}
       track('booking_start', {
         from: 'drawer',
