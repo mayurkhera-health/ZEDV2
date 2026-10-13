@@ -370,12 +370,18 @@ for page in pages:
 # all promise it, with or without the words: a "fixed number in writing" is the
 # same undertaking as a "fixed price", and "we don't bill by the hour" is its
 # other half. Removed 16 Sep 2026; guarded so they cannot drift back in.
-PRICE_COMMITMENTS = ['fixed price', 'fixed scope', 'fixed number',
-                     'hourly meter', 'bill by the hour']
+# Matched as regexes, not substrings. The list used to be plain strings and
+# "fixed-price" -- hyphenated -- sat in three places on assessment.html for a
+# month while this gate reported PASS, including in the meta description Google
+# shows and the og:description that appears when the page is shared.
+PRICE_COMMITMENTS = [r'fixed[-\s]price', r'fixed[-\s]scope', r'fixed[-\s]fee',
+                     r'fixed[-\s]cost', r'fixed[-\s]number',
+                     r'hourly meter', r'bill by the hour', r'flat[-\s]fee',
+                     r'flat[-\s]rate']
 for page in pages:
     flat = re.sub(r'\s+', ' ', visible(io.open(page, encoding='utf-8').read())).lower()
     for phrase in PRICE_COMMITMENTS:
-        if phrase in flat:
+        if re.search(phrase, flat):
             fail('%s says "%s". The site quotes before work starts; it does not '
                  'commit to the price being fixed.' % (page, phrase))
 

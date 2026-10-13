@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="AutomateSmall">
+  <!-- The header's checkbox mark, redrawn to survive 16px: the tilt is gone,
+       the strokes are twice as heavy, and the card fills the canvas. -->
+  <rect width="32" height="32" rx="7" fill="#F7F5EE"/>
+  <rect x="2.6" y="2.6" width="26.8" height="26.8" rx="5.4" fill="none" stroke="#26282B" stroke-width="2.2"/>
+  <path d="M9.6 16.6l4.2 4.2 8.8-9.4" fill="none" stroke="#2F5D48" stroke-width="3.8"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
