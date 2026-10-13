@@ -298,7 +298,7 @@ if forms_post:
         fail('privacy.html has no "Who else can see it" section, so nothing says '
              'where an enquiry goes.')
     else:
-        for who in ['Google', 'Fly']:
+        for who in ['Google', 'Cloudflare']:
             if who not in _section:
                 fail('privacy.html\'s "Who else can see it" section does not name '
                      '%s, which handles enquiry data or hosting. Name every '
@@ -310,18 +310,33 @@ if forms_use_mailto and not re.search(r'mail-preview|ask-preview', home + io.ope
          'for a visitor with no mail handler, so the composed message must always '
          'be shown with a way to copy it.')
 
+# Cloudflare Web Analytics is enabled on this zone with "Automatic setup",
+# which injects its beacon at the edge. Nothing about it appears in the HTML
+# this repository builds, so no scan of the source can ever see it. That is
+# exactly how privacy.html came to say "nothing counts your visit" for a month
+# while the dashboard counted them: the old guard looked for provider strings,
+# found none, and took the silence as proof.
+#
+# The negative is unprovable from here, so it may not be claimed. The guard now
+# runs the other way: no page may assert that nothing is measured, and the
+# privacy page must name who measures it.
 ANALYTICS = ['plausible', 'fathom', 'umami', 'gtag(', 'googletagmanager',
-             'matomo', 'segment.com', 'posthog']
+             'matomo', 'segment.com', 'posthog', 'cloudflareinsights']
 html_and_js = ''.join(io.open(f, encoding='utf-8').read() for f in pages) + js
-analytics_installed = any(a in html_and_js.lower() for a in ANALYTICS)
-claims_no_analytics = 'no analytics on it' in privacy
+analytics_in_source = any(a in html_and_js.lower() for a in ANALYTICS)
 
-if analytics_installed and claims_no_analytics:
-    fail('an analytics provider is installed but privacy.html still says there is '
-         'no analytics on the site. Name the provider on the privacy page.')
-if not analytics_installed and not claims_no_analytics:
-    fail('privacy.html no longer states that the site has no analytics, but no '
-         'analytics provider is installed. Say what is actually true.')
+UNPROVABLE = ['no analytics on it', 'nothing counts your visit',
+              'no cookies, no analytics', 'no analytics,']
+for claim in UNPROVABLE:
+    if claim in privacy.lower():
+        fail('privacy.html says "%s". Analytics can be switched on at the edge '
+             'without touching this repository, so the source cannot prove that '
+             'nothing is measured. Describe what is measured instead of claiming '
+             'the negative.' % claim)
+if 'Cloudflare' not in privacy:
+    fail('privacy.html does not name Cloudflare, which both serves this site and '
+         'counts page views for it. Every processor is named there or the page is '
+         'vague exactly where it must be specific.')
 
 # --- Dead forms may not promise a reply --------------------------------------
 # The booking form said "expect a reply with a couple of times to choose from",
