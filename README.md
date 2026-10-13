@@ -187,12 +187,16 @@ the script itself are in `docs/form-endpoint-setup.md`.
   machinery, and a domain-reputation risk, to save a screenshot. Its opt-in
   checkbox was also the site's only marketing consent; there is now no
   mailing list anywhere, and privacy.html says so.
-- **Any founder or company history.** The founder photo slot, the unwritten
-  story and the ZEDventures explainer were all removed on 15 Sep 2026 at the
-  owner's instruction. The only human trace left is "Built by ZEDventures"
-  in the footer. This is a deliberate state, not an oversight, but it is a
-  real gap for a trust-led service business: there is currently no person on
-  the site for a visitor to buy.
+- **Any founder.** The founder photo slot and the unwritten story were
+  removed on 15 Sep 2026 at the owner's instruction, and have not come back.
+  This is a deliberate state, not an oversight, but it is a real gap for a
+  trust-led service business: there is still no person on the site for a
+  visitor to buy.
+
+  Company history is no longer absent. "Backed by ZEDVentures" went onto the
+  homepage and "Why we started AutomateSmall" onto the About page on 13 Oct
+  2026, and the footer's "Built by ZEDventures" became "A ZEDVentures
+  Initiative" on every page. The company is named; the people are not.
 
 ## Hosting — Cloudflare Pages
 

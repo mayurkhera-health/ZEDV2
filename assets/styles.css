@@ -22,7 +22,7 @@
   --status-due:       #9A6700;
   --line:             #DDD6C7;
 
-  --zed: #E31937;   /* ZEDventures brand red. Only ever used to mark the
+  --zed: #E31937;   /* ZEDVentures brand red. Only ever used to mark the
                        parent-company relationship. Never decorative. */
 
   /* Derived, kept in the same warm family */
@@ -497,7 +497,7 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
    colour one step back from the page's own. It should read like a note at the
    end of a letter. */
 .backing{ max-width:min(640px,66ch); }
-/* The ZEDventures mark. A short bar wherever the parent company is named, and
+/* The ZEDVentures mark. A short bar wherever the parent company is named, and
    nowhere else on the site -- it is a signal of ownership, not an accent, so
    --brick remains AutomateSmall's own warm red in all twelve of its existing
    places and nothing that was brick has become this.
@@ -733,7 +733,7 @@ input[type=range]{ width:100%; height:44px; accent-color:var(--brick); backgroun
 .foot nav{ display:grid; gap:9px; }
 .foot nav a{ font-size:15.5px; color:var(--ink-soft); text-decoration:none; }
 .foot nav a:hover{ color:var(--ink); }
-/* The footer's ZEDventures link. The brief asked for var(--zed) on the text,
+/* The footer's ZEDVentures link. The brief asked for var(--zed) on the text,
    but this row is 14px on --paper, where the red measures 4.32 -- under AA.
    So the red goes on the underline, which is decoration rather than text, and
    the hover colour is left to the site's own a:hover. The link is already

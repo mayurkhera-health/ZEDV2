@@ -76,6 +76,18 @@ if 'Do you use AI?' not in home:
     fail('the "Do you use AI?" FAQ question is missing; total silence on it '
          'reads as evasive once an owner asks.')
 
+# --- The parent company has one spelling -------------------------------------
+# automatesmall.com writes ZEDVentures; zedventures.com's own site writes
+# ZEDventures. Both were live across the two properties at once. This locks the
+# one we control so it cannot drift back a page at a time. The domain itself is
+# lowercase and is exempt automatically: visible() has already stripped every
+# href, so zedventures.com never reaches this text.
+_wrongcase = re.findall(r'ZEDventures', body)
+if _wrongcase:
+    fail('"ZEDventures" appears %d time(s) in visible copy. This site spells the '
+         'parent company ZEDVentures, with a capital V. The domain '
+         'zedventures.com stays lowercase and is not affected.' % len(_wrongcase))
+
 # --- A4: banned vocabulary --------------------------------------------------
 for word in BANNED:
     if re.search(word, body, re.I):
