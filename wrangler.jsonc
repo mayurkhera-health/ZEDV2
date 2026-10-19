@@ -10,7 +10,7 @@
   // ran with no config, so wrangler generated {"directory": "."} and shipped
   // the repository root -- .git included. Redeploying over the same name is
   // what replaces that asset manifest.
-  "name": "zedv2",
+  "name": "automatesmall",
   "compatibility_date": "2026-09-15",
 
   "assets": {
